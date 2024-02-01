@@ -35,30 +35,8 @@ type Admin struct {
 	User
 }
 
-type Student struct {
-	User
-	Name       string `json:"name"`
-	NISN       string `json:"nisn"`
-	Address    string `json:"address"`
-	Birthplace string `json:"birthplace"`
-	Birthdate  string `json:"birthdate"`
-	ParentID   string `json:"parent_id"`
-	Parent     Parent `gorm:"foreignKey:ParentID"`
-}
 
-type Teacher struct {
-	User
-	Name       string `json:"name"`
-	NIP        string `json:"nip"`
-	Address    string `json:"address"`
-	Birthplace string `json:"birthplace"`
-	Birthdate  string `json:"birthdate"`
-}
 
-type Parent struct {
-	User
-	Name       string `json:"name"`
-	Address    string `json:"address"`
-	Birthplace string `json:"birthplace"`
-	Birthdate  string `json:"birthdate"`
-}
+
+
+

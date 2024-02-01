@@ -17,7 +17,10 @@ func Start() {
 		panic(err)
 	}
 
-	seeder.SuperAdminSeeder(db)
+	seed := seeder.Seed{DB: db}
+	seed.SuperAdminSeeder()
+	seed.AdminSeeder()
+	seed.StudentSeeder()
 
 	err = app.Listen(":" + os.Getenv("PORT"))
 
