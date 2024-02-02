@@ -18,9 +18,7 @@ func Start() {
 	}
 
 	seed := seeder.Seed{DB: db}
-	seed.SuperAdminSeeder()
-	seed.AdminSeeder()
-	seed.StudentSeeder()
+	seed.SeedAll()
 
 	err = app.Listen(":" + os.Getenv("PORT"))
 

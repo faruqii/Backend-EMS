@@ -5,15 +5,15 @@ import (
 	"gorm.io/gorm"
 )
 
-type Role string
+type Role struct {
+	ID   string `json:"id" gorm:"primaryKey, type:uuid, default:uuid_generate_v4()"`
+	Name string `json:"name"`
+}
 
-const (
-	SuperAdminRole Role = "superadmin"
-	AdminRole      Role = "admin"
-	StudentRole    Role = "student"
-	TeacherRole    Role = "teacher"
-	ParentRole     Role = "parent"
-)
+func (r *Role) BeforeCreate(tx *gorm.DB) (err error) {
+	r.ID = uuid.NewString()
+	return nil
+}
 
 type User struct {
 	ID       string `json:"id" gorm:"primaryKey, type:uuid, default:uuid_generate_v4()"`
@@ -34,9 +34,3 @@ type SuperAdmin struct {
 type Admin struct {
 	User
 }
-
-
-
-
-
-

@@ -13,6 +13,31 @@ type Seed struct {
 	DB *gorm.DB
 }
 
+func (s *Seed) SeedAll() {
+	s.RoleSeeder()
+	s.SuperAdminSeeder()
+	s.AdminSeeder()
+	s.StudentSeeder()
+}
+
+func (s *Seed) RoleSeeder() {
+	roles := []entities.Role{
+		{Name: "superadmin"},
+		{Name: "admin"},
+		{Name: "student"},
+		{Name: "teacher"},
+		{Name: "parent"},
+	}
+
+	for _, role := range roles {
+		err := s.DB.Create(&role).Error
+		if err != nil {
+			log.Fatalf("Failed to seed role: %v", err)
+		}
+	}
+
+}
+
 func (s *Seed) SuperAdminSeeder() {
 	var lenghtTable int64
 	s.DB.Model(&entities.SuperAdmin{}).Count(&lenghtTable)
@@ -21,7 +46,7 @@ func (s *Seed) SuperAdminSeeder() {
 			User: entities.User{
 				Username: "superadmin",
 				Password: os.Getenv("SUPER_ADMIN_PASSWORD"),
-				Role:     string(entities.SuperAdminRole),
+				Role:     "superadmin",
 			},
 		}
 
@@ -41,7 +66,7 @@ func (s *Seed) AdminSeeder() {
 			User: entities.User{
 				Username: "admin",
 				Password: os.Getenv("ADMIN_PASSWORD"),
-				Role:     string(entities.AdminRole),
+				Role:     "admin",
 			},
 		}
 
@@ -59,7 +84,7 @@ func (s *Seed) StudentSeeder() {
 		student := entities.Student{
 			User: entities.User{
 				Username: "student",
-				Role:     string(entities.StudentRole),
+				Role:     "student",
 			},
 			Name:       "student",
 			NISN:       "1234567890",

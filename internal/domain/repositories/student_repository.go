@@ -1,0 +1,82 @@
+package repositories
+
+import (
+	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
+	"gorm.io/gorm"
+)
+
+// StudentRepository is a contract of student repository
+// This is an interface that will be implemented by StudentRepository
+
+type StudentRepository interface {
+	Insert(student *entities.Student) (*entities.Student, error)
+	Update(student *entities.Student) (*entities.Student, error)
+	Delete(student *entities.Student) error
+	FindById(id int) (*entities.Student, error)
+	FindByNISN(nisn string) (*entities.Student, error)
+	FindStudentByToken(token string) (string, error)
+	FindRoleByName(name string) (*entities.Role, error)
+}
+
+type studentRepository struct {
+	db *gorm.DB
+}
+
+func NewStudentRepository(db *gorm.DB) *studentRepository {
+	return &studentRepository{db: db}
+}
+
+func (r *studentRepository) Insert(student *entities.Student) (*entities.Student, error) {
+	if err := r.db.Create(student).Error; err != nil {
+		return nil, err
+	}
+	return student, nil
+}
+
+func (r *studentRepository) Update(student *entities.Student) (*entities.Student, error) {
+	if err := r.db.Save(student).Error; err != nil {
+		return nil, err
+	}
+	return student, nil
+}
+
+func (r *studentRepository) Delete(student *entities.Student) error {
+	if err := r.db.Delete(student).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *studentRepository) FindById(id int) (*entities.Student, error) {
+	student := new(entities.Student)
+	if err := r.db.First(student, id).Error; err != nil {
+		return nil, err
+	}
+	return student, nil
+}
+
+func (r *studentRepository) FindByNISN(nisn string) (*entities.Student, error) {
+	student := new(entities.Student)
+	if err := r.db.Where("nisn = ?", nisn).First(student).Error; err != nil {
+		return nil, err
+	}
+	return student, nil
+}
+
+func (r *studentRepository) FindStudentByToken(token string) (string, error) {
+	var studentID string
+	if err := r.db.Raw("SELECT user_id FROM tokens WHERE token = ?", token).Scan(&studentID).Error; err != nil {
+		return "", err
+	}
+	return studentID, nil
+}
+
+func (r *studentRepository) FindRoleByName(name string) (*entities.Role, error) {
+	role := new(entities.Role)
+	if err := r.db.Where("name = ?", name).First(role).Error; err != nil {
+		return nil, err
+	}
+	return role, nil
+}
+
+// Path: internal/domain/repositories/student_repository.go

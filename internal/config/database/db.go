@@ -40,6 +40,7 @@ func Connect() (*gorm.DB, error) {
 	DB = conn
 
 	err = conn.AutoMigrate(
+		&entities.Role{},
 		&entities.SuperAdmin{},
 		&entities.Admin{},
 		&entities.Student{},
@@ -49,6 +50,7 @@ func Connect() (*gorm.DB, error) {
 		&entities.Class{},
 		&entities.Grade{},
 		&entities.Schedule{},
+		&entities.Token{},
 	)
 
 	if err != nil {
