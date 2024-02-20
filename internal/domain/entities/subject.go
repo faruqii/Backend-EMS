@@ -10,7 +10,7 @@ type Subject struct {
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	Semester    string    `json:"semester"`
-	Teachers    []Teacher `gorm:"many2many:teacher_subjects;"`
+	Teachers    []Teacher `json:"teachers" gorm:"many2many:teacher_subjects"`
 }
 
 func (s *Subject) BeforeCreate(tx *gorm.DB) (err error) {
@@ -19,8 +19,8 @@ func (s *Subject) BeforeCreate(tx *gorm.DB) (err error) {
 }
 
 type TeacherSubject struct {
-	TeacherID string `gorm:"primaryKey"`
-	SubjectID string `gorm:"primaryKey"`
+	TeacherID string `json:"teacher_id" gorm:"primaryKey"`
+	SubjectID string `json:"subject_id" gorm:"primaryKey"`
 	Teacher   Teacher
 	Subject   Subject
 }

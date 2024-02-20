@@ -5,6 +5,9 @@ import (
 
 	"github.com/Magetan-Boyz/Backend/internal/config/database"
 	"github.com/Magetan-Boyz/Backend/internal/config/seeder"
+	"github.com/Magetan-Boyz/Backend/internal/domain/repositories"
+	"github.com/Magetan-Boyz/Backend/internal/routes"
+	"github.com/Magetan-Boyz/Backend/internal/services"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -19,6 +22,16 @@ func Start() {
 
 	seed := seeder.Seed{DB: db}
 	seed.SeedAll()
+
+	// Repositories
+	adminRepository := repositories.NewAdminRepository(db)
+
+	// Services
+	adminService := services.NewAdminService(adminRepository)
+
+	//Routes
+	apiEndpoint := app.Group("/api")
+	routes.AdminRoutes(apiEndpoint, adminService)
 
 	err = app.Listen(":" + os.Getenv("PORT"))
 
