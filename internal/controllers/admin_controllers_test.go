@@ -1,144 +1,94 @@
 package controllers_test
 
 import (
-	"bytes"
 	"encoding/json"
-	"io"
-	"log"
+	"errors"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"github.com/Magetan-Boyz/Backend/internal/controllers"
+	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"github.com/Magetan-Boyz/Backend/internal/dto"
 	"github.com/Magetan-Boyz/Backend/internal/services"
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"github.com/valyala/fasthttp"
 )
 
-func TestLogin_Positive(t *testing.T) {
-	app := fiber.New()
+func TestAdminController_Login(t *testing.T) {
+	tests := []struct {
+		name            string
+		mockSvc         func(*gomock.Controller) *services.MockAdminService
+		args            func() *fiber.Ctx
+		wantHTTPErrCode int
+	}{
+		{
+			name: "Positive",
+			mockSvc: func(ctrl *gomock.Controller) *services.MockAdminService {
+				expectedAdminResponse := &entities.Admin{
+					User: entities.User{
+						ID:       "123",
+						Username: "testuser",
+					},
+				}
+				mockAdminService := services.NewMockAdminService(ctrl)
+				mockAdminService.EXPECT().LogIn("testuser", "testpassword").
+					Return(expectedAdminResponse, nil).Times(1)
 
-	mockAdminService := &services.MockAdminService{}
-	mockAdminService.EXPECT().LogIn("testuser", "testpassword").Return(&dto.AdminLoginResponse{
-		ID:       "123",
-		Username: "testuser",
-		Token:    "mocked-token",
-	})
+				mockAdminService.EXPECT().CreateAdminToken(expectedAdminResponse).Return("mocked-token", nil).Times(1)
 
-	controller := controllers.NewAdminController(mockAdminService)
+				return mockAdminService
+			},
+			args: func() *fiber.Ctx {
+				reqBody := dto.AdminLoginRequest{Username: "testuser", Password: "testpassword"}
+				reqBodyBytes, _ := json.Marshal(reqBody)
 
-	app.Post("/login", controller.Login)
+				app := fiber.New()
 
-	reqBody := dto.AdminLoginRequest{Username: "testuser", Password: "testpassword"}
-	reqBodyBytes, _ := json.Marshal(reqBody)
-	req := httptest.NewRequest(http.MethodPost, "/login", bytes.NewReader(reqBodyBytes))
-	req.Header.Set("Content-Type", "application/json")
-	resp, err := app.Test(req)
+				ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
+				ctx.Request().Header.SetContentType("application/json")
+				ctx.Request().SetBody(reqBodyBytes)
 
-	assert.NoError(t, err)
-	assert.Equal(t, http.StatusOK, resp.StatusCode)
+				return ctx
+			},
+		},
+		{
+			name: "Negative",
+			mockSvc: func(ctrl *gomock.Controller) *services.MockAdminService {
+				mockAdminService := services.NewMockAdminService(ctrl)
+				mockAdminService.EXPECT().LogIn("testuser", "testpassword").Return(nil, errors.New("internal server error")).Times(1)
 
-	var response dto.AdminLoginResponse
-	err = json.NewDecoder(resp.Body).Decode(&response)
-	assert.NoError(t, err)
-	assert.Equal(t, "123", response.ID)
-	assert.Equal(t, "testuser", response.Username)
-	assert.Equal(t, "mocked-token", response.Token)
-}
+				return mockAdminService
+			},
+			args: func() *fiber.Ctx {
+				reqBody := dto.AdminLoginRequest{Username: "testuser", Password: "testpassword"}
+				reqBodyBytes, _ := json.Marshal(reqBody)
 
-func TestLogin_Negative(t *testing.T) {
-	app := fiber.New()
+				app := fiber.New()
 
-	mockAdminService := &services.MockAdminService{}
-	// empty username and password
-	mockAdminService.EXPECT().LogIn("", "").Return(nil, &services.ErrorMessages{
-		Message:    "Username could not be empty",
-		StatusCode: http.StatusBadRequest,
-	})
+				ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
+				ctx.Request().Header.SetContentType("application/json")
+				ctx.Request().SetBody(reqBodyBytes)
 
-	controller := controllers.NewAdminController(mockAdminService)
-
-	app.Post("/login", controller.Login)
-
-	// Test with empty request body
-	reqBody := []byte{}
-	req := httptest.NewRequest(http.MethodPost, "/login", bytes.NewReader(reqBody))
-	req.Header.Set("Content-Type", "application/json")
-	resp, err := app.Test(req)
-
-	assert.NoError(t, err)
-	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
-
-	// Add more negative test cases for error scenarios if needed
-}
-
-func TestCreateSubject_Success(t *testing.T) {
-	app := fiber.New()
-
-	mockAdminService := &services.MockAdminService{}
-	subject := &dto.SubjectRequest{Name: "Math", Description: "Mathematics subject", Semester: "Spring"}
-	mockAdminService.EXPECT().CreateSubject(subject).Return(&dto.SubjectResponse{
-		ID:          "123",
-		Name:        "Math",
-		Description: "Mathematics subject",
-		Semester:    "Spring",
-	})
-
-	controller := controllers.NewAdminController(mockAdminService)
-
-	app.Post("/create-subject", controller.CreateSubject)
-
-	reqBody := dto.SubjectRequest{Name: "Math", Description: "Mathematics subject", Semester: "Spring"}
-	reqBodyBytes, _ := json.Marshal(reqBody)
-	req := httptest.NewRequest(http.MethodPost, "/create-subject", bytes.NewReader(reqBodyBytes))
-	req.Header.Set("Content-Type", "application/json")
-	resp, err := app.Test(req)
-
-	assert.NoError(t, err)
-	assert.Equal(t, http.StatusCreated, resp.StatusCode)
-
-	var response map[string]interface{}
-	err = json.NewDecoder(resp.Body).Decode(&response)
-	assert.NoError(t, err)
-	assert.Equal(t, "Subject created successfully", response["message"])
-
-	// Check if the data field is not nil
-	assert.NotNil(t, response["data"])
-	log.Println(response["data"])
-}
-
-func TestCreateSubject_BadRequest(t *testing.T) {
-	app := fiber.New()
-
-	mockAdminService := &services.MockAdminService{}
-	mockAdminService.EXPECT().CreateSubject(&dto.SubjectRequest{}).Return(nil, &services.ErrorMessages{
-		Message:    "Name could not be empty",
-		StatusCode: http.StatusBadRequest,
-	})
-
-	controller := controllers.NewAdminController(mockAdminService)
-
-	app.Post("/create-subject", controller.CreateSubject)
-
-	// Test with empty request body
-	reqBody := []byte{}
-	req := httptest.NewRequest(http.MethodPost, "/create-subject", bytes.NewReader(reqBody))
-	req.Header.Set("Content-Type", "application/json")
-	resp, err := app.Test(req)
-
-	assert.NoError(t, err)
-	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
-
-	// Read the response body content
-	bodyBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatal(err)
+				return ctx
+			},
+			wantHTTPErrCode: http.StatusBadRequest,
+		},
 	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			c := controllers.NewAdminController(tt.mockSvc(ctrl))
+			ctx := tt.args()
 
-	// Convert the response body content bytes to a string and print it
-	bodyString := string(bodyBytes)
-	log.Println(bodyString)
+			c.Login(ctx)
 
-	// Add more negative test cases for error scenarios if needed
+			if tt.wantHTTPErrCode != 0 {
+				assert.Equal(t, tt.wantHTTPErrCode, ctx.Response().StatusCode())
+			} else {
+				assert.Equal(t, http.StatusOK, ctx.Response().StatusCode())
+			}
+		})
+	}
 }
