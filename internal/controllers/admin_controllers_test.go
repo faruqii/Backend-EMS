@@ -92,3 +92,79 @@ func TestAdminController_Login(t *testing.T) {
 		})
 	}
 }
+
+func TestAdminController_CreateSubject(t *testing.T) {
+	tests := []struct {
+		name            string
+		mockSvc         func(*gomock.Controller) *services.MockAdminService
+		args            func() *fiber.Ctx
+		wantHTTPErrCode int
+	}{
+		{
+			name: "Positive",
+			mockSvc: func(ctrl *gomock.Controller) *services.MockAdminService {
+				mockAdminService := services.NewMockAdminService(ctrl)
+				mockAdminService.EXPECT().CreateSubject(&entities.Subject{
+					Name:        "testsubject",
+					Description: "testdescription",
+					Semester:    "1",
+				}).Return(nil).Times(1)
+
+				return mockAdminService
+			},
+			args: func() *fiber.Ctx {
+				reqBody := dto.SubjectRequest{Name: "testsubject", Description: "testdescription", Semester: "1"}
+				reqBodyBytes, _ := json.Marshal(reqBody)
+
+				app := fiber.New()
+
+				ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
+				ctx.Request().Header.SetContentType("application/json")
+				ctx.Request().SetBody(reqBodyBytes)
+
+				return ctx
+			},
+		},
+		{
+			name: "Negative",
+			mockSvc: func(ctrl *gomock.Controller) *services.MockAdminService {
+				mockAdminService := services.NewMockAdminService(ctrl)
+				mockAdminService.EXPECT().CreateSubject(&entities.Subject{
+					Name:        "testsubject",
+					Description: "testdescription",
+					Semester:    "1",
+				}).Return(errors.New("internal server error")).Times(1)
+
+				return mockAdminService
+			},
+			args: func() *fiber.Ctx {
+				reqBody := dto.SubjectRequest{Name: "testsubject", Description: "testdescription", Semester: "1"}
+				reqBodyBytes, _ := json.Marshal(reqBody)
+
+				app := fiber.New()
+
+				ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
+				ctx.Request().Header.SetContentType("application/json")
+				ctx.Request().SetBody(reqBodyBytes)
+
+				return ctx
+			},
+			wantHTTPErrCode: http.StatusInternalServerError,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			c := controllers.NewAdminController(tt.mockSvc(ctrl))
+			ctx := tt.args()
+
+			c.CreateSubject(ctx)
+
+			if tt.wantHTTPErrCode != 0 {
+				assert.Equal(t, tt.wantHTTPErrCode, ctx.Response().StatusCode())
+			} else {
+				assert.Equal(t, http.StatusCreated, ctx.Response().StatusCode())
+			}
+		})
+	}
+}
