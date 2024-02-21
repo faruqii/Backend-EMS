@@ -15,10 +15,12 @@ type AdminService interface {
 	LogIn(username, password string) (*entities.Admin, error)
 	CreateAdminToken(admin *entities.Admin) (string, error)
 	GetAdminByToken(token string) (*entities.Admin, error)
+	CreateSubject(subject *entities.Subject) error
 }
 
 type adminService struct {
-	adminRepository repositories.AdminRepository
+	adminRepository   repositories.AdminRepository
+	subjectRepository repositories.SubjectRepository
 }
 
 func NewAdminService(adminRepository repositories.AdminRepository) *adminService {
@@ -101,4 +103,15 @@ func (s *adminService) GetAdminByToken(token string) (*entities.Admin, error) {
 	}
 
 	return s.adminRepository.FindById(username)
+}
+
+func (s *adminService) CreateSubject(subject *entities.Subject) error {
+	err := s.subjectRepository.Create(subject)
+	if err != nil {
+		return &ErrorMessages{
+			Message:    "Failed to create subject",
+			StatusCode: 500,
+		}
+	}
+	return nil
 }
