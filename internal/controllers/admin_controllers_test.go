@@ -10,52 +10,21 @@ import (
 	"testing"
 
 	"github.com/Magetan-Boyz/Backend/internal/controllers"
-	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"github.com/Magetan-Boyz/Backend/internal/dto"
+	"github.com/Magetan-Boyz/Backend/internal/services"
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/assert"
 )
 
-// MockAdminService is a mock implementation of AdminService
-type MockAdminService struct{}
-
-// LogIn mocks the login functionality
-func (m *MockAdminService) LogIn(username, password string) (*entities.Admin, error) {
-	admin := &entities.Admin{
-		User: entities.User{
-			ID:       "123",
-			Username: username,
-			Password: password,
-		},
-	}
-	return admin, nil
-}
-
-// CreateAdminToken mocks the token creation functionality
-func (m *MockAdminService) CreateAdminToken(admin *entities.Admin) (string, error) {
-	return "mocked-token", nil
-}
-
-// GetAdminByToken mocks the method to retrieve admin by token
-func (m *MockAdminService) GetAdminByToken(token string) (*entities.Admin, error) {
-	admin := &entities.Admin{
-		User: entities.User{
-			ID:       "123",
-			Username: "testuser",
-		},
-	}
-	return admin, nil
-}
-
-// CreateSubject mocks the method to create a subject
-func (m *MockAdminService) CreateSubject(subject *entities.Subject) error {
-	return nil
-}
-
 func TestLogin_Positive(t *testing.T) {
 	app := fiber.New()
 
-	mockAdminService := &MockAdminService{}
+	mockAdminService := &services.MockAdminService{}
+	mockAdminService.EXPECT().LogIn("testuser", "testpassword").Return(&dto.AdminLoginResponse{
+		ID:       "123",
+		Username: "testuser",
+		Token:    "mocked-token",
+	})
 
 	controller := controllers.NewAdminController(mockAdminService)
 
@@ -81,7 +50,12 @@ func TestLogin_Positive(t *testing.T) {
 func TestLogin_Negative(t *testing.T) {
 	app := fiber.New()
 
-	mockAdminService := &MockAdminService{}
+	mockAdminService := &services.MockAdminService{}
+	// empty username and password
+	mockAdminService.EXPECT().LogIn("", "").Return(nil, &services.ErrorMessages{
+		Message:    "Username could not be empty",
+		StatusCode: http.StatusBadRequest,
+	})
 
 	controller := controllers.NewAdminController(mockAdminService)
 
@@ -102,7 +76,14 @@ func TestLogin_Negative(t *testing.T) {
 func TestCreateSubject_Success(t *testing.T) {
 	app := fiber.New()
 
-	mockAdminService := &MockAdminService{}
+	mockAdminService := &services.MockAdminService{}
+	subject := &dto.SubjectRequest{Name: "Math", Description: "Mathematics subject", Semester: "Spring"}
+	mockAdminService.EXPECT().CreateSubject(subject).Return(&dto.SubjectResponse{
+		ID:          "123",
+		Name:        "Math",
+		Description: "Mathematics subject",
+		Semester:    "Spring",
+	})
 
 	controller := controllers.NewAdminController(mockAdminService)
 
@@ -130,7 +111,11 @@ func TestCreateSubject_Success(t *testing.T) {
 func TestCreateSubject_BadRequest(t *testing.T) {
 	app := fiber.New()
 
-	mockAdminService := &MockAdminService{}
+	mockAdminService := &services.MockAdminService{}
+	mockAdminService.EXPECT().CreateSubject(&dto.SubjectRequest{}).Return(nil, &services.ErrorMessages{
+		Message:    "Name could not be empty",
+		StatusCode: http.StatusBadRequest,
+	})
 
 	controller := controllers.NewAdminController(mockAdminService)
 

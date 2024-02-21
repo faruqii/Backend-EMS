@@ -6,7 +6,7 @@ type SubjectRequest struct {
 	Semester    string `json:"semester"`
 }
 
-type SubjectResponseDTO struct {
+type SubjectResponse struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`

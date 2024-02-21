@@ -3,7 +3,6 @@ package services
 import (
 	"time"
 
-	"github.com/Magetan-Boyz/Backend/internal/config/database"
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"github.com/Magetan-Boyz/Backend/internal/domain/repositories"
 	"github.com/Magetan-Boyz/Backend/internal/dto"
@@ -11,6 +10,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+//go:generate mockgen -source=admin_service.go -destination=mock_admin_service.go -package=services
 type AdminService interface {
 	LogIn(username, password string) (*entities.Admin, error)
 	CreateAdminToken(admin *entities.Admin) (string, error)
@@ -28,18 +28,8 @@ func NewAdminService(adminRepository repositories.AdminRepository) *adminService
 }
 
 func (s *adminService) LogIn(username, password string) (*entities.Admin, error) {
-	conn, err := database.Connect()
 
-	if err != nil {
-		return nil, &ErrorMessages{
-			Message:    "Failed to connect to database",
-			StatusCode: 500,
-		}
-	}
-
-	repo := repositories.NewAdminRepository(conn)
-
-	admin, err := repo.FindByUsername(username)
+	admin, err := s.adminRepository.FindByUsername(username)
 
 	if err != nil {
 		return nil, &ErrorMessages{

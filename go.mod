@@ -11,6 +11,8 @@ require (
 	gorm.io/gorm v1.25.5
 )
 
+require github.com/golang/mock v1.6.0 // indirect
+
 require (
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.0

@@ -93,7 +93,7 @@ func (s *Seed) StudentSeeder() {
 			Birthdate:  "student",
 		}
 
-		password, err := bcrypt.GenerateFromPassword([]byte("student"), bcrypt.DefaultCost)
+		password, err := bcrypt.GenerateFromPassword([]byte("student"), bcrypt.MinCost)
 		if err != nil {
 			log.Fatalf("Failed to generate password: %v", err)
 		}

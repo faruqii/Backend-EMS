@@ -66,7 +66,7 @@ func (c *AdminController) CreateSubject(ctx *fiber.Ctx) (err error) {
 		})
 	}
 
-	response := dto.SubjectResponseDTO{
+	response := dto.SubjectResponse{
 		ID:          subject.ID,
 		Name:        subject.Name,
 		Description: subject.Description,
