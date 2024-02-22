@@ -8,5 +8,11 @@ import (
 
 func AdminRoutes(router fiber.Router, adminService services.AdminService) {
 	adminController := controllers.NewAdminController(adminService)
-	router.Post("/login", adminController.Login)
+	adminControllerRoutes := router.Group("/admin")
+
+	subjectControllerRoutes := adminControllerRoutes.Group("/subject")
+	subjectControllerRoutes.Post("/create", adminController.CreateSubject)
+
+	teacherControllerRoutes := adminControllerRoutes.Group("/teacher")
+	teacherControllerRoutes.Post("/create", adminController.CreateTeacher)
 }

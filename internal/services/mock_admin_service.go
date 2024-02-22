@@ -39,21 +39,6 @@ func (m *MockAdminService) EXPECT() *MockAdminServiceMockRecorder {
 	return m.recorder
 }
 
-// CreateAdminToken mocks base method.
-func (m *MockAdminService) CreateAdminToken(admin *entities.Admin) (string, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateAdminToken", admin)
-	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// CreateAdminToken indicates an expected call of CreateAdminToken.
-func (mr *MockAdminServiceMockRecorder) CreateAdminToken(admin any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateAdminToken", reflect.TypeOf((*MockAdminService)(nil).CreateAdminToken), admin)
-}
-
 // CreateSubject mocks base method.
 func (m *MockAdminService) CreateSubject(subject *entities.Subject) error {
 	m.ctrl.T.Helper()
@@ -80,34 +65,4 @@ func (m *MockAdminService) CreateTeacher(teacher *entities.Teacher) error {
 func (mr *MockAdminServiceMockRecorder) CreateTeacher(teacher any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTeacher", reflect.TypeOf((*MockAdminService)(nil).CreateTeacher), teacher)
-}
-
-// GetAdminByToken mocks base method.
-func (m *MockAdminService) GetAdminByToken(token string) (*entities.Admin, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAdminByToken", token)
-	ret0, _ := ret[0].(*entities.Admin)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetAdminByToken indicates an expected call of GetAdminByToken.
-func (mr *MockAdminServiceMockRecorder) GetAdminByToken(token any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAdminByToken", reflect.TypeOf((*MockAdminService)(nil).GetAdminByToken), token)
-}
-
-// LogIn mocks base method.
-func (m *MockAdminService) LogIn(username, password string) (*entities.Admin, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "LogIn", username, password)
-	ret0, _ := ret[0].(*entities.Admin)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// LogIn indicates an expected call of LogIn.
-func (mr *MockAdminServiceMockRecorder) LogIn(username, password any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LogIn", reflect.TypeOf((*MockAdminService)(nil).LogIn), username, password)
 }

@@ -14,8 +14,8 @@ import (
 func Start() {
 
 	app := fiber.New()
-	db, err := database.Connect()
 
+	db, err := database.Connect()
 	if err != nil {
 		panic(err)
 	}
@@ -24,10 +24,11 @@ func Start() {
 	seed.SeedAll()
 
 	// Repositories
-	adminRepository := repositories.NewAdminRepository(db)
+	subjectRepository := repositories.NewSubjectRepository(db)
+	teacherRepository := repositories.NewTeacherRepository(db)
 
 	// Services
-	adminService := services.NewAdminService(adminRepository)
+	adminService := services.NewAdminService(subjectRepository, teacherRepository)
 
 	//Routes
 	apiEndpoint := app.Group("/api")

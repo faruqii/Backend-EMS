@@ -46,7 +46,6 @@ func (s *Seed) SuperAdminSeeder() {
 			User: entities.User{
 				Username: "superadmin",
 				Password: os.Getenv("SUPER_ADMIN_PASSWORD"),
-				Role:     "superadmin",
 			},
 		}
 
@@ -66,7 +65,6 @@ func (s *Seed) AdminSeeder() {
 			User: entities.User{
 				Username: "admin",
 				Password: os.Getenv("ADMIN_PASSWORD"),
-				Role:     "admin",
 			},
 		}
 
@@ -84,7 +82,6 @@ func (s *Seed) StudentSeeder() {
 		student := entities.Student{
 			User: entities.User{
 				Username: "student",
-				Role:     "student",
 			},
 			Name:       "student",
 			NISN:       "1234567890",
