@@ -12,9 +12,10 @@ require (
 	gorm.io/gorm v1.25.5
 )
 
+require go.uber.org/mock v0.4.0
+
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/golang/mock v1.6.0
 	github.com/kr/text v0.2.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.12.0 // indirect

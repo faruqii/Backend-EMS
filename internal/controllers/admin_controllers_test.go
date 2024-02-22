@@ -3,6 +3,7 @@ package controllers_test
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"testing"
 
@@ -11,9 +12,9 @@ import (
 	"github.com/Magetan-Boyz/Backend/internal/dto"
 	"github.com/Magetan-Boyz/Backend/internal/services"
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"github.com/valyala/fasthttp"
+	"go.uber.org/mock/gomock"
 )
 
 func TestAdminController_Login(t *testing.T) {
@@ -84,10 +85,15 @@ func TestAdminController_Login(t *testing.T) {
 
 			c.Login(ctx)
 
+			actualStatusCode := ctx.Response().StatusCode()
+
 			if tt.wantHTTPErrCode != 0 {
-				assert.Equal(t, tt.wantHTTPErrCode, ctx.Response().StatusCode())
+				assert.Equal(t, tt.wantHTTPErrCode, actualStatusCode)
+				fmt.Printf("Test %s: Expected HTTP status code %d, got %d\n", tt.name, tt.wantHTTPErrCode, actualStatusCode)
 			} else {
-				assert.Equal(t, http.StatusOK, ctx.Response().StatusCode())
+				expectedStatusCode := http.StatusOK
+				assert.Equal(t, expectedStatusCode, actualStatusCode)
+				fmt.Printf("Test %s: Expected HTTP status code %d, got %d\n", tt.name, expectedStatusCode, actualStatusCode)
 			}
 		})
 	}
@@ -160,11 +166,116 @@ func TestAdminController_CreateSubject(t *testing.T) {
 
 			c.CreateSubject(ctx)
 
+			actualStatusCode := ctx.Response().StatusCode()
+
 			if tt.wantHTTPErrCode != 0 {
-				assert.Equal(t, tt.wantHTTPErrCode, ctx.Response().StatusCode())
+				assert.Equal(t, tt.wantHTTPErrCode, actualStatusCode)
+				fmt.Printf("Test %s: Expected HTTP status code %d, got %d\n", tt.name, tt.wantHTTPErrCode, actualStatusCode)
 			} else {
-				assert.Equal(t, http.StatusCreated, ctx.Response().StatusCode())
+				expectedStatusCode := http.StatusCreated
+				assert.Equal(t, expectedStatusCode, actualStatusCode)
+				fmt.Printf("Test %s: Expected HTTP status code %d, got %d\n", tt.name, expectedStatusCode, actualStatusCode)
 			}
 		})
 	}
+}
+
+func TestAdminController_CreateTeacher(t *testing.T) {
+	tests := []struct {
+		name            string
+		mockSvc         func(*gomock.Controller) *services.MockAdminService
+		args            func() *fiber.Ctx
+		wantHTTPErrCode int
+	}{
+		{
+			name: "Positive",
+			mockSvc: func(ctrl *gomock.Controller) *services.MockAdminService {
+				mockAdminService := services.NewMockAdminService(ctrl)
+				mockAdminService.EXPECT().CreateTeacher(&entities.Teacher{
+					User: entities.User{
+						Username: "testuser",
+						Password: "testpassword",
+						Role:     "teacher",
+					},
+					Name:  "testname",
+					Email: "testemail",
+				}).Return(nil).Times(1)
+
+				return mockAdminService
+			},
+			args: func() *fiber.Ctx {
+				reqBody := dto.TeacherRequest{
+					Username: "testuser",
+					Password: "testpassword",
+					Name:     "testname",
+					Email:    "testemail",
+				}
+				reqBodyBytes, _ := json.Marshal(reqBody)
+
+				app := fiber.New()
+
+				ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
+				ctx.Request().Header.SetContentType("application/json")
+				ctx.Request().SetBody(reqBodyBytes)
+
+				return ctx
+			},
+		},
+		{
+			name: "Negative",
+			mockSvc: func(ctrl *gomock.Controller) *services.MockAdminService {
+				mockAdminService := services.NewMockAdminService(ctrl)
+				mockAdminService.EXPECT().CreateTeacher(&entities.Teacher{
+					User: entities.User{
+						Username: "testuser",
+						Password: "testpassword",
+						Role:     "teacher",
+					},
+					Name:  "testname",
+					Email: "testemail",
+				}).Return(errors.New("internal server error")).Times(1)
+
+				return mockAdminService
+			},
+			args: func() *fiber.Ctx {
+				reqBody := dto.TeacherRequest{
+					Username: "testuser",
+					Password: "testpassword",
+					Name:     "testname",
+					Email:    "testemail",
+				}
+				reqBodyBytes, _ := json.Marshal(reqBody)
+
+				app := fiber.New()
+
+				ctx := app.AcquireCtx(&fasthttp.RequestCtx{})
+				ctx.Request().Header.SetContentType("application/json")
+				ctx.Request().SetBody(reqBodyBytes)
+
+				return ctx
+			},
+			wantHTTPErrCode: http.StatusInternalServerError,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			c := controllers.NewAdminController(tt.mockSvc(ctrl))
+			ctx := tt.args()
+
+			c.CreateTeacher(ctx)
+
+			actualStatusCode := ctx.Response().StatusCode()
+
+			if tt.wantHTTPErrCode != 0 {
+				assert.Equal(t, tt.wantHTTPErrCode, actualStatusCode)
+				fmt.Printf("Test %s: Expected HTTP status code %d, got %d\n", tt.name, tt.wantHTTPErrCode, actualStatusCode)
+			} else {
+				expectedStatusCode := http.StatusCreated
+				assert.Equal(t, expectedStatusCode, actualStatusCode)
+				fmt.Printf("Test %s: Expected HTTP status code %d, got %d\n", tt.name, expectedStatusCode, actualStatusCode)
+			}
+		})
+	}
+
 }

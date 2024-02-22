@@ -16,11 +16,14 @@ type AdminService interface {
 	CreateAdminToken(admin *entities.Admin) (string, error)
 	GetAdminByToken(token string) (*entities.Admin, error)
 	CreateSubject(subject *entities.Subject) error
+	CreateTeacher(teacher *entities.Teacher) error
 }
 
 type adminService struct {
 	adminRepository   repositories.AdminRepository
 	subjectRepository repositories.SubjectRepository
+	tokenRepository   repositories.TokenRepository
+	teacherRepostory  repositories.TeacherRepository
 }
 
 func NewAdminService(adminRepository repositories.AdminRepository) *adminService {
@@ -70,7 +73,7 @@ func (s *adminService) CreateAdminToken(admin *entities.Admin) (string, error) {
 		RoleType: "admin",
 	}
 
-	_, err := s.adminRepository.CreateOrUpdateToken(&adminToken)
+	_, err := s.tokenRepository.CreateOrUpdateToken(&adminToken)
 
 	if err != nil {
 		return "", &ErrorMessages{
@@ -83,7 +86,7 @@ func (s *adminService) CreateAdminToken(admin *entities.Admin) (string, error) {
 }
 
 func (s *adminService) GetAdminByToken(token string) (*entities.Admin, error) {
-	username, err := s.adminRepository.FindAdminByToken(token)
+	username, err := s.tokenRepository.FindUserByToken(token)
 
 	if err != nil {
 		return nil, &ErrorMessages{
@@ -100,6 +103,17 @@ func (s *adminService) CreateSubject(subject *entities.Subject) error {
 	if err != nil {
 		return &ErrorMessages{
 			Message:    "Failed to create subject",
+			StatusCode: 500,
+		}
+	}
+	return nil
+}
+
+func (s *adminService) CreateTeacher(teacher *entities.Teacher) error {
+	err := s.teacherRepostory.Create(teacher)
+	if err != nil {
+		return &ErrorMessages{
+			Message:    "Failed to create teacher",
 			StatusCode: 500,
 		}
 	}
