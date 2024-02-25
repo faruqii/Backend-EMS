@@ -18,6 +18,7 @@ func (s *Seed) SeedAll() {
 	s.SuperAdminSeeder()
 	s.AdminSeeder()
 	s.StudentSeeder()
+	s.UserSeeder()
 }
 
 func (s *Seed) RoleSeeder() {
@@ -100,6 +101,28 @@ func (s *Seed) StudentSeeder() {
 		err = s.DB.Create(&student).Error
 		if err != nil {
 			log.Fatalf("Failed to seed student: %v", err)
+		}
+	}
+}
+
+func (s *Seed) UserSeeder() {
+	var lenghtTable int64
+	s.DB.Model(&entities.User{}).Count(&lenghtTable)
+	if lenghtTable == 0 {
+		user := entities.User{
+			Username: "user",
+		}
+
+		password, err := bcrypt.GenerateFromPassword([]byte("user"), bcrypt.MinCost)
+		if err != nil {
+			log.Fatalf("Failed to generate password: %v", err)
+		}
+
+		user.Password = string(password)
+
+		err = s.DB.Create(&user).Error
+		if err != nil {
+			log.Fatalf("Failed to seed user: %v", err)
 		}
 	}
 }

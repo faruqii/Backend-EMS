@@ -24,14 +24,19 @@ func Start() {
 	seed.SeedAll()
 
 	// Repositories
+	userRepository := repositories.NewUserRepository(db)
+	tokenRepository := repositories.NewTokenRepository(db)
+	roleRepository := repositories.NewRoleRepository(db)
 	subjectRepository := repositories.NewSubjectRepository(db)
 	teacherRepository := repositories.NewTeacherRepository(db)
 
 	// Services
+	authService := services.NewAuthService(userRepository, tokenRepository, roleRepository)
 	adminService := services.NewAdminService(subjectRepository, teacherRepository)
 
 	//Routes
 	apiEndpoint := app.Group("/api")
+	routes.AuthRoutes(apiEndpoint, authService)
 	routes.AdminRoutes(apiEndpoint, adminService)
 
 	err = app.Listen(":" + os.Getenv("PORT"))

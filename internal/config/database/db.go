@@ -41,11 +41,14 @@ func Connect() (*gorm.DB, error) {
 
 	err = conn.AutoMigrate(
 		&entities.Role{},
+		&entities.User{},
+		&entities.UserRole{},
 		&entities.SuperAdmin{},
 		&entities.Admin{},
 		&entities.Student{},
 		&entities.Teacher{},
 		&entities.Parent{},
+		&entities.ParentStudent{},
 		&entities.Subject{},
 		&entities.Class{},
 		&entities.Grade{},

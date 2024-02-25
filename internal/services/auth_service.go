@@ -20,19 +20,24 @@ type AuthService interface {
 type authService struct {
 	userRepository  repositories.UserRepository
 	tokenRepository repositories.TokenRepository
+	roleRepository  repositories.RoleRepository
 }
 
-func NewAuthService(userRepository repositories.UserRepository) *authService {
-	return &authService{userRepository: userRepository}
+func NewAuthService(userRepository repositories.UserRepository,
+	tokenRepositroy repositories.TokenRepository, roleRepository repositories.RoleRepository) *authService {
+	return &authService{
+		userRepository:  userRepository,
+		tokenRepository: tokenRepositroy,
+		roleRepository:  roleRepository,
+	}
 }
 
 func (s *authService) LogIn(username, password string) (*entities.User, error) {
-
 	user, err := s.userRepository.FindByUsername(username)
 
 	if err != nil {
 		return nil, &ErrorMessages{
-			Message:    "Username not found",
+			Message:    "User not found",
 			StatusCode: 404,
 		}
 	}
@@ -51,6 +56,7 @@ func (s *authService) LogIn(username, password string) (*entities.User, error) {
 }
 
 func (s *authService) CreateUserToken(user *entities.User, role string) (string, error) {
+	// Create JWT token
 	claims := dto.Claims{
 		UserID: user.ID,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -59,8 +65,28 @@ func (s *authService) CreateUserToken(user *entities.User, role string) (string,
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte("secret"))
+	signedToken, err := token.SignedString([]byte("secret"))
+	if err != nil {
+		return "", err
+	}
 
+	roleName, err := s.roleRepository.GetRoleNameFromID(user.ID)
+	if err != nil {
+		return "", err
+	}
+
+	// Create or update token in repository
+	newToken := &entities.Token{
+		UserID:   user.ID,
+		Token:    signedToken,
+		RoleType: roleName,
+	}
+	_, err = s.tokenRepository.CreateOrUpdateToken(newToken)
+	if err != nil {
+		return "", err
+	}
+
+	return signedToken, nil
 }
 
 func (s *authService) GetUserByToken(token string) (*entities.User, error) {

@@ -6,14 +6,19 @@ import (
 )
 
 type Student struct {
-	User
-	Name       string  `json:"name"`
-	NISN       string  `json:"nisn"`
-	Address    string  `json:"address"`
-	Birthplace string  `json:"birthplace"`
-	Birthdate  string  `json:"birthdate"`
-	ParentID   *string `json:"parent_id"`
-	Parent     Parent  `json:"parent" gorm:"foreignKey:ParentID;references:ID"`
+	ID         string `json:"id" gorm:"primaryKey, type:uuid, default:uuid_generate_v4()"`
+	UserID     string `json:"user_id"`
+	User       User   `json:"user" gorm:"foreignKey:UserID"`
+	Name       string `json:"name"`
+	NISN       string `json:"nisn"`
+	Address    string `json:"address"`
+	Birthplace string `json:"birthplace"`
+	Birthdate  string `json:"birthdate"`
+}
+
+func (s *Student) BeforeCreate(tx *gorm.DB) (err error) {
+	s.ID = uuid.NewString()
+	return nil
 }
 
 type Grade struct {

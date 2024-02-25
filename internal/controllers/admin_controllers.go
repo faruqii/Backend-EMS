@@ -72,7 +72,7 @@ func (c *AdminController) CreateTeacher(ctx *fiber.Ctx) (err error) {
 	}
 
 	response := dto.TeacherResponse{
-		ID:    teacher.ID,
+		ID:    teacher.UserID,
 		Name:  teacher.Name,
 		Email: teacher.Email,
 	}
