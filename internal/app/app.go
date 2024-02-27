@@ -6,6 +6,7 @@ import (
 	"github.com/Magetan-Boyz/Backend/internal/config/database"
 	"github.com/Magetan-Boyz/Backend/internal/config/seeder"
 	"github.com/Magetan-Boyz/Backend/internal/domain/repositories"
+	"github.com/Magetan-Boyz/Backend/internal/middleware"
 	"github.com/Magetan-Boyz/Backend/internal/routes"
 	"github.com/Magetan-Boyz/Backend/internal/services"
 	"github.com/gofiber/fiber/v2"
@@ -34,10 +35,12 @@ func Start() {
 	authService := services.NewAuthService(userRepository, tokenRepository, roleRepository)
 	adminService := services.NewAdminService(subjectRepository, teacherRepository)
 
+	// Middleware
+	middleware := middleware.NewMiddleware(tokenRepository, roleRepository)
 	//Routes
 	apiEndpoint := app.Group("/api")
 	routes.AuthRoutes(apiEndpoint, authService)
-	routes.AdminRoutes(apiEndpoint, adminService)
+	routes.AdminRoutes(apiEndpoint, adminService, middleware)
 
 	err = app.Listen(":" + os.Getenv("PORT"))
 

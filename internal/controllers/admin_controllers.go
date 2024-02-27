@@ -5,11 +5,34 @@ import (
 
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"github.com/Magetan-Boyz/Backend/internal/dto"
+	"github.com/Magetan-Boyz/Backend/internal/middleware"
 	"github.com/gofiber/fiber/v2"
 )
 
-
 func (c *AdminController) CreateSubject(ctx *fiber.Ctx) (err error) {
+	authMiddleware := c.middlewareManager.Authenticate()
+	err = authMiddleware(ctx)
+	if err != nil {
+		if middlewareErr, ok := err.(middleware.MiddlewareError); ok {
+			return ctx.Status(middlewareErr.StatusCode).JSON(fiber.Map{
+				"error": middlewareErr.Message,
+			})
+		}
+	}
+
+	// Apply authorization middleware
+	authMiddleware = c.middlewareManager.Authorization("admin")
+	err = authMiddleware(ctx)
+	if err != nil {
+		if middlewareErr, ok := err.(middleware.MiddlewareError); ok {
+			return ctx.Status(middlewareErr.StatusCode).JSON(fiber.Map{
+				"error": middlewareErr.Message,
+			})
+		}
+	}
+
+	// Proceed with the controller logic
+
 	req := dto.SubjectRequest{}
 
 	if err = ctx.BodyParser(&req); err != nil {
@@ -46,6 +69,20 @@ func (c *AdminController) CreateSubject(ctx *fiber.Ctx) (err error) {
 }
 
 func (c *AdminController) CreateTeacher(ctx *fiber.Ctx) (err error) {
+	// Apply authentication middleware
+	authMiddleware := c.middlewareManager.Authenticate()
+	err = authMiddleware(ctx)
+	if err != nil {
+		return err
+	}
+
+	// Apply authorization middleware
+	authMiddleware = c.middlewareManager.Authorization("admin")
+	err = authMiddleware(ctx)
+	if err != nil {
+		return err
+	}
+
 	var req dto.TeacherRequest
 
 	if err = ctx.BodyParser(&req); err != nil {

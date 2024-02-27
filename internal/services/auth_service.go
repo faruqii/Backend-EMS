@@ -10,7 +10,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-//go:generate mockgen -source=auth_service.go -destination=mock_auth_service.go -package=services
+//go:generate mockgen -source=auth_service.go -destination=mock_auth_service.go -package=mock
 type AuthService interface {
 	LogIn(username, password string) (*entities.User, error)
 	CreateUserToken(user *entities.User, role string) (string, error)

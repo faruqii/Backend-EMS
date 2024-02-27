@@ -4,7 +4,7 @@ import (
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"gorm.io/gorm"
 )
-
+//go:generate mockgen -source=role_repository.go -destination=mock_role_repository.go -package=mocks
 type RoleRepository interface {
 	GetRoleNameFromID(id string) (string, error)
 }

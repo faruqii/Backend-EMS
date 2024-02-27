@@ -9,7 +9,7 @@ import (
 
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"github.com/Magetan-Boyz/Backend/internal/dto"
-	"github.com/Magetan-Boyz/Backend/internal/services"
+	"github.com/Magetan-Boyz/Backend/internal/mocks"
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/valyala/fasthttp"
@@ -19,18 +19,18 @@ import (
 func TestAuthController_LogIn(t *testing.T) {
 	tests := []struct {
 		name            string
-		mockSvc         func(*gomock.Controller) *services.MockAuthService
+		mockSvc         func(*gomock.Controller) *mocks.MockAuthService
 		args            func() *fiber.Ctx
 		wantHTTPErrCode int
 	}{
 		{
 			name: "Positive",
-			mockSvc: func(ctrl *gomock.Controller) *services.MockAuthService {
+			mockSvc: func(ctrl *gomock.Controller) *mocks.MockAuthService {
 				expectedUserResponse := &entities.User{
 					ID:       "123",
 					Username: "testusername",
 				}
-				mockAuthService := services.NewMockAuthService(ctrl)
+				mockAuthService := mocks.NewMockAuthService(ctrl)
 				mockAuthService.EXPECT().LogIn("testusername", "testpassword").Return(expectedUserResponse, nil).Times(1)
 				mockAuthService.EXPECT().CreateUserToken(expectedUserResponse, "user").Return("mocked-token", nil).Times(1)
 				return mockAuthService
@@ -50,8 +50,8 @@ func TestAuthController_LogIn(t *testing.T) {
 		},
 		{
 			name: "Negative",
-			mockSvc: func(ctrl *gomock.Controller) *services.MockAuthService {
-				mockAuthService := services.NewMockAuthService(ctrl)
+			mockSvc: func(ctrl *gomock.Controller) *mocks.MockAuthService {
+				mockAuthService := mocks.NewMockAuthService(ctrl)
 				mockAuthService.EXPECT().LogIn("testusername", "testpassword").Return(nil, errors.New("Internal Server Error")).Times(1)
 
 				return mockAuthService

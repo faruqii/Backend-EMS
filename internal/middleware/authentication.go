@@ -6,47 +6,72 @@ import (
 )
 
 type AuthenticationMiddleware interface {
-	Authenticate() error
+	Authenticate() fiber.Handler
 }
 
-type authenticationMiddleware struct {
+type AuthorizationMiddleware interface {
+	Authorization(targetRole string) fiber.Handler
+}
+
+type Middleware struct {
 	tokenRepository repositories.TokenRepository
+	roleRepository  repositories.RoleRepository
 }
 
-func NewAuthenticationMiddleware(tokenRepository repositories.TokenRepository) *authenticationMiddleware {
-	return &authenticationMiddleware{
+func NewMiddleware(tokenRepository repositories.TokenRepository, roleRepository repositories.RoleRepository) *Middleware {
+	return &Middleware{
 		tokenRepository: tokenRepository,
+		roleRepository:  roleRepository,
 	}
 }
 
-// Authenticate is a middleware that checks if the user is authenticated implements fiber's middleware interface
-func (m *authenticationMiddleware) Authenticate() fiber.Handler {
+type MiddlewareError struct {
+	Message    string
+	StatusCode int
+}
+
+func (e MiddlewareError) Error() string {
+	return e.Message
+}
+
+// Authenticate middleware checks if the user is authenticated and sets user data in context locals
+func (m *Middleware) Authenticate() fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		token := c.Get("Authorization")
 		if token == "" {
-			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-				"error": "Unauthorized",
-			})
+			return fiber.NewError(fiber.StatusUnauthorized, "Unauthorized")
 		}
+
+		// Fetch user from token
 		user, err := m.tokenRepository.FindUserByToken(token)
 		if err != nil {
-			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-				"error": "Unauthorized",
-			})
+			return fiber.NewError(fiber.StatusUnauthorized, "Unauthorized")
 		}
+
+		// Get User ID from token
+		userID, err := m.tokenRepository.GetUserIDByToken(token)
+		if err != nil {
+			return fiber.NewError(fiber.StatusInternalServerError, "Internal Server Error")
+		}
+
+		// Fetch user's role name from the repository based on user's ID
+		userRoleName, err := m.roleRepository.GetRoleNameFromID(userID)
+		if err != nil {
+			return fiber.NewError(fiber.StatusInternalServerError, "Internal Server Error")
+		}
+
 		c.Locals("user", user)
+		c.Locals("role", userRoleName) // Set user's role name in locals
 		return c.Next()
 	}
 }
 
-// Authorization is a middleware that checks if user's roles contain given target role on the param
-func (m *authenticationMiddleware) Authorization(targetRole string) fiber.Handler {
+// Authorization middleware checks if the user has the required role
+func (m *Middleware) Authorization(targetRole string) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		user := c.Locals("user").(string)
-		if user != targetRole {
-			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
-				"error": "Forbidden",
-			})
+		userRole, ok := c.Locals("role").(string)
+		if !ok || userRole != targetRole {
+			return fiber.NewError(fiber.StatusForbidden, "Forbidden")
 		}
 		return c.Next()
 	}

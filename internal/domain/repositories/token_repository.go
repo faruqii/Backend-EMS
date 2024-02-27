@@ -5,10 +5,12 @@ import (
 	"gorm.io/gorm"
 )
 
+//go:generate mockgen -source=token_repository.go -destination=mock_token_repository.go -package=mocks
 type TokenRepository interface {
 	CreateOrUpdateToken(token *entities.Token) (string, error)
 	GetTokenByUserID(userID string) (*entities.Token, error)
 	FindUserByToken(token string) (string, error)
+	GetUserIDByToken(token string) (string, error)
 }
 
 type tokenRepository struct {
@@ -47,7 +49,19 @@ func (r *tokenRepository) GetTokenByUserID(userID string) (*entities.Token, erro
 }
 
 func (r *tokenRepository) FindUserByToken(token string) (string, error) {
-	var user entities.User
+	var user entities.Token
 	err := r.db.Where("token = ?", token).First(&user).Error
-	return user.Username, err
+	if err != nil {
+		return "", err
+	}
+	return user.UserID, nil
+}
+
+func (r *tokenRepository) GetUserIDByToken(token string) (string, error) {
+	var user entities.Token
+	err := r.db.Where("token = ?", token).First(&user).Error
+	if err != nil {
+		return "", err
+	}
+	return user.UserID, nil
 }

@@ -15,24 +15,20 @@ func (r *Role) BeforeCreate(tx *gorm.DB) (err error) {
 	return nil
 }
 
-
-
 // table users
-	// 1, "name", "pass"
+// 1, "name", "pass"
 // table roles
-	// 1, "superadmin"
-	// 2, "admin"
-	// 3, "teacher"
-	// 4, "student"
-	// 5, "parent"
-	// 6, "staff"
-	// 7, "guest"
-	// 8, "alumni"
-	// 9, "normal"	
+// 1, "superadmin"
+// 2, "admin"
+// 3, "teacher"
+// 4, "student"
+// 5, "parent"
 // table user_roles (map user_id to role_id)
-	// 1, 1
-	// 2, 2
-	// 3, 3
+// 1, 1
+// 2, 2
+// 3, 3
+// table tokens
+// id, user_id, token, role_type, expired_at
 
 // authentication design
 // 1. user logs in with username and password
@@ -48,4 +44,3 @@ func (r *Role) BeforeCreate(tx *gorm.DB) (err error) {
 // 7. server checks user's role
 // 8. server checks if user has access to the route
 // 9. server returns data to user
-

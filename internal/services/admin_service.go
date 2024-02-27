@@ -5,7 +5,7 @@ import (
 	"github.com/Magetan-Boyz/Backend/internal/domain/repositories"
 )
 
-//go:generate mockgen -source=admin_service.go -destination=mock_admin_service.go -package=services
+//go:generate mockgen -source=admin_service.go -destination=mock_admin_service.go -package=mock
 type AdminService interface {
 	CreateSubject(subject *entities.Subject) error
 	CreateTeacher(teacher *entities.Teacher) error
