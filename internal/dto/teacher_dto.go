@@ -8,7 +8,8 @@ type TeacherRequest struct {
 }
 
 type TeacherResponse struct {
-	ID    string `json:"id"`
-	Name  string `json:"name"`
-	Email string `json:"email"`
+	ID                string `json:"id"`
+	Name              string `json:"name"`
+	Email             string `json:"email"`
+	IsHomeroomTeacher bool   `json:"is_homeroom_teacher"`
 }

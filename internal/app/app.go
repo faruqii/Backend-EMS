@@ -33,7 +33,7 @@ func Start() {
 
 	// Services
 	authService := services.NewAuthService(userRepository, tokenRepository, roleRepository)
-	adminService := services.NewAdminService(subjectRepository, teacherRepository)
+	adminService := services.NewAdminService(subjectRepository, teacherRepository, userRepository, roleRepository)
 
 	// Middleware
 	middleware := middleware.NewMiddleware(tokenRepository, roleRepository)

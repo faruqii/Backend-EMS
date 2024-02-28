@@ -19,4 +19,5 @@ func AdminRoutes(router fiber.Router, adminService services.AdminService, middle
 	// Apply middleware to teacher controller routes
 	teacherControllerRoutes := adminControllerRoutes.Group("/teacher")
 	teacherControllerRoutes.Post("/create", middlewareManager.Authenticate(), middlewareManager.Authorization("admin"), adminController.CreateTeacher)
+	teacherControllerRoutes.Get("/all", middlewareManager.Authenticate(), middlewareManager.Authorization("admin"), adminController.GetAllTeacher)
 }

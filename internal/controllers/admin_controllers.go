@@ -73,14 +73,22 @@ func (c *AdminController) CreateTeacher(ctx *fiber.Ctx) (err error) {
 	authMiddleware := c.middlewareManager.Authenticate()
 	err = authMiddleware(ctx)
 	if err != nil {
-		return err
+		if middlewareErr, ok := err.(middleware.MiddlewareError); ok {
+			return ctx.Status(middlewareErr.StatusCode).JSON(fiber.Map{
+				"error": middlewareErr.Message,
+			})
+		}
 	}
 
 	// Apply authorization middleware
 	authMiddleware = c.middlewareManager.Authorization("admin")
 	err = authMiddleware(ctx)
 	if err != nil {
-		return err
+		if middlewareErr, ok := err.(middleware.MiddlewareError); ok {
+			return ctx.Status(middlewareErr.StatusCode).JSON(fiber.Map{
+				"error": middlewareErr.Message,
+			})
+		}
 	}
 
 	var req dto.TeacherRequest
@@ -109,13 +117,62 @@ func (c *AdminController) CreateTeacher(ctx *fiber.Ctx) (err error) {
 	}
 
 	response := dto.TeacherResponse{
-		ID:    teacher.UserID,
-		Name:  teacher.Name,
-		Email: teacher.Email,
+		ID:                teacher.UserID,
+		Name:              teacher.Name,
+		Email:             teacher.Email,
+		IsHomeroomTeacher: teacher.IsHomeroom,
 	}
 
 	return ctx.Status(http.StatusCreated).JSON(fiber.Map{
 		"message": "Teacher created successfully",
 		"data":    response,
+	})
+}
+
+func (c *AdminController) GetAllTeacher(ctx *fiber.Ctx) (err error) {
+	// Apply authentication middleware
+	authMiddleware := c.middlewareManager.Authenticate()
+	err = authMiddleware(ctx)
+	if err != nil {
+		if middlewareErr, ok := err.(middleware.MiddlewareError); ok {
+			return ctx.Status(middlewareErr.StatusCode).JSON(fiber.Map{
+				"error": middlewareErr.Message,
+			})
+		}
+	}
+
+	// Apply authorization middleware
+	authMiddleware = c.middlewareManager.Authorization("admin")
+	err = authMiddleware(ctx)
+	if err != nil {
+		if middlewareErr, ok := err.(middleware.MiddlewareError); ok {
+			return ctx.Status(middlewareErr.StatusCode).JSON(fiber.Map{
+				"error": middlewareErr.Message,
+			})
+		}
+	}
+
+	teachers, err := c.adminService.GetAllTeacher()
+
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	var response []dto.TeacherResponse
+
+	for _, teacher := range teachers {
+		teacherRes := dto.TeacherResponse{
+			ID:                teacher.UserID,
+			Name:              teacher.Name,
+			Email:             teacher.Email,
+			IsHomeroomTeacher: teacher.IsHomeroom,
+		}
+		response = append(response, teacherRes)
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"data": response,
 	})
 }
