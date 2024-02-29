@@ -16,3 +16,4 @@ func NewAdminController(adminService services.AdminService, middlewareManager mi
 		middlewareManager: middlewareManager,
 	}
 }
+

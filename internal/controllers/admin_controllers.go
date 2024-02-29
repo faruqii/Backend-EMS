@@ -9,29 +9,31 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+func (c *AdminController) AuthAndAuthorize(role string) fiber.Handler {
+	return func(ctx *fiber.Ctx) error {
+		authMiddleware := c.middlewareManager.Authenticate()
+		if err := authMiddleware(ctx); err != nil {
+			if middlewareErr, ok := err.(middleware.MiddlewareError); ok {
+				return ctx.Status(middlewareErr.StatusCode).JSON(fiber.Map{
+					"error": middlewareErr.Message,
+				})
+			}
+		}
+
+		authMiddleware = c.middlewareManager.Authorization(role)
+		if err := authMiddleware(ctx); err != nil {
+			if middlewareErr, ok := err.(middleware.MiddlewareError); ok {
+				return ctx.Status(middlewareErr.StatusCode).JSON(fiber.Map{
+					"error": middlewareErr.Message,
+				})
+			}
+		}
+
+		return nil
+	}
+}
+
 func (c *AdminController) CreateSubject(ctx *fiber.Ctx) (err error) {
-	authMiddleware := c.middlewareManager.Authenticate()
-	err = authMiddleware(ctx)
-	if err != nil {
-		if middlewareErr, ok := err.(middleware.MiddlewareError); ok {
-			return ctx.Status(middlewareErr.StatusCode).JSON(fiber.Map{
-				"error": middlewareErr.Message,
-			})
-		}
-	}
-
-	// Apply authorization middleware
-	authMiddleware = c.middlewareManager.Authorization("admin")
-	err = authMiddleware(ctx)
-	if err != nil {
-		if middlewareErr, ok := err.(middleware.MiddlewareError); ok {
-			return ctx.Status(middlewareErr.StatusCode).JSON(fiber.Map{
-				"error": middlewareErr.Message,
-			})
-		}
-	}
-
-	// Proceed with the controller logic
 
 	req := dto.SubjectRequest{}
 
@@ -68,28 +70,34 @@ func (c *AdminController) CreateSubject(ctx *fiber.Ctx) (err error) {
 	})
 }
 
-func (c *AdminController) CreateTeacher(ctx *fiber.Ctx) (err error) {
-	// Apply authentication middleware
-	authMiddleware := c.middlewareManager.Authenticate()
-	err = authMiddleware(ctx)
+func (c *AdminController) GetAllSubject(ctx *fiber.Ctx) (err error) {
+
+	subjects, err := c.adminService.GetAllSubject()
+
 	if err != nil {
-		if middlewareErr, ok := err.(middleware.MiddlewareError); ok {
-			return ctx.Status(middlewareErr.StatusCode).JSON(fiber.Map{
-				"error": middlewareErr.Message,
-			})
-		}
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
 	}
 
-	// Apply authorization middleware
-	authMiddleware = c.middlewareManager.Authorization("admin")
-	err = authMiddleware(ctx)
-	if err != nil {
-		if middlewareErr, ok := err.(middleware.MiddlewareError); ok {
-			return ctx.Status(middlewareErr.StatusCode).JSON(fiber.Map{
-				"error": middlewareErr.Message,
-			})
+	var response []dto.SubjectResponse
+
+	for _, subject := range subjects {
+		subjectRes := dto.SubjectResponse{
+			ID:          subject.ID,
+			Name:        subject.Name,
+			Description: subject.Description,
+			Semester:    subject.Semester,
 		}
+		response = append(response, subjectRes)
 	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"data": response,
+	})
+}
+
+func (c *AdminController) CreateTeacher(ctx *fiber.Ctx) (err error) {
 
 	var req dto.TeacherRequest
 
@@ -130,27 +138,6 @@ func (c *AdminController) CreateTeacher(ctx *fiber.Ctx) (err error) {
 }
 
 func (c *AdminController) GetAllTeacher(ctx *fiber.Ctx) (err error) {
-	// Apply authentication middleware
-	authMiddleware := c.middlewareManager.Authenticate()
-	err = authMiddleware(ctx)
-	if err != nil {
-		if middlewareErr, ok := err.(middleware.MiddlewareError); ok {
-			return ctx.Status(middlewareErr.StatusCode).JSON(fiber.Map{
-				"error": middlewareErr.Message,
-			})
-		}
-	}
-
-	// Apply authorization middleware
-	authMiddleware = c.middlewareManager.Authorization("admin")
-	err = authMiddleware(ctx)
-	if err != nil {
-		if middlewareErr, ok := err.(middleware.MiddlewareError); ok {
-			return ctx.Status(middlewareErr.StatusCode).JSON(fiber.Map{
-				"error": middlewareErr.Message,
-			})
-		}
-	}
 
 	teachers, err := c.adminService.GetAllTeacher()
 
@@ -164,7 +151,7 @@ func (c *AdminController) GetAllTeacher(ctx *fiber.Ctx) (err error) {
 
 	for _, teacher := range teachers {
 		teacherRes := dto.TeacherResponse{
-			ID:                teacher.UserID,
+			ID:                teacher.ID,
 			Name:              teacher.Name,
 			Email:             teacher.Email,
 			IsHomeroomTeacher: teacher.IsHomeroom,
@@ -174,5 +161,47 @@ func (c *AdminController) GetAllTeacher(ctx *fiber.Ctx) (err error) {
 
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
 		"data": response,
+	})
+}
+
+func (c *AdminController) AssignTeacherToSubject(ctx *fiber.Ctx) (err error) {
+	subjectID := ctx.Params("id")
+
+	var req dto.TeacherSubjectRequest
+
+	if err = ctx.BodyParser(&req); err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+	teacher, err := c.adminService.FindTeacherByID(req.TeacherID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	subject, err := c.adminService.FindSubjectByID(subjectID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	err = c.adminService.AssignTeacherToSubject(teacher.ID, subjectID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	response := dto.TeacherSubjectResponse{
+		SubjectName: subject.Name,
+		TeacherName: teacher.Name,
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Teacher assigned to subject successfully",
+		"data":    response,
 	})
 }

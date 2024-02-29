@@ -11,6 +11,9 @@ type SubjectRepository interface {
 	Create(subject *entities.Subject) error
 	Update(subject *entities.Subject) error
 	Delete(id string) error
+	GetAll() ([]entities.Subject, error)
+	AssignTeacherToSubject(teacherID, subjectID string) error
+	IsTeacherAssignedToSubject(teacherID, subjectID string) (bool, error)
 }
 
 // subjectRepository is a concrete implementation of SubjectRepository.
@@ -26,7 +29,7 @@ func NewSubjectRepository(db *gorm.DB) SubjectRepository {
 // FindByID finds a subject by ID.
 func (r *subjectRepository) FindByID(id string) (*entities.Subject, error) {
 	var subject entities.Subject
-	if err := r.db.First(&subject, id).Error; err != nil {
+	if err := r.db.Where("id = ?", id).First(&subject).Error; err != nil {
 		return nil, err
 	}
 	return &subject, nil
@@ -54,4 +57,36 @@ func (r *subjectRepository) Delete(id string) error {
 		return err
 	}
 	return nil
+}
+
+// GetAll returns all subjects.
+func (r *subjectRepository) GetAll() ([]entities.Subject, error) {
+	var subjects []entities.Subject
+	if err := r.db.Find(&subjects).Error; err != nil {
+		return nil, err
+	}
+	return subjects, nil
+}
+
+// AssignTeacherToSubject assigns a teacher to a subject.
+func (r *subjectRepository) AssignTeacherToSubject(teacherID, subjectID string) error {
+	teacherSubject := entities.TeacherSubject{
+		TeacherID: teacherID,
+		SubjectID: subjectID,
+	}
+	if err := r.db.Create(&teacherSubject).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+// IsTeacherAssignedToSubject checks if a teacher is assigned to a subject.
+func (r *subjectRepository) IsTeacherAssignedToSubject(teacherID, subjectID string) (bool, error) {
+	var count int64
+	if err := r.db.Model(&entities.TeacherSubject{}).
+		Where("teacher_id = ? AND subject_id = ?", teacherID, subjectID).
+		Count(&count).Error; err != nil {
+		return false, err
+	}
+	return count > 0, nil
 }

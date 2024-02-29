@@ -11,5 +11,14 @@ type SubjectResponse struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Semester    string `json:"semester"`
-	// Omitting Teachers field as it's not included in the response
+}
+
+type TeacherSubjectRequest struct {
+	TeacherID string `json:"teacher_id"`
+	SubjectID string `json:"subject_id"`
+}
+
+type TeacherSubjectResponse struct {
+	SubjectName string `json:"subject_name"`
+	TeacherName string `json:"teacher_name"`
 }

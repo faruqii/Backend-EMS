@@ -19,8 +19,8 @@ func (s *Subject) BeforeCreate(tx *gorm.DB) (err error) {
 }
 
 type TeacherSubject struct {
-	TeacherID string `json:"teacher_id" gorm:"primaryKey"`
-	SubjectID string `json:"subject_id" gorm:"primaryKey"`
-	Teacher   Teacher
-	Subject   Subject
+	TeacherID string  `json:"teacher_id"`
+	SubjectID string  `json:"subject_id"`
+	Teacher   Teacher `json:"teacher" gorm:"foreignKey:TeacherID"`
+	Subject   Subject `json:"subject" gorm:"foreignKey:SubjectID"`
 }

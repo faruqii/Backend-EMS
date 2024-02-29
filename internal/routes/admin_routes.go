@@ -7,17 +7,19 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func AdminRoutes(router fiber.Router, adminService services.AdminService, middlewareManager *middleware.Middleware) {
-	adminController := controllers.NewAdminController(adminService, *middlewareManager)
+func AdminRoutes(router fiber.Router, adminSvc services.AdminService, mw *middleware.Middleware) {
+	adminCtrl := controllers.NewAdminController(adminSvc, *mw)
 
-	adminControllerRoutes := router.Group("/admin")
+	adminCtrlRoutes := router.Group("/admin")
 
-	// Apply middleware to subject controller routes
-	subjectControllerRoutes := adminControllerRoutes.Group("/subject")
-	subjectControllerRoutes.Post("/create", middlewareManager.Authenticate(), middlewareManager.Authorization("admin"), adminController.CreateSubject)
+	// Subject routes with middleware chaining
+	subCtrlRoutes := adminCtrlRoutes.Group("/subjects")
+	subCtrlRoutes.Post("/create", adminCtrl.AuthAndAuthorize("admin"), adminCtrl.CreateSubject)
+	subCtrlRoutes.Get("/all", adminCtrl.AuthAndAuthorize("admin"), adminCtrl.GetAllSubject)
+	subCtrlRoutes.Post("/:id/assign-teacher", adminCtrl.AuthAndAuthorize("admin"), adminCtrl.AssignTeacherToSubject)
 
-	// Apply middleware to teacher controller routes
-	teacherControllerRoutes := adminControllerRoutes.Group("/teacher")
-	teacherControllerRoutes.Post("/create", middlewareManager.Authenticate(), middlewareManager.Authorization("admin"), adminController.CreateTeacher)
-	teacherControllerRoutes.Get("/all", middlewareManager.Authenticate(), middlewareManager.Authorization("admin"), adminController.GetAllTeacher)
+	// Teacher routes with middleware chaining
+	teacherCtrlRoutes := adminCtrlRoutes.Group("/teacher")
+	teacherCtrlRoutes.Post("/create", adminCtrl.AuthAndAuthorize("admin"), adminCtrl.CreateTeacher)
+	teacherCtrlRoutes.Get("/all", adminCtrl.AuthAndAuthorize("admin"), adminCtrl.GetAllTeacher)
 }

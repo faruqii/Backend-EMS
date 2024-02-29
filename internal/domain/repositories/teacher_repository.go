@@ -27,7 +27,7 @@ func NewTeacherRepository(db *gorm.DB) TeacherRepository {
 // FindByID finds a teacher by ID.
 func (r *teacherRepository) FindByID(id string) (*entities.Teacher, error) {
 	var teacher entities.Teacher
-	if err := r.db.First(&teacher, id).Error; err != nil {
+	if err := r.db.Where("id = ?", id).First(&teacher).Error; err != nil {
 		return nil, err
 	}
 	return &teacher, nil
