@@ -205,3 +205,19 @@ func (c *AdminController) AssignTeacherToSubject(ctx *fiber.Ctx) (err error) {
 		"data":    response,
 	})
 }
+
+func (c *AdminController) GetTeachersBySubjectID(ctx *fiber.Ctx) (err error) {
+	subjectID := ctx.Params("id")
+
+	teachers, err := c.adminService.GetTeachersBySubjectID(subjectID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Teachers fetched successfully",
+		"data":    teachers,
+	})
+}

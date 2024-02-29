@@ -17,6 +17,7 @@ func AdminRoutes(router fiber.Router, adminSvc services.AdminService, mw *middle
 	subCtrlRoutes.Post("/create", adminCtrl.AuthAndAuthorize("admin"), adminCtrl.CreateSubject)
 	subCtrlRoutes.Get("/all", adminCtrl.AuthAndAuthorize("admin"), adminCtrl.GetAllSubject)
 	subCtrlRoutes.Post("/:id/assign-teacher", adminCtrl.AuthAndAuthorize("admin"), adminCtrl.AssignTeacherToSubject)
+	subCtrlRoutes.Get("/:id/teachers", adminCtrl.AuthAndAuthorize("admin"), adminCtrl.GetTeachersBySubjectID)
 
 	// Teacher routes with middleware chaining
 	teacherCtrlRoutes := adminCtrlRoutes.Group("/teacher")

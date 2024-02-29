@@ -3,6 +3,7 @@ package services
 import (
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"github.com/Magetan-Boyz/Backend/internal/domain/repositories"
+	"github.com/Magetan-Boyz/Backend/internal/dto"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -15,6 +16,7 @@ type AdminService interface {
 	AssignTeacherToSubject(teacherID, SubjectID string) error
 	FindTeacherByID(id string) (*entities.Teacher, error)
 	FindSubjectByID(id string) (*entities.Subject, error)
+	GetTeachersBySubjectID(subjectID string) ([]dto.TeacherSubjectResponse, error)
 }
 
 type adminService struct {
@@ -150,3 +152,22 @@ func (s *adminService) FindSubjectByID(id string) (*entities.Subject, error) {
 	return subject, nil
 }
 
+func (s *adminService) GetTeachersBySubjectID(subjectID string) ([]dto.TeacherSubjectResponse, error) {
+	teacherSubjects, err := s.subjectRepository.GetTeachersBySubjectID(subjectID)
+	if err != nil {
+		return nil, &ErrorMessages{
+			Message:    "Failed to fetch teachers",
+			StatusCode: 500,
+		}
+	}
+
+	var teachers []dto.TeacherSubjectResponse
+	for _, ts := range teacherSubjects {
+        teachers = append(teachers, dto.TeacherSubjectResponse{
+            TeacherName: ts.Teacher.Name,
+            SubjectName: ts.Subject.Name,
+        })
+    }
+    return teachers, nil
+
+}
