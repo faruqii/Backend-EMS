@@ -48,14 +48,8 @@ func (m *Middleware) Authenticate() fiber.Handler {
 			return fiber.NewError(fiber.StatusUnauthorized, "Unauthorized")
 		}
 
-		// Get User ID from token
-		userID, err := m.tokenRepository.GetUserIDByToken(token)
-		if err != nil {
-			return fiber.NewError(fiber.StatusInternalServerError, "Internal Server Error")
-		}
-
 		// Fetch user's role name from the repository based on user's ID
-		userRoleName, err := m.roleRepository.GetRoleNameFromID(userID)
+		userRoleName, err := m.tokenRepository.FindRoleTypeBasedOnToken(token)
 		if err != nil {
 			return fiber.NewError(fiber.StatusInternalServerError, "Internal Server Error")
 		}

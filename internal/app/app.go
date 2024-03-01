@@ -37,6 +37,7 @@ func Start() {
 
 	// Middleware
 	middleware := middleware.NewMiddleware(tokenRepository, roleRepository)
+	
 	//Routes
 	apiEndpoint := app.Group("/api")
 	routes.AuthRoutes(apiEndpoint, authService)

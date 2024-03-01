@@ -5,33 +5,8 @@ import (
 
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"github.com/Magetan-Boyz/Backend/internal/dto"
-	"github.com/Magetan-Boyz/Backend/internal/middleware"
 	"github.com/gofiber/fiber/v2"
 )
-
-func (c *AdminController) AuthAndAuthorize(role string) fiber.Handler {
-	return func(ctx *fiber.Ctx) error {
-		authMiddleware := c.middlewareManager.Authenticate()
-		if err := authMiddleware(ctx); err != nil {
-			if middlewareErr, ok := err.(middleware.MiddlewareError); ok {
-				return ctx.Status(middlewareErr.StatusCode).JSON(fiber.Map{
-					"error": middlewareErr.Message,
-				})
-			}
-		}
-
-		authMiddleware = c.middlewareManager.Authorization(role)
-		if err := authMiddleware(ctx); err != nil {
-			if middlewareErr, ok := err.(middleware.MiddlewareError); ok {
-				return ctx.Status(middlewareErr.StatusCode).JSON(fiber.Map{
-					"error": middlewareErr.Message,
-				})
-			}
-		}
-
-		return nil
-	}
-}
 
 func (c *AdminController) CreateSubject(ctx *fiber.Ctx) (err error) {
 
