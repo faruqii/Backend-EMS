@@ -30,10 +30,11 @@ func Start() {
 	roleRepository := repositories.NewRoleRepository(db)
 	subjectRepository := repositories.NewSubjectRepository(db)
 	teacherRepository := repositories.NewTeacherRepository(db)
+	classRepository := repositories.NewClassRepository(db)
 
 	// Services
 	authService := services.NewAuthService(userRepository, tokenRepository, roleRepository)
-	adminService := services.NewAdminService(subjectRepository, teacherRepository, userRepository, roleRepository)
+	adminService := services.NewAdminService(subjectRepository, teacherRepository, userRepository, roleRepository, classRepository)
 
 	// Middleware
 	middleware := middleware.NewMiddleware(tokenRepository, roleRepository)

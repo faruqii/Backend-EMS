@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
-	"github.com/Magetan-Boyz/Backend/internal/dto"
+	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
 	"github.com/Magetan-Boyz/Backend/internal/mocks"
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/assert"

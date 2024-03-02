@@ -3,8 +3,8 @@ package controllers
 import (
 	"net/http"
 
+	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
-	"github.com/Magetan-Boyz/Backend/internal/dto"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -194,5 +194,76 @@ func (c *AdminController) GetTeachersBySubjectID(ctx *fiber.Ctx) (err error) {
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
 		"message": "Teachers fetched successfully",
 		"data":    teachers,
+	})
+}
+
+func (c *AdminController) CreateClass(ctx *fiber.Ctx) (err error) {
+
+	var req dto.CreateClassRequest
+
+	if err = ctx.BodyParser(&req); err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	class := entities.Class{
+		Name: req.Name,
+	}
+
+	err = c.adminService.CreateClass(&class)
+
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	response := dto.ClassResponse{
+		ID:              class.ID,
+		Name:            class.Name,
+		HomeRoomTeacher: class.HomeRoomTeacher.Name,
+	}
+
+	return ctx.Status(http.StatusCreated).JSON(fiber.Map{
+		"message": "Class created successfully",
+		"data":    response,
+	})
+}
+
+func (c *AdminController) AssignHomeroomTeacher(ctx *fiber.Ctx) (err error) {
+	classID := ctx.Query("classID")
+	teacherID := ctx.Query("teacherID")
+
+	class, err := c.adminService.FindClassByID(classID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	teacher, err := c.adminService.FindTeacherByID(teacherID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	err = c.adminService.AssignHomeroomTeacher(classID, teacherID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	response := dto.ClassResponse{
+		ID:              class.ID,
+		Name:            class.Name,
+		HomeRoomTeacher: teacher.Name,
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Homeroom teacher assigned successfully",
+		"data":    response,
 	})
 }

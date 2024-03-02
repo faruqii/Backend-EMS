@@ -3,7 +3,7 @@ package services
 import (
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"github.com/Magetan-Boyz/Backend/internal/domain/repositories"
-	"github.com/Magetan-Boyz/Backend/internal/dto"
+	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -17,6 +17,9 @@ type AdminService interface {
 	FindTeacherByID(id string) (*entities.Teacher, error)
 	FindSubjectByID(id string) (*entities.Subject, error)
 	GetTeachersBySubjectID(subjectID string) ([]dto.TeacherSubjectResponse, error)
+	CreateClass(class *entities.Class) error
+	AssignHomeroomTeacher(classID, teacherID string) error
+	FindClassByID(id string) (*entities.Class, error)
 }
 
 type adminService struct {
@@ -24,14 +27,16 @@ type adminService struct {
 	teacherRepository repositories.TeacherRepository
 	userRepository    repositories.UserRepository
 	roleRepository    repositories.RoleRepository
+	classRepository  repositories.ClassRepository
 }
 
-func NewAdminService(subjectRepository repositories.SubjectRepository, teacherRepository repositories.TeacherRepository, userRepository repositories.UserRepository, roleRepository repositories.RoleRepository) *adminService {
+func NewAdminService(subjectRepository repositories.SubjectRepository, teacherRepository repositories.TeacherRepository, userRepository repositories.UserRepository, roleRepository repositories.RoleRepository, classRepository repositories.ClassRepository) *adminService {
 	return &adminService{
 		subjectRepository: subjectRepository,
 		teacherRepository: teacherRepository,
 		userRepository:    userRepository,
 		roleRepository:    roleRepository,
+		classRepository:  classRepository,
 	}
 }
 
@@ -163,11 +168,77 @@ func (s *adminService) GetTeachersBySubjectID(subjectID string) ([]dto.TeacherSu
 
 	var teachers []dto.TeacherSubjectResponse
 	for _, ts := range teacherSubjects {
-        teachers = append(teachers, dto.TeacherSubjectResponse{
-            TeacherName: ts.Teacher.Name,
-            SubjectName: ts.Subject.Name,
-        })
-    }
-    return teachers, nil
+		teachers = append(teachers, dto.TeacherSubjectResponse{
+			TeacherName: ts.Teacher.Name,
+			SubjectName: ts.Subject.Name,
+		})
+	}
+	return teachers, nil
 
 }
+
+func (s *adminService) CreateClass(class *entities.Class) error {
+	err := s.classRepository.Insert(class)
+	if err != nil {
+		return &ErrorMessages{
+			Message:    "Failed to create class",
+			StatusCode: 500,
+		}
+	}
+	return nil
+}
+
+func (s *adminService) AssignHomeroomTeacher(classID, teacherID string) error {
+	// Check if teacher exists
+	teacher, err := s.teacherRepository.FindByID(teacherID)
+	if err != nil {
+		return &ErrorMessages{
+			Message:    "Teacher not found",
+			StatusCode: 400,
+		}
+	}
+
+	// Check if class exists
+	class, err := s.classRepository.FindByID(classID)
+	if err != nil {
+		return &ErrorMessages{
+			Message:    "Class not found",
+			StatusCode: 400,
+		}
+	}
+
+	// Update class with teacherID
+	class.HomeRoomTeacherID = &teacherID
+	if err := s.classRepository.Update(class); err != nil {
+		return &ErrorMessages{
+			Message:    "Failed to assign teacher as homeroom",
+			StatusCode: 500,
+		}
+	}
+
+	// Update teacher with isHomeroom
+	teacher.IsHomeroom = true
+	if err := s.teacherRepository.Update(teacher); err != nil {
+		return &ErrorMessages{
+			Message:    "Failed to update teacher",
+			StatusCode: 500,
+		}
+	}
+
+	return nil
+}
+
+func (s *adminService) FindClassByID(id string) (*entities.Class, error) {
+	class, err := s.classRepository.FindByID(id)
+	if err != nil {
+		return nil, &ErrorMessages{
+			Message:    "Failed to fetch class",
+			StatusCode: 500,
+		}
+	}
+	return class, nil
+}
+
+
+
+

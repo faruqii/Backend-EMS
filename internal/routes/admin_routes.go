@@ -25,4 +25,10 @@ func AdminRoutes(router fiber.Router, adminSvc services.AdminService, mw *middle
 	teacherCtrlRoutes.Use(mw.Authenticate(), mw.Authorization("admin")) // Apply middleware here
 	teacherCtrlRoutes.Post("/create", adminCtrl.CreateTeacher)
 	teacherCtrlRoutes.Get("/all", adminCtrl.GetAllTeacher)
+
+	// Class routes with middleware chaining
+	classCtrlRoutes := adminCtrlRoutes.Group("/class")
+	classCtrlRoutes.Use(mw.Authenticate(), mw.Authorization("admin")) // Apply middleware here
+	classCtrlRoutes.Post("/create", adminCtrl.CreateClass)
+	classCtrlRoutes.Post("/assign-homeroom-teacher", adminCtrl.AssignHomeroomTeacher)
 }

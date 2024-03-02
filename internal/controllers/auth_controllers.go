@@ -3,7 +3,7 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/Magetan-Boyz/Backend/internal/dto"
+	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
 	"github.com/gofiber/fiber/v2"
 )
 
