@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"github.com/Magetan-Boyz/Backend/internal/controllers"
+	"github.com/Magetan-Boyz/Backend/internal/controllers/admin"
 	"github.com/Magetan-Boyz/Backend/internal/middleware"
 	"github.com/Magetan-Boyz/Backend/internal/services"
 	"github.com/gofiber/fiber/v2"
