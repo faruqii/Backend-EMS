@@ -22,3 +22,8 @@ type TeacherSubjectResponse struct {
 	SubjectName string `json:"subject_name"`
 	TeacherName string `json:"teacher_name"`
 }
+
+type TeacherSubjectsResponse struct {
+	TeacherName string   `json:"teacher_name"`
+	SubjectName []string `json:"subject_name"`
+}

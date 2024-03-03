@@ -17,6 +17,7 @@ type AdminService interface {
 	FindTeacherByID(id string) (*entities.Teacher, error)
 	FindSubjectByID(id string) (*entities.Subject, error)
 	GetTeachersBySubjectID(subjectID string) ([]dto.TeacherSubjectResponse, error)
+	GetTeacherSubjects(teacherID string) ([]dto.TeacherSubjectsResponse, error)
 	CreateClass(class *entities.Class) error
 	AssignHomeroomTeacher(classID, teacherID string) error
 	FindClassByID(id string) (*entities.Class, error)
@@ -25,25 +26,25 @@ type AdminService interface {
 }
 
 type adminService struct {
-	subjectRepository repositories.SubjectRepository
-	teacherRepository repositories.TeacherRepository
-	userRepository    repositories.UserRepository
-	roleRepository    repositories.RoleRepository
-	classRepository   repositories.ClassRepository
+	subjectRepo repositories.SubjectRepository
+	teacherRepo repositories.TeacherRepository
+	userRepo    repositories.UserRepository
+	roleRepo    repositories.RoleRepository
+	classRepo   repositories.ClassRepository
 }
 
-func NewAdminService(subjectRepository repositories.SubjectRepository, teacherRepository repositories.TeacherRepository, userRepository repositories.UserRepository, roleRepository repositories.RoleRepository, classRepository repositories.ClassRepository) *adminService {
+func NewAdminService(subjectRepo repositories.SubjectRepository, teacherRepo repositories.TeacherRepository, userRepo repositories.UserRepository, roleRepo repositories.RoleRepository, classRepo repositories.ClassRepository) *adminService {
 	return &adminService{
-		subjectRepository: subjectRepository,
-		teacherRepository: teacherRepository,
-		userRepository:    userRepository,
-		roleRepository:    roleRepository,
-		classRepository:   classRepository,
+		subjectRepo: subjectRepo,
+		teacherRepo: teacherRepo,
+		userRepo:    userRepo,
+		roleRepo:    roleRepo,
+		classRepo:   classRepo,
 	}
 }
 
 func (s *adminService) CreateSubject(subject *entities.Subject) error {
-	err := s.subjectRepository.Create(subject)
+	err := s.subjectRepo.Create(subject)
 	if err != nil {
 		return &ErrorMessages{
 			Message:    "Failed to create subject",
@@ -54,7 +55,7 @@ func (s *adminService) CreateSubject(subject *entities.Subject) error {
 }
 
 func (s *adminService) GetAllSubject() ([]entities.Subject, error) {
-	subjects, err := s.subjectRepository.GetAll()
+	subjects, err := s.subjectRepo.GetAll()
 	if err != nil {
 		return nil, &ErrorMessages{
 			Message:    "Failed to fetch subjects",
@@ -67,7 +68,7 @@ func (s *adminService) GetAllSubject() ([]entities.Subject, error) {
 func (s *adminService) CreateTeacher(teacher *entities.Teacher) error {
 
 	// check if teacher is exist
-	_, err := s.userRepository.FindByUsername(teacher.User.Username)
+	_, err := s.userRepo.FindByUsername(teacher.User.Username)
 	if err == nil {
 		return &ErrorMessages{
 			Message:    "Teacher already exist",
@@ -85,7 +86,7 @@ func (s *adminService) CreateTeacher(teacher *entities.Teacher) error {
 
 	teacher.User.Password = string(hashedPassword)
 
-	err = s.teacherRepository.Create(teacher)
+	err = s.teacherRepo.Create(teacher)
 	if err != nil {
 		return &ErrorMessages{
 			Message:    "Failed to create teacher",
@@ -94,7 +95,7 @@ func (s *adminService) CreateTeacher(teacher *entities.Teacher) error {
 	}
 
 	// assign role to teacher
-	err = s.roleRepository.AssignUserRole(teacher.User.ID, "teacher")
+	err = s.roleRepo.AssignUserRole(teacher.User.ID, "teacher")
 	if err != nil {
 		return &ErrorMessages{
 			Message:    "Failed to assign role to teacher",
@@ -105,7 +106,7 @@ func (s *adminService) CreateTeacher(teacher *entities.Teacher) error {
 }
 
 func (s *adminService) GetAllTeacher() ([]entities.Teacher, error) {
-	teachers, err := s.teacherRepository.GetAll()
+	teachers, err := s.teacherRepo.GetAll()
 	if err != nil {
 		return nil, &ErrorMessages{
 			Message:    "Failed to fetch teachers",
@@ -116,7 +117,7 @@ func (s *adminService) GetAllTeacher() ([]entities.Teacher, error) {
 }
 
 func (s *adminService) AssignTeacherToSubject(teacherID, SubjectID string) error {
-	isAssigned, err := s.subjectRepository.IsTeacherAssignedToSubject(teacherID, SubjectID)
+	isAssigned, err := s.subjectRepo.IsTeacherAssignedToSubject(teacherID, SubjectID)
 	if err != nil {
 		return err
 	}
@@ -127,7 +128,7 @@ func (s *adminService) AssignTeacherToSubject(teacherID, SubjectID string) error
 		}
 	}
 
-	err = s.subjectRepository.AssignTeacherToSubject(teacherID, SubjectID)
+	err = s.subjectRepo.AssignTeacherToSubject(teacherID, SubjectID)
 	if err != nil {
 		return &ErrorMessages{
 			Message:    "Failed to assign teacher to subject",
@@ -138,7 +139,7 @@ func (s *adminService) AssignTeacherToSubject(teacherID, SubjectID string) error
 }
 
 func (s *adminService) FindTeacherByID(id string) (*entities.Teacher, error) {
-	teacher, err := s.teacherRepository.FindByID(id)
+	teacher, err := s.teacherRepo.FindByID(id)
 	if err != nil {
 		return nil, &ErrorMessages{
 			Message:    "Failed to fetch teacher",
@@ -149,7 +150,7 @@ func (s *adminService) FindTeacherByID(id string) (*entities.Teacher, error) {
 }
 
 func (s *adminService) FindSubjectByID(id string) (*entities.Subject, error) {
-	subject, err := s.subjectRepository.FindByID(id)
+	subject, err := s.subjectRepo.FindByID(id)
 	if err != nil {
 		return nil, &ErrorMessages{
 			Message:    "Failed to fetch subject",
@@ -160,7 +161,7 @@ func (s *adminService) FindSubjectByID(id string) (*entities.Subject, error) {
 }
 
 func (s *adminService) GetTeachersBySubjectID(subjectID string) ([]dto.TeacherSubjectResponse, error) {
-	teacherSubjects, err := s.subjectRepository.GetTeachersBySubjectID(subjectID)
+	teacherSubjects, err := s.subjectRepo.GetTeachersBySubjectID(subjectID)
 	if err != nil {
 		return nil, &ErrorMessages{
 			Message:    "Failed to fetch teachers",
@@ -179,8 +180,44 @@ func (s *adminService) GetTeachersBySubjectID(subjectID string) ([]dto.TeacherSu
 
 }
 
+func (s *adminService) GetTeacherSubjects(teacherID string) ([]dto.TeacherSubjectsResponse, error) {
+	teacherSubjects, err := s.subjectRepo.GetTeacherSubjects(teacherID)
+	if err != nil {
+		return nil, &ErrorMessages{
+			Message:    "Failed to fetch subjects",
+			StatusCode: 500,
+		}
+	}
+
+	var subjects []dto.TeacherSubjectsResponse
+
+	if len(teacherSubjects) == 0 {
+		// Return an empty response with teacher_name as empty string
+		subjects = append(subjects, dto.TeacherSubjectsResponse{
+			TeacherName: "",
+			SubjectName: []string{},
+		})
+	} else {
+		// Construct response with teacher_name as the first teacher's name and subjects in a map
+		subjectMap := make(map[string]bool)
+		for _, ts := range teacherSubjects {
+			subjectMap[ts.Subject.Name] = true
+		}
+		firstTeacherName := teacherSubjects[0].Teacher.Name
+		subjects = append(subjects, dto.TeacherSubjectsResponse{
+			TeacherName: firstTeacherName,
+			SubjectName: make([]string, 0, len(subjectMap)),
+		})
+		for subject := range subjectMap {
+			subjects[0].SubjectName = append(subjects[0].SubjectName, subject)
+		}
+	}
+
+	return subjects, nil
+}
+
 func (s *adminService) CreateClass(class *entities.Class) error {
-	err := s.classRepository.Insert(class)
+	err := s.classRepo.Insert(class)
 	if err != nil {
 		return &ErrorMessages{
 			Message:    "Failed to create class",
@@ -192,7 +229,7 @@ func (s *adminService) CreateClass(class *entities.Class) error {
 
 func (s *adminService) AssignHomeroomTeacher(classID, teacherID string) error {
 	// Check if teacher exists
-	teacher, err := s.teacherRepository.FindByID(teacherID)
+	teacher, err := s.teacherRepo.FindByID(teacherID)
 	if err != nil {
 		return &ErrorMessages{
 			Message:    "Teacher not found",
@@ -201,7 +238,7 @@ func (s *adminService) AssignHomeroomTeacher(classID, teacherID string) error {
 	}
 
 	// Check if class exists
-	class, err := s.classRepository.FindByID(classID)
+	class, err := s.classRepo.FindByID(classID)
 	if err != nil {
 		return &ErrorMessages{
 			Message:    "Class not found",
@@ -227,7 +264,7 @@ func (s *adminService) AssignHomeroomTeacher(classID, teacherID string) error {
 
 	// Update class with teacherID
 	class.HomeRoomTeacherID = &teacherID
-	if err := s.classRepository.Update(class); err != nil {
+	if err := s.classRepo.Update(class); err != nil {
 		return &ErrorMessages{
 			Message:    "Failed to assign teacher as homeroom",
 			StatusCode: 500,
@@ -236,7 +273,7 @@ func (s *adminService) AssignHomeroomTeacher(classID, teacherID string) error {
 
 	// Update teacher with isHomeroom
 	teacher.IsHomeroom = true
-	if err := s.teacherRepository.Update(teacher); err != nil {
+	if err := s.teacherRepo.Update(teacher); err != nil {
 		return &ErrorMessages{
 			Message:    "Failed to update teacher",
 			StatusCode: 500,
@@ -247,7 +284,7 @@ func (s *adminService) AssignHomeroomTeacher(classID, teacherID string) error {
 }
 
 func (s *adminService) FindClassByID(id string) (*entities.Class, error) {
-	class, err := s.classRepository.FindByID(id)
+	class, err := s.classRepo.FindByID(id)
 	if err != nil {
 		return nil, &ErrorMessages{
 			Message:    "Failed to fetch class",
@@ -258,7 +295,7 @@ func (s *adminService) FindClassByID(id string) (*entities.Class, error) {
 }
 
 func (s *adminService) GetAllClass() ([]entities.Class, error) {
-	classes, err := s.classRepository.GetAll()
+	classes, err := s.classRepo.GetAll()
 	if err != nil {
 		return nil, &ErrorMessages{
 			Message:    "Failed to fetch classes",
@@ -269,7 +306,7 @@ func (s *adminService) GetAllClass() ([]entities.Class, error) {
 }
 
 func (s *adminService) UpdateTeacherHomeroomStatus(teacherID string, status bool) error {
-	teacher, err := s.teacherRepository.FindByID(teacherID)
+	teacher, err := s.teacherRepo.FindByID(teacherID)
 	if err != nil {
 		return &ErrorMessages{
 			Message:    "Teacher not found",
@@ -278,7 +315,7 @@ func (s *adminService) UpdateTeacherHomeroomStatus(teacherID string, status bool
 	}
 
 	teacher.IsHomeroom = status
-	if err := s.teacherRepository.Update(teacher); err != nil {
+	if err := s.teacherRepo.Update(teacher); err != nil {
 		return &ErrorMessages{
 			Message:    "Failed to update teacher",
 			StatusCode: 500,

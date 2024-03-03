@@ -15,6 +15,7 @@ type SubjectRepository interface {
 	AssignTeacherToSubject(teacherID, subjectID string) error
 	IsTeacherAssignedToSubject(teacherID, subjectID string) (bool, error)
 	GetTeachersBySubjectID(subjectID string) ([]entities.TeacherSubject, error)
+	GetTeacherSubjects(teacherID string) ([]entities.TeacherSubject, error)
 }
 
 // subjectRepository is a concrete implementation of SubjectRepository.
@@ -97,6 +98,16 @@ func (r *subjectRepository) GetTeachersBySubjectID(subjectID string) ([]entities
 	var teacherSubjects []entities.TeacherSubject
 	if err := r.db.Preload("Teacher").Preload("Subject").
 		Where("subject_id = ?", subjectID).Find(&teacherSubjects).Error; err != nil {
+		return nil, err
+	}
+	return teacherSubjects, nil
+}
+
+// GetTeacherSubjects returns all subjects assigned to a teacher.
+func (r *subjectRepository) GetTeacherSubjects(teacherID string) ([]entities.TeacherSubject, error) {
+	var teacherSubjects []entities.TeacherSubject
+	if err := r.db.Preload("Teacher").Preload("Subject").
+		Where("teacher_id = ?", teacherID).Find(&teacherSubjects).Error; err != nil {
 		return nil, err
 	}
 	return teacherSubjects, nil

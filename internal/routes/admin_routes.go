@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"github.com/Magetan-Boyz/Backend/internal/controllers/admin"
+	controllers "github.com/Magetan-Boyz/Backend/internal/controllers/admin"
 	"github.com/Magetan-Boyz/Backend/internal/middleware"
 	"github.com/Magetan-Boyz/Backend/internal/services"
 	"github.com/gofiber/fiber/v2"
@@ -26,6 +26,7 @@ func AdminRoutes(router fiber.Router, adminSvc services.AdminService, mw *middle
 	teacherCtrlRoutes.Post("/create", adminCtrl.CreateTeacher)
 	teacherCtrlRoutes.Get("/all", adminCtrl.GetAllTeacher)
 	teacherCtrlRoutes.Put("/:id/update-homeroom-status", adminCtrl.UpdateTeacherHomeroomStatus)
+	teacherCtrlRoutes.Get("/:id/subjects", adminCtrl.GetTeacherSubjects)
 
 	// Class routes with middleware chaining
 	classCtrlRoutes := adminCtrlRoutes.Group("/class")

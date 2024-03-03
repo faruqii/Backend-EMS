@@ -36,7 +36,7 @@ func (c *AdminController) CreateTeacher(ctx *fiber.Ctx) (err error) {
 	}
 
 	response := dto.TeacherResponse{
-		ID:                teacher.UserID,
+		ID:                teacher.ID,
 		Name:              teacher.Name,
 		Email:             teacher.Email,
 		IsHomeroomTeacher: teacher.IsHomeroom,
@@ -130,5 +130,21 @@ func (c *AdminController) GetTeachersBySubjectID(ctx *fiber.Ctx) (err error) {
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
 		"message": "Teachers fetched successfully",
 		"data":    teachers,
+	})
+}
+
+func (c *AdminController) GetTeacherSubjects(ctx *fiber.Ctx) (err error) {
+	teacherID := ctx.Params("id")
+
+	subjects, err := c.adminService.GetTeacherSubjects(teacherID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Subjects fetched successfully",
+		"data":    subjects,
 	})
 }
