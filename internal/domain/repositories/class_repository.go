@@ -45,7 +45,7 @@ func (r *classRepository) Delete(id string) error {
 
 func (r *classRepository) FindByID(id string) (*entities.Class, error) {
 	var class entities.Class
-	if err := r.db.First(&class, id).Error; err != nil {
+	if err := r.db.First(&class, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 	return &class, nil
@@ -61,7 +61,8 @@ func (r *classRepository) FindByTeacherID(teacherID string) ([]entities.Class, e
 
 func (r *classRepository) GetAll() ([]entities.Class, error) {
 	var classes []entities.Class
-	if err := r.db.Find(&classes).Error; err != nil {
+	// preloading the teacher
+	if err := r.db.Preload("HomeRoomTeacher").Find(&classes).Error; err != nil {
 		return nil, err
 	}
 	return classes, nil

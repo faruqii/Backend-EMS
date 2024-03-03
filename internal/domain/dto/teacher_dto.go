@@ -13,3 +13,7 @@ type TeacherResponse struct {
 	Email             string `json:"email"`
 	IsHomeroomTeacher bool   `json:"is_homeroom_teacher"`
 }
+
+type UpdateHomeroomStatusRequest struct {
+	Status bool `json:"status"`
+}

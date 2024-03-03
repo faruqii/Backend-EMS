@@ -9,3 +9,7 @@ type ClassResponse struct {
 	Name            string `json:"name"`
 	HomeRoomTeacher string `json:"homeRoomTeacher"`
 }
+
+type AssignHomeroomTeacherRequest struct {
+	TeacherID string `json:"teacher_id"`
+}

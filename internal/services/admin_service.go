@@ -1,9 +1,9 @@
 package services
 
 import (
+	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"github.com/Magetan-Boyz/Backend/internal/domain/repositories"
-	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -20,6 +20,8 @@ type AdminService interface {
 	CreateClass(class *entities.Class) error
 	AssignHomeroomTeacher(classID, teacherID string) error
 	FindClassByID(id string) (*entities.Class, error)
+	GetAllClass() ([]entities.Class, error)
+	UpdateTeacherHomeroomStatus(teacherID string, status bool) error
 }
 
 type adminService struct {
@@ -27,7 +29,7 @@ type adminService struct {
 	teacherRepository repositories.TeacherRepository
 	userRepository    repositories.UserRepository
 	roleRepository    repositories.RoleRepository
-	classRepository  repositories.ClassRepository
+	classRepository   repositories.ClassRepository
 }
 
 func NewAdminService(subjectRepository repositories.SubjectRepository, teacherRepository repositories.TeacherRepository, userRepository repositories.UserRepository, roleRepository repositories.RoleRepository, classRepository repositories.ClassRepository) *adminService {
@@ -36,7 +38,7 @@ func NewAdminService(subjectRepository repositories.SubjectRepository, teacherRe
 		teacherRepository: teacherRepository,
 		userRepository:    userRepository,
 		roleRepository:    roleRepository,
-		classRepository:  classRepository,
+		classRepository:   classRepository,
 	}
 }
 
@@ -207,6 +209,22 @@ func (s *adminService) AssignHomeroomTeacher(classID, teacherID string) error {
 		}
 	}
 
+	// Check if the class already has a homeroom teacher assigned
+	if class.HomeRoomTeacherID != nil {
+		return &ErrorMessages{
+			Message:    "Class already has a homeroom teacher assigned",
+			StatusCode: 400,
+		}
+	}
+
+	// Check if the teacher is already designated as a homeroom teacher
+	if teacher.IsHomeroom {
+		return &ErrorMessages{
+			Message:    "Teacher is already designated as a homeroom teacher",
+			StatusCode: 400,
+		}
+	}
+
 	// Update class with teacherID
 	class.HomeRoomTeacherID = &teacherID
 	if err := s.classRepository.Update(class); err != nil {
@@ -239,6 +257,32 @@ func (s *adminService) FindClassByID(id string) (*entities.Class, error) {
 	return class, nil
 }
 
+func (s *adminService) GetAllClass() ([]entities.Class, error) {
+	classes, err := s.classRepository.GetAll()
+	if err != nil {
+		return nil, &ErrorMessages{
+			Message:    "Failed to fetch classes",
+			StatusCode: 500,
+		}
+	}
+	return classes, nil
+}
 
+func (s *adminService) UpdateTeacherHomeroomStatus(teacherID string, status bool) error {
+	teacher, err := s.teacherRepository.FindByID(teacherID)
+	if err != nil {
+		return &ErrorMessages{
+			Message:    "Teacher not found",
+			StatusCode: 400,
+		}
+	}
 
-
+	teacher.IsHomeroom = status
+	if err := s.teacherRepository.Update(teacher); err != nil {
+		return &ErrorMessages{
+			Message:    "Failed to update teacher",
+			StatusCode: 500,
+		}
+	}
+	return nil
+}

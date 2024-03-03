@@ -232,8 +232,7 @@ func (c *AdminController) CreateClass(ctx *fiber.Ctx) (err error) {
 }
 
 func (c *AdminController) AssignHomeroomTeacher(ctx *fiber.Ctx) (err error) {
-	classID := ctx.Query("classID")
-	teacherID := ctx.Query("teacherID")
+	classID := ctx.Params("id")
 
 	class, err := c.adminService.FindClassByID(classID)
 	if err != nil {
@@ -242,14 +241,22 @@ func (c *AdminController) AssignHomeroomTeacher(ctx *fiber.Ctx) (err error) {
 		})
 	}
 
-	teacher, err := c.adminService.FindTeacherByID(teacherID)
+	var req dto.AssignHomeroomTeacherRequest
+
+	if err = ctx.BodyParser(&req); err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	teacher, err := c.adminService.FindTeacherByID(req.TeacherID)
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
 		})
 	}
 
-	err = c.adminService.AssignHomeroomTeacher(classID, teacherID)
+	err = c.adminService.AssignHomeroomTeacher(classID, req.TeacherID)
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
@@ -265,5 +272,54 @@ func (c *AdminController) AssignHomeroomTeacher(ctx *fiber.Ctx) (err error) {
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
 		"message": "Homeroom teacher assigned successfully",
 		"data":    response,
+	})
+}
+
+func (c *AdminController) GetAllClass(ctx *fiber.Ctx) (err error) {
+
+	classes, err := c.adminService.GetAllClass()
+
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	var response []dto.ClassResponse
+
+	for _, class := range classes {
+		classRes := dto.ClassResponse{
+			ID:              class.ID,
+			Name:            class.Name,
+			HomeRoomTeacher: class.HomeRoomTeacher.Name,
+		}
+		response = append(response, classRes)
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"data": response,
+	})
+}
+
+func (c *AdminController) UpdateTeacherHomeroomStatus(ctx *fiber.Ctx) (err error) {
+	teacherID := ctx.Params("id")
+
+	req := dto.UpdateHomeroomStatusRequest{}
+
+	if err = ctx.BodyParser(&req); err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	err = c.adminService.UpdateTeacherHomeroomStatus(teacherID, req.Status)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Homeroom status updated successfully",
 	})
 }
