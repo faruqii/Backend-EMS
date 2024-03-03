@@ -12,6 +12,7 @@ type ScheduleRepository interface {
 	FindByID(id string) (*entities.Schedule, error)
 	FindByClassID(classID string) ([]entities.Schedule, error)
 	GetAll() ([]entities.Schedule, error)
+	GetScheduleByID(id string) (*entities.Schedule, error)
 }
 
 type scheduleRepository struct {
@@ -61,8 +62,19 @@ func (r *scheduleRepository) FindByClassID(classID string) ([]entities.Schedule,
 
 func (r *scheduleRepository) GetAll() ([]entities.Schedule, error) {
 	var schedules []entities.Schedule
-	if err := r.db.Find(&schedules).Error; err != nil {
+	// Preload the class, subject, and teacher
+	if err := r.db.Preload("Class").Preload("Subject").Preload("Teacher").Find(&schedules).Error; err != nil {
 		return nil, err
 	}
 	return schedules, nil
 }
+
+func (r *scheduleRepository) GetScheduleByID(id string) (*entities.Schedule, error) {
+	var schedule entities.Schedule
+	if err := r.db.Preload("Class").Preload("Subject").Preload("Teacher").First(&schedule, id).Error; err != nil {
+		return nil, err
+	}
+	return &schedule, nil
+}
+
+

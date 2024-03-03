@@ -23,23 +23,27 @@ type AdminService interface {
 	FindClassByID(id string) (*entities.Class, error)
 	GetAllClass() ([]entities.Class, error)
 	UpdateTeacherHomeroomStatus(teacherID string, status bool) error
+	CreateSchedule(schedule *entities.Schedule) error
+	GetScheduleByID(id string) (*entities.Schedule, error)
 }
 
 type adminService struct {
-	subjectRepo repositories.SubjectRepository
-	teacherRepo repositories.TeacherRepository
-	userRepo    repositories.UserRepository
-	roleRepo    repositories.RoleRepository
-	classRepo   repositories.ClassRepository
+	subjectRepo  repositories.SubjectRepository
+	teacherRepo  repositories.TeacherRepository
+	userRepo     repositories.UserRepository
+	roleRepo     repositories.RoleRepository
+	classRepo    repositories.ClassRepository
+	scheduleRepo repositories.ScheduleRepository
 }
 
-func NewAdminService(subjectRepo repositories.SubjectRepository, teacherRepo repositories.TeacherRepository, userRepo repositories.UserRepository, roleRepo repositories.RoleRepository, classRepo repositories.ClassRepository) *adminService {
+func NewAdminService(subjectRepo repositories.SubjectRepository, teacherRepo repositories.TeacherRepository, userRepo repositories.UserRepository, roleRepo repositories.RoleRepository, classRepo repositories.ClassRepository, scheduleRepo repositories.ScheduleRepository) *adminService {
 	return &adminService{
-		subjectRepo: subjectRepo,
-		teacherRepo: teacherRepo,
-		userRepo:    userRepo,
-		roleRepo:    roleRepo,
-		classRepo:   classRepo,
+		subjectRepo:  subjectRepo,
+		teacherRepo:  teacherRepo,
+		userRepo:     userRepo,
+		roleRepo:     roleRepo,
+		classRepo:    classRepo,
+		scheduleRepo: scheduleRepo,
 	}
 }
 
@@ -217,7 +221,17 @@ func (s *adminService) GetTeacherSubjects(teacherID string) ([]dto.TeacherSubjec
 }
 
 func (s *adminService) CreateClass(class *entities.Class) error {
-	err := s.classRepo.Insert(class)
+
+	// check if class is already exist by name
+	_, err := s.classRepo.FindByName(class.Name)
+	if err == nil {
+		return &ErrorMessages{
+			Message:    "Class already exist",
+			StatusCode: 400,
+		}
+	}
+
+	err = s.classRepo.Insert(class)
 	if err != nil {
 		return &ErrorMessages{
 			Message:    "Failed to create class",
@@ -322,4 +336,26 @@ func (s *adminService) UpdateTeacherHomeroomStatus(teacherID string, status bool
 		}
 	}
 	return nil
+}
+
+func (s *adminService) CreateSchedule(schedule *entities.Schedule) error {
+	err := s.scheduleRepo.Insert(schedule)
+	if err != nil {
+		return &ErrorMessages{
+			Message:    "Failed to create schedule",
+			StatusCode: 500,
+		}
+	}
+	return nil
+}
+
+func (s *adminService) GetScheduleByID(id string) (*entities.Schedule, error) {
+	schedule, err := s.scheduleRepo.GetScheduleByID(id)
+	if err != nil {
+		return nil, &ErrorMessages{
+			Message:    "Failed to fetch schedule",
+			StatusCode: 500,
+		}
+	}
+	return schedule, nil
 }

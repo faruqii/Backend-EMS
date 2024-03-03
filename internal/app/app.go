@@ -31,14 +31,15 @@ func Start() {
 	subjectRepo := repositories.NewSubjectRepository(db)
 	teacherRepo := repositories.NewTeacherRepository(db)
 	classRepo := repositories.NewClassRepository(db)
+	scheduleRepo := repositories.NewScheduleRepository(db)
 
 	// Services
 	authService := services.NewAuthService(userRepo, tokenRepo, roleRepo)
-	adminService := services.NewAdminService(subjectRepo, teacherRepo, userRepo, roleRepo, classRepo)
+	adminService := services.NewAdminService(subjectRepo, teacherRepo, userRepo, roleRepo, classRepo, scheduleRepo)
 
 	// Middleware
 	middleware := middleware.NewMiddleware(tokenRepo, roleRepo)
-	
+
 	//Routes
 	api := app.Group("/api")
 	routes.AuthRoutes(api, authService)

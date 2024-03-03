@@ -12,6 +12,7 @@ type ClassRepository interface {
 	FindByID(id string) (*entities.Class, error)
 	FindByTeacherID(teacherID string) ([]entities.Class, error)
 	GetAll() ([]entities.Class, error)
+	FindByName(name string) (*entities.Class, error)
 }
 
 type classRepository struct {
@@ -66,4 +67,12 @@ func (r *classRepository) GetAll() ([]entities.Class, error) {
 		return nil, err
 	}
 	return classes, nil
+}
+
+func (r *classRepository) FindByName(name string) (*entities.Class, error) {
+	var class entities.Class
+	if err := r.db.First(&class, "name = ?", name).Error; err != nil {
+		return nil, err
+	}
+	return &class, nil
 }
