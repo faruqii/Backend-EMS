@@ -9,6 +9,7 @@ import (
 	"github.com/Magetan-Boyz/Backend/internal/middleware"
 	"github.com/Magetan-Boyz/Backend/internal/routes"
 	"github.com/Magetan-Boyz/Backend/internal/services"
+	adminSvc "github.com/Magetan-Boyz/Backend/internal/services/admin"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -35,7 +36,7 @@ func Start() {
 
 	// Services
 	authService := services.NewAuthService(userRepo, tokenRepo, roleRepo)
-	adminService := services.NewAdminService(subjectRepo, teacherRepo, userRepo, roleRepo, classRepo, scheduleRepo)
+	adminService := adminSvc.NewAdminService(subjectRepo, teacherRepo, userRepo, roleRepo, classRepo, scheduleRepo)
 
 	// Middleware
 	middleware := middleware.NewMiddleware(tokenRepo, roleRepo)

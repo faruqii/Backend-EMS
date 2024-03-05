@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"github.com/Magetan-Boyz/Backend/internal/middleware"
-	"github.com/Magetan-Boyz/Backend/internal/services"
+	"github.com/Magetan-Boyz/Backend/internal/services/admin"
 )
 
 type AdminController struct {
