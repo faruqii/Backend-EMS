@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
@@ -17,12 +18,31 @@ func (c *AdminController) CreateSchedule(ctx *fiber.Ctx) (err error) {
 		})
 	}
 
+	// check if schedule already exists in the class and subject combination
+	exists, err := c.adminService.IsScheduleExists(req.ClassID, req.SubjectID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	if exists {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Schedule already exists",
+		})
+	}
+
+	// Calculate start and end times based on input hours
+	startTime := time.Date(2024, time.January, 1, req.StartTime, 0, 0, 0, time.UTC)
+	endTime := time.Date(2024, time.January, 1, req.EndTime, 0, 0, 0, time.UTC)
+
 	schedule := entities.Schedule{
 		ClassID:   req.ClassID,
 		SubjectID: req.SubjectID,
 		TeacherID: req.TeacherID,
 		DayOfWeek: req.DayOfWeek,
-		Duration:  req.Duration,
+		StartTime: startTime,
+		EndTime:   endTime,
 	}
 
 	err = c.adminService.CreateSchedule(&schedule)
@@ -33,8 +53,7 @@ func (c *AdminController) CreateSchedule(ctx *fiber.Ctx) (err error) {
 		})
 	}
 
-	// Get Schedule By ID
-	scheduleResponse, err := c.adminService.GetScheduleByID(schedule.ID)
+	schedules, err := c.adminService.GetPreloadSchedule()
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
@@ -42,12 +61,13 @@ func (c *AdminController) CreateSchedule(ctx *fiber.Ctx) (err error) {
 	}
 
 	response := dto.ScheduleResponse{
-		ID:        scheduleResponse.ID,
-		Class:     scheduleResponse.Class.Name,
-		Subject:   scheduleResponse.Subject.Name,
-		Teacher:   scheduleResponse.Teacher.Name,
-		DayOfWeek: scheduleResponse.DayOfWeek,
-		Duration:  scheduleResponse.Duration,
+		ID:        schedule.ID,
+		Class:     schedules.Class.Name,
+		Subject:   schedules.Subject.Name,
+		Teacher:   schedules.Teacher.Name,
+		DayOfWeek: schedule.DayOfWeek,
+		StartTime: schedule.StartTime,
+		EndTime:   schedule.EndTime,
 	}
 
 	return ctx.Status(http.StatusCreated).JSON(fiber.Map{

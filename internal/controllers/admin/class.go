@@ -134,3 +134,32 @@ func (c *AdminController) UpdateTeacherHomeroomStatus(ctx *fiber.Ctx) (err error
 		"message": "Homeroom status updated successfully",
 	})
 }
+
+func (c *AdminController) GetClassSchedule(ctx *fiber.Ctx) (err error) {
+	classID := ctx.Params("id")
+
+	schedules, err := c.adminService.GetClassSchedule(classID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	var response []dto.ScheduleResponse
+
+	for _, schedule := range schedules {
+		scheduleRes := dto.ScheduleResponse{
+			ID:        schedule.ID,
+			Subject:   schedule.Subject.Name,
+			Teacher:   schedule.Teacher.Name,
+			DayOfWeek: schedule.DayOfWeek,
+			StartTime: schedule.StartTime,
+			EndTime:   schedule.EndTime,
+		}
+		response = append(response, scheduleRes)
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"data": response,
+	})
+}

@@ -13,6 +13,8 @@ type ScheduleRepository interface {
 	FindByClassID(classID string) ([]entities.Schedule, error)
 	GetAll() ([]entities.Schedule, error)
 	GetScheduleByID(id string) (*entities.Schedule, error)
+	GetPreloadSchedule() (*entities.Schedule, error)
+	IsScheduleExists(classID, subjectID string) (bool, error)
 }
 
 type scheduleRepository struct {
@@ -54,7 +56,12 @@ func (r *scheduleRepository) FindByID(id string) (*entities.Schedule, error) {
 
 func (r *scheduleRepository) FindByClassID(classID string) ([]entities.Schedule, error) {
 	var schedules []entities.Schedule
-	if err := r.db.Where("class_id = ?", classID).Find(&schedules).Error; err != nil {
+	// Preload the class, subject, and teacher
+	if err := r.db.Preload("Class").
+		Preload("Subject").
+		Preload("Teacher").
+		Where("class_id = ?", classID).
+		Find(&schedules).Error; err != nil {
 		return nil, err
 	}
 	return schedules, nil
@@ -77,4 +84,20 @@ func (r *scheduleRepository) GetScheduleByID(id string) (*entities.Schedule, err
 	return &schedule, nil
 }
 
+func (r *scheduleRepository) GetPreloadSchedule() (*entities.Schedule, error) {
+	var schedules entities.Schedule
+	if err := r.db.Preload("Class").Preload("Subject").Preload("Teacher").Find(&schedules).Error; err != nil {
+		return nil, err
+	}
+	return &schedules, nil
+}
 
+func (r *scheduleRepository) IsScheduleExists(classID, subjectID string) (bool, error) {
+	var count int64
+	if err := r.db.Model(&entities.Schedule{}).
+		Where("class_id = ? AND subject_id = ?", classID, subjectID).
+		Count(&count).Error; err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}

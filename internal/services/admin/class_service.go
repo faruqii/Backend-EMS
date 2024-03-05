@@ -7,6 +7,7 @@ type AdminClassService interface {
 	AssignHomeroomTeacher(classID, teacherID string) error
 	FindClassByID(id string) (*entities.Class, error)
 	GetAllClass() ([]entities.Class, error)
+	GetClassSchedule(classID string) ([]entities.Schedule, error)
 }
 
 func (s *adminService) CreateClass(class *entities.Class) error {
@@ -59,4 +60,9 @@ func (s *adminService) FindClassByID(id string) (*entities.Class, error) {
 func (s *adminService) GetAllClass() ([]entities.Class, error) {
 	classes, err := s.classRepo.GetAll()
 	return classes, s.handleError(err, "Failed to fetch classes", 500)
+}
+
+func (s *adminService) GetClassSchedule(classID string) ([]entities.Schedule, error) {
+	schedules, err := s.scheduleRepo.FindByClassID(classID)
+	return schedules, s.handleError(err, "Failed to fetch class schedule", 500)
 }

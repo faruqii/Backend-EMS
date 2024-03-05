@@ -3,7 +3,7 @@ package routes
 import (
 	controllers "github.com/Magetan-Boyz/Backend/internal/controllers/admin"
 	"github.com/Magetan-Boyz/Backend/internal/middleware"
-	"github.com/Magetan-Boyz/Backend/internal/services/admin"
+	services "github.com/Magetan-Boyz/Backend/internal/services/admin"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -34,4 +34,10 @@ func AdminRoutes(router fiber.Router, adminSvc services.AdminService, mw *middle
 	classCtrlRoutes.Post("/create", adminCtrl.CreateClass)
 	classCtrlRoutes.Post("/:id/assign-homeroom-teacher", adminCtrl.AssignHomeroomTeacher)
 	classCtrlRoutes.Get("/all", adminCtrl.GetAllClass)
+	classCtrlRoutes.Get("/:id/schedule", adminCtrl.GetClassSchedule)
+
+	// Schedule routes with middleware chaining
+	scheduleCtrlRoutes := adminCtrlRoutes.Group("/schedule")
+	scheduleCtrlRoutes.Use(mw.Authenticate(), mw.Authorization("admin")) // Apply middleware here
+	scheduleCtrlRoutes.Post("/create", adminCtrl.CreateSchedule)
 }
