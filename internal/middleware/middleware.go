@@ -60,13 +60,21 @@ func (m *Middleware) Authenticate() fiber.Handler {
 	}
 }
 
-// Authorization middleware checks if the user has the required role
-func (m *Middleware) Authorization(targetRole string) fiber.Handler {
+// Authorization middleware checks if the user has any of the required roles
+func (m *Middleware) Authorization(targetRoles ...string) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		userRole, ok := c.Locals("role").(string)
-		if !ok || userRole != targetRole {
+		if !ok {
 			return fiber.NewError(fiber.StatusForbidden, "Forbidden")
 		}
-		return c.Next()
+
+		// Check if the user has any of the required roles
+		for _, role := range targetRoles {
+			if userRole == role {
+				return c.Next()
+			}
+		}
+
+		return fiber.NewError(fiber.StatusForbidden, "Forbidden")
 	}
 }
