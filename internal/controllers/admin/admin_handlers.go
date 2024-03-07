@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"github.com/Magetan-Boyz/Backend/internal/middleware"
-	"github.com/Magetan-Boyz/Backend/internal/services/admin"
+	services "github.com/Magetan-Boyz/Backend/internal/services/admin"
 )
 
 type AdminController struct {
@@ -16,4 +16,3 @@ func NewAdminController(adminService services.AdminService, middlewareManager mi
 		middlewareManager: middlewareManager,
 	}
 }
-

@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"strings"
+
 	"github.com/Magetan-Boyz/Backend/internal/domain/repositories"
 	"github.com/gofiber/fiber/v2"
 )
@@ -37,7 +39,14 @@ func (e MiddlewareError) Error() string {
 // Authenticate middleware checks if the user is authenticated and sets user data in context locals
 func (m *Middleware) Authenticate() fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		token := c.Get("Authorization")
+		authHeader := c.Get("Authorization")
+		if authHeader == "" {
+			return fiber.NewError(fiber.StatusUnauthorized, "Unauthorized")
+		}
+
+		// Extract bearer token from Authorization header
+		token := strings.TrimPrefix(authHeader, "Bearer ")
+
 		if token == "" {
 			return fiber.NewError(fiber.StatusUnauthorized, "Unauthorized")
 		}
@@ -56,6 +65,10 @@ func (m *Middleware) Authenticate() fiber.Handler {
 
 		c.Locals("user", user)
 		c.Locals("role", userRoleName) // Set user's role name in locals
+
+		// Set bearer token as a custom header
+		c.Set("auth", token)
+
 		return c.Next()
 	}
 }

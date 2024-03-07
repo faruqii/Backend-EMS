@@ -6,6 +6,7 @@ import (
 
 	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
+	"github.com/Magetan-Boyz/Backend/internal/helper"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -60,12 +61,15 @@ func (c *AdminController) CreateSchedule(ctx *fiber.Ctx) (err error) {
 		})
 	}
 
+	dayOfWeekToInt := helper.WeekdayToInt(schedule.DayOfWeek)
+	dayOfWeek := helper.ScheduleToDay(dayOfWeekToInt)
+
 	response := dto.ScheduleResponse{
 		ID:        schedule.ID,
 		Class:     schedules.Class.Name,
 		Subject:   schedules.Subject.Name,
 		Teacher:   schedules.Teacher.Name,
-		DayOfWeek: schedule.DayOfWeek,
+		DayOfWeek: dayOfWeek,
 		StartTime: schedule.StartTime,
 		EndTime:   schedule.EndTime,
 	}

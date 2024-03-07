@@ -1,6 +1,8 @@
 package repositories
 
 import (
+	"time"
+
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"gorm.io/gorm"
 )
@@ -15,6 +17,7 @@ type ScheduleRepository interface {
 	GetScheduleByID(id string) (*entities.Schedule, error)
 	GetPreloadSchedule() (*entities.Schedule, error)
 	IsScheduleExists(classID, subjectID string) (bool, error)
+	GetTeacherTodaySchedule(teacherID string, dayOfWeek time.Weekday) ([]entities.Schedule, error)
 }
 
 type scheduleRepository struct {
@@ -100,4 +103,15 @@ func (r *scheduleRepository) IsScheduleExists(classID, subjectID string) (bool, 
 		return false, err
 	}
 	return count > 0, nil
+}
+
+func (r *scheduleRepository) GetTeacherTodaySchedule(teacherID string, dayOfWeek time.Weekday) ([]entities.Schedule, error) {
+	var schedules []entities.Schedule
+	// Preload the class, subject, and teacher
+	if err := r.db.Preload("Class").Preload("Subject").Preload("Teacher").
+		Where("teacher_id = ? AND day_of_week = ?", teacherID, dayOfWeek).
+		Find(&schedules).Error; err != nil {
+		return nil, err
+	}
+	return schedules, nil
 }

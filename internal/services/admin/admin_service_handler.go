@@ -2,7 +2,6 @@ package services
 
 import (
 	"github.com/Magetan-Boyz/Backend/internal/domain/repositories"
-	"github.com/Magetan-Boyz/Backend/internal/services"
 )
 
 // AdminService is a contract for AdminService
@@ -43,15 +42,4 @@ func NewAdminService(
 		classRepo:    classRepo,
 		scheduleRepo: scheduleRepo,
 	}
-}
-
-// handleError is a function to handle error for adminService
-func (s *adminService) handleError(err error, message string, statusCode int) error {
-	if err != nil {
-		return &services.ErrorMessages{
-			Message:    message,
-			StatusCode: statusCode,
-		}
-	}
-	return nil
 }

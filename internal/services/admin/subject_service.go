@@ -1,6 +1,9 @@
 package services
 
-import "github.com/Magetan-Boyz/Backend/internal/domain/entities"
+import (
+	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
+	"github.com/Magetan-Boyz/Backend/internal/services"
+)
 
 type AdminSubjectService interface {
 	CreateSubject(subject *entities.Subject) error
@@ -10,15 +13,15 @@ type AdminSubjectService interface {
 
 func (s *adminService) CreateSubject(subject *entities.Subject) error {
 	err := s.subjectRepo.Create(subject)
-	return s.handleError(err, "Failed to create subject", 500)
+	return services.HandleError(err, "Failed to create subject", 500)
 }
 
 func (s *adminService) GetAllSubject() ([]entities.Subject, error) {
 	subjects, err := s.subjectRepo.GetAll()
-	return subjects, s.handleError(err, "Failed to fetch subjects", 500)
+	return subjects, services.HandleError(err, "Failed to fetch subjects", 500)
 }
 
 func (s *adminService) FindSubjectByID(id string) (*entities.Subject, error) {
 	subject, err := s.subjectRepo.FindByID(id)
-	return subject, s.handleError(err, "Failed to fetch subject", 500)
+	return subject, services.HandleError(err, "Failed to fetch subject", 500)
 }

@@ -12,11 +12,11 @@ type CreateScheduleRequest struct {
 }
 
 type ScheduleResponse struct {
-	ID        string       `json:"id"`
-	Class     string       `json:"class"`
-	Subject   string       `json:"subject"`
-	Teacher   string       `json:"teacher"`
-	DayOfWeek time.Weekday `json:"day_of_week"`
-	StartTime time.Time    `json:"start_time"`
-	EndTime   time.Time    `json:"end_time"`
+	ID        string    `json:"id"`
+	Class     string    `json:"class"`
+	Subject   string    `json:"subject"`
+	Teacher   string    `json:"teacher"`
+	DayOfWeek string    `json:"day_of_week"`
+	StartTime time.Time `json:"start_time"`
+	EndTime   time.Time `json:"end_time"`
 }

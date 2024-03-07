@@ -12,6 +12,7 @@ type TokenRepository interface {
 	FindUserByToken(token string) (string, error)
 	GetUserIDByToken(token string) (string, error)
 	FindRoleTypeBasedOnToken(token string) (string, error)
+	GetTeacherIDByUserID(userID string) (string, error)
 }
 
 type tokenRepository struct {
@@ -74,4 +75,13 @@ func (r *tokenRepository) FindRoleTypeBasedOnToken(token string) (string, error)
 		return "", err
 	}
 	return user.RoleType, nil
+}
+
+func (r *tokenRepository) GetTeacherIDByUserID(userID string) (string, error) {
+	var teacher entities.Teacher
+	err := r.db.Where("user_id = ?", userID).First(&teacher).Error
+	if err != nil {
+		return "", err
+	}
+	return teacher.ID, nil
 }
