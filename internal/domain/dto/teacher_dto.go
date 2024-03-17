@@ -1,7 +1,5 @@
 package dto
 
-import "time"
-
 type TeacherRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
@@ -21,9 +19,9 @@ type UpdateHomeroomStatusRequest struct {
 }
 
 type TeacherSchedule struct {
-	SubjectName string    `json:"subject_name"`
-	ClassName   string    `json:"class_name"`
-	Day         string    `json:"day"`
-	StartTime   time.Time `json:"start_time"`
-	EndTime     time.Time `json:"end_time"`
+	SubjectName string `json:"subject_name"`
+	ClassName   string `json:"class_name"`
+	Day         string `json:"day"`
+	StartTime   string `json:"start_time"`
+	EndTime     string `json:"end_time"`
 }

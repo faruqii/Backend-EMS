@@ -26,4 +26,3 @@ func ScheduleToDay(day int) string {
 		return "Invalid day"
 	}
 }
-
