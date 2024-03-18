@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
@@ -152,16 +151,14 @@ func (c *AdminController) GetClassSchedule(ctx *fiber.Ctx) (err error) {
 	for _, schedule := range schedules {
 		dayOfWeekToInt := helper.WeekdayToInt(schedule.DayOfWeek)
 		dayOfWeek := helper.ScheduleToDay(dayOfWeekToInt)
-		loc, _ := time.LoadLocation("Asia/Jakarta")
-		startTimeFormatted := schedule.StartTime.In(loc).Format("15:04")
-		endTimeFormatted := schedule.EndTime.In(loc).Format("15:04")
 		scheduleRes := dto.ScheduleResponse{
 			ID:        schedule.ID,
+			Class:     schedule.Class.Name,
 			Subject:   schedule.Subject.Name,
 			Teacher:   schedule.Teacher.Name,
 			DayOfWeek: dayOfWeek,
-			StartTime: startTimeFormatted,
-			EndTime:   endTimeFormatted,
+			StartTime: schedule.StartTime,
+			EndTime:   schedule.EndTime,
 		}
 		response = append(response, scheduleRes)
 	}
