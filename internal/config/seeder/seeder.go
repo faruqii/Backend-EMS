@@ -30,10 +30,12 @@ func (s *Seed) RoleSeeder() {
 		{Name: "parent"},
 	}
 
-	for _, role := range roles {
-		err := s.DB.Create(&role).Error
+	var lenghtTable int64
+	s.DB.Model(&entities.Role{}).Count(&lenghtTable)
+	if lenghtTable == 0 {
+		err := s.DB.Create(&roles).Error
 		if err != nil {
-			log.Fatalf("Failed to seed role: %v", err)
+			log.Fatalf("Failed to seed roles: %v", err)
 		}
 	}
 
