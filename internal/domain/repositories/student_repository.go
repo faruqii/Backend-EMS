@@ -9,13 +9,14 @@ import (
 // This is an interface that will be implemented by StudentRepository
 
 type StudentRepository interface {
-	Insert(student *entities.Student) (*entities.Student, error)
-	Update(student *entities.Student) (*entities.Student, error)
+	Insert(student *entities.Student) error
+	Update(student *entities.Student) error
 	Delete(student *entities.Student) error
 	FindById(id int) (*entities.Student, error)
 	FindByNISN(nisn string) (*entities.Student, error)
 	FindStudentByToken(token string) (string, error)
 	FindRoleByName(name string) (*entities.Role, error)
+	FindByUsername(username string) (*entities.User, error)
 }
 
 type studentRepository struct {
@@ -26,18 +27,18 @@ func NewStudentRepository(db *gorm.DB) *studentRepository {
 	return &studentRepository{db: db}
 }
 
-func (r *studentRepository) Insert(student *entities.Student) (*entities.Student, error) {
+func (r *studentRepository) Insert(student *entities.Student) error {
 	if err := r.db.Create(student).Error; err != nil {
-		return nil, err
+		return err
 	}
-	return student, nil
+	return nil
 }
 
-func (r *studentRepository) Update(student *entities.Student) (*entities.Student, error) {
+func (r *studentRepository) Update(student *entities.Student) error {
 	if err := r.db.Save(student).Error; err != nil {
-		return nil, err
+		return err
 	}
-	return student, nil
+	return nil
 }
 
 func (r *studentRepository) Delete(student *entities.Student) error {
@@ -77,6 +78,12 @@ func (r *studentRepository) FindRoleByName(name string) (*entities.Role, error) 
 		return nil, err
 	}
 	return role, nil
+}
+
+func (r *studentRepository) FindByUsername(username string) (*entities.User, error) {
+	var user entities.User
+	err := r.db.Where("username = ?", username).First(&user).Error
+	return &user, err
 }
 
 // Path: internal/domain/repositories/student_repository.go
