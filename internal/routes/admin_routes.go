@@ -40,4 +40,9 @@ func AdminRoutes(router fiber.Router, adminSvc services.AdminService, mw *middle
 	scheduleCtrlRoutes := adminCtrlRoutes.Group("/schedule")
 	scheduleCtrlRoutes.Use(mw.Authenticate(), mw.Authorization("admin")) // Apply middleware here
 	scheduleCtrlRoutes.Post("/create", adminCtrl.CreateSchedule)
+
+	// Student routes with middleware chaining
+	studentCtrlRoutes := adminCtrlRoutes.Group("/student")
+	studentCtrlRoutes.Use(mw.Authenticate(), mw.Authorization("admin")) // Apply middleware here
+	studentCtrlRoutes.Post("/create", adminCtrl.CreateStudent)
 }

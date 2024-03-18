@@ -12,6 +12,7 @@ type AdminService interface {
 	AdminTeacherService
 	AdminClassService
 	AdminScheduleService
+	AdminStudentService
 }
 
 // adminService is a struct for AdminService call repository layer so it can communicate with database
@@ -22,6 +23,7 @@ type adminService struct {
 	roleRepo     repositories.RoleRepository
 	classRepo    repositories.ClassRepository
 	scheduleRepo repositories.ScheduleRepository
+	studentRepo  repositories.StudentRepository
 }
 
 // NewAdminService is a constructor for adminService
@@ -33,6 +35,7 @@ func NewAdminService(
 	roleRepo repositories.RoleRepository,
 	classRepo repositories.ClassRepository,
 	scheduleRepo repositories.ScheduleRepository,
+	studentRepo repositories.StudentRepository,
 ) *adminService {
 	return &adminService{
 		subjectRepo:  subjectRepo,
@@ -41,5 +44,6 @@ func NewAdminService(
 		roleRepo:     roleRepo,
 		classRepo:    classRepo,
 		scheduleRepo: scheduleRepo,
+		studentRepo:  studentRepo,
 	}
 }
