@@ -3,9 +3,9 @@ package services
 import (
 	"time"
 
+	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"github.com/Magetan-Boyz/Backend/internal/domain/repositories"
-	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
 	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
 )

@@ -17,6 +17,8 @@ type StudentRepository interface {
 	FindStudentByToken(token string) (string, error)
 	FindRoleByName(name string) (*entities.Role, error)
 	FindByUsername(username string) (*entities.User, error)
+	InsertStudentToClass(studentID, classID string) error
+	GetAllStudents() ([]entities.Student, error)
 }
 
 type studentRepository struct {
@@ -84,6 +86,32 @@ func (r *studentRepository) FindByUsername(username string) (*entities.User, err
 	var user entities.User
 	err := r.db.Where("username = ?", username).First(&user).Error
 	return &user, err
+}
+
+func (r *studentRepository) InsertStudentToClass(studentID, classID string) error {
+	student := new(entities.Student)
+	if err := r.db.First(student, studentID).Error; err != nil {
+		return err
+	}
+
+	class := new(entities.Class)
+	if err := r.db.First(class, classID).Error; err != nil {
+		return err
+	}
+
+	if err := r.db.Model(class).Association("Students").Append(student); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *studentRepository) GetAllStudents() ([]entities.Student, error) {
+	var students []entities.Student
+	if err := r.db.Find(&students).Error; err != nil {
+		return nil, err
+	}
+	return students, nil
 }
 
 // Path: internal/domain/repositories/student_repository.go

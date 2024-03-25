@@ -45,4 +45,5 @@ func AdminRoutes(router fiber.Router, adminSvc services.AdminService, mw *middle
 	studentCtrlRoutes := adminCtrlRoutes.Group("/student")
 	studentCtrlRoutes.Use(mw.Authenticate(), mw.Authorization("admin")) // Apply middleware here
 	studentCtrlRoutes.Post("/create", adminCtrl.CreateStudent)
+	studentCtrlRoutes.Get("/all", adminCtrl.GetAllStudents)
 }

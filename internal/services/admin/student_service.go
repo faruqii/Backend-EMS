@@ -8,6 +8,7 @@ import (
 
 type AdminStudentService interface {
 	CreateStudent(student *entities.Student) error
+	GetAllStudents() ([]entities.Student, error)
 }
 
 func (s *adminService) CreateStudent(student *entities.Student) error {
@@ -30,4 +31,13 @@ func (s *adminService) CreateStudent(student *entities.Student) error {
 
 	err = s.roleRepo.AssignUserRole(student.User.ID, "student")
 	return services.HandleError(err, "Failed to assign role to student", 500)
+}
+
+func (s *adminService) GetAllStudents() ([]entities.Student, error) {
+	students, err := s.studentRepo.GetAllStudents()
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to get students", 500)
+	}
+
+	return students, nil
 }

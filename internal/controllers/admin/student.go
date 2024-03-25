@@ -52,3 +52,32 @@ func (c *AdminController) CreateStudent(ctx *fiber.Ctx) (err error) {
 		"data":    response,
 	})
 }
+
+func (c *AdminController) GetAllStudents(ctx *fiber.Ctx) (err error) {
+	students, err := c.adminService.GetAllStudents()
+
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	var response []dto.StudentResponse
+
+	for _, student := range students {
+		res := dto.StudentResponse{
+			ID:         student.ID,
+			Name:       student.Name,
+			NISN:       student.NISN,
+			Address:    student.Address,
+			Birthplace: student.Birthplace,
+			Birthdate:  student.Birthdate,
+		}
+
+		response = append(response, res)
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"data": response,
+	})
+}
