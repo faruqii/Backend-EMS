@@ -1,4 +1,4 @@
-package controllers
+package handlers
 
 import (
 	"net/http"
@@ -8,7 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func (c *AdminController) CreateTeacher(ctx *fiber.Ctx) (err error) {
+func (c *AdminHandler) CreateTeacher(ctx *fiber.Ctx) (err error) {
 
 	var req dto.TeacherRequest
 
@@ -48,7 +48,7 @@ func (c *AdminController) CreateTeacher(ctx *fiber.Ctx) (err error) {
 	})
 }
 
-func (c *AdminController) GetAllTeacher(ctx *fiber.Ctx) (err error) {
+func (c *AdminHandler) GetAllTeacher(ctx *fiber.Ctx) (err error) {
 
 	teachers, err := c.adminService.GetAllTeacher()
 
@@ -75,7 +75,7 @@ func (c *AdminController) GetAllTeacher(ctx *fiber.Ctx) (err error) {
 	})
 }
 
-func (c *AdminController) AssignTeacherToSubject(ctx *fiber.Ctx) (err error) {
+func (c *AdminHandler) AssignTeacherToSubject(ctx *fiber.Ctx) (err error) {
 	subjectID := ctx.Params("id")
 
 	var req dto.TeacherSubjectRequest
@@ -117,7 +117,7 @@ func (c *AdminController) AssignTeacherToSubject(ctx *fiber.Ctx) (err error) {
 	})
 }
 
-func (c *AdminController) GetTeachersBySubjectID(ctx *fiber.Ctx) (err error) {
+func (c *AdminHandler) GetTeachersBySubjectID(ctx *fiber.Ctx) (err error) {
 	subjectID := ctx.Params("id")
 
 	teachers, err := c.adminService.GetTeachersBySubjectID(subjectID)
@@ -133,7 +133,7 @@ func (c *AdminController) GetTeachersBySubjectID(ctx *fiber.Ctx) (err error) {
 	})
 }
 
-func (c *AdminController) GetTeacherSubjects(ctx *fiber.Ctx) (err error) {
+func (c *AdminHandler) GetTeacherSubjects(ctx *fiber.Ctx) (err error) {
 	teacherID := ctx.Params("id")
 
 	subjects, err := c.adminService.GetTeacherSubjects(teacherID)

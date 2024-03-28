@@ -1,4 +1,4 @@
-package controllers
+package handlers
 
 import (
 	"net/http"
@@ -7,7 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func (a *AuthController) LogIn(ctx *fiber.Ctx) (err error) {
+func (a *AuthHandler) LogIn(ctx *fiber.Ctx) (err error) {
 	var req dto.LoginRequest
 
 	if err = ctx.BodyParser(&req); err != nil {

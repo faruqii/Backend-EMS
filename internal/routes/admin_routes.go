@@ -1,49 +1,49 @@
 package routes
 
 import (
-	controllers "github.com/Magetan-Boyz/Backend/internal/controllers/admin"
+	handlers "github.com/Magetan-Boyz/Backend/internal/handlers/admin"
 	"github.com/Magetan-Boyz/Backend/internal/middleware"
 	services "github.com/Magetan-Boyz/Backend/internal/services/admin"
 	"github.com/gofiber/fiber/v2"
 )
 
 func AdminRoutes(router fiber.Router, adminSvc services.AdminService, mw *middleware.Middleware) {
-	adminCtrl := controllers.NewAdminController(adminSvc, *mw)
+	admin := handlers.NewAdminHandler(adminSvc, *mw)
 
-	adminCtrlRoutes := router.Group("/admin")
+	adminRoutes := router.Group("/admin")
 
 	// Subject routes with middleware chaining
-	subCtrlRoutes := adminCtrlRoutes.Group("/subjects")
-	subCtrlRoutes.Use(mw.Authenticate(), mw.Authorization("admin")) // Apply middleware here
-	subCtrlRoutes.Post("/create", adminCtrl.CreateSubject)
-	subCtrlRoutes.Get("/all", adminCtrl.GetAllSubject)
-	subCtrlRoutes.Post("/:id/assign-teacher", adminCtrl.AssignTeacherToSubject)
-	subCtrlRoutes.Get("/:id/teachers", adminCtrl.GetTeachersBySubjectID)
+	subRoutes := adminRoutes.Group("/subjects")
+	subRoutes.Use(mw.Authenticate(), mw.Authorization("admin")) // Apply middleware here
+	subRoutes.Post("/create", admin.CreateSubject)
+	subRoutes.Get("/all", admin.GetAllSubject)
+	subRoutes.Post("/:id/assign-teacher", admin.AssignTeacherToSubject)
+	subRoutes.Get("/:id/teachers", admin.GetTeachersBySubjectID)
 
 	// Teacher routes with middleware chaining
-	teacherCtrlRoutes := adminCtrlRoutes.Group("/teacher")
-	teacherCtrlRoutes.Use(mw.Authenticate(), mw.Authorization("admin")) // Apply middleware here
-	teacherCtrlRoutes.Post("/create", adminCtrl.CreateTeacher)
-	teacherCtrlRoutes.Get("/all", adminCtrl.GetAllTeacher)
-	teacherCtrlRoutes.Put("/:id/update-homeroom-status", adminCtrl.UpdateTeacherHomeroomStatus)
-	teacherCtrlRoutes.Get("/:id/subjects", adminCtrl.GetTeacherSubjects)
+	teacherRoutes := adminRoutes.Group("/teacher")
+	teacherRoutes.Use(mw.Authenticate(), mw.Authorization("admin")) // Apply middleware here
+	teacherRoutes.Post("/create", admin.CreateTeacher)
+	teacherRoutes.Get("/all", admin.GetAllTeacher)
+	teacherRoutes.Put("/:id/update-homeroom-status", admin.UpdateTeacherHomeroomStatus)
+	teacherRoutes.Get("/:id/subjects", admin.GetTeacherSubjects)
 
 	// Class routes with middleware chaining
-	classCtrlRoutes := adminCtrlRoutes.Group("/class")
-	classCtrlRoutes.Use(mw.Authenticate(), mw.Authorization("admin")) // Apply middleware here
-	classCtrlRoutes.Post("/create", adminCtrl.CreateClass)
-	classCtrlRoutes.Post("/:id/assign-homeroom-teacher", adminCtrl.AssignHomeroomTeacher)
-	classCtrlRoutes.Get("/all", adminCtrl.GetAllClass)
-	classCtrlRoutes.Get("/:id/schedule", adminCtrl.GetClassSchedule)
+	classRoutes := adminRoutes.Group("/class")
+	classRoutes.Use(mw.Authenticate(), mw.Authorization("admin")) // Apply middleware here
+	classRoutes.Post("/create", admin.CreateClass)
+	classRoutes.Post("/:id/assign-homeroom-teacher", admin.AssignHomeroomTeacher)
+	classRoutes.Get("/all", admin.GetAllClass)
+	classRoutes.Get("/:id/schedule", admin.GetClassSchedule)
 
 	// Schedule routes with middleware chaining
-	scheduleCtrlRoutes := adminCtrlRoutes.Group("/schedule")
-	scheduleCtrlRoutes.Use(mw.Authenticate(), mw.Authorization("admin")) // Apply middleware here
-	scheduleCtrlRoutes.Post("/create", adminCtrl.CreateSchedule)
+	scheduleRoutes := adminRoutes.Group("/schedule")
+	scheduleRoutes.Use(mw.Authenticate(), mw.Authorization("admin")) // Apply middleware here
+	scheduleRoutes.Post("/create", admin.CreateSchedule)
 
 	// Student routes with middleware chaining
-	studentCtrlRoutes := adminCtrlRoutes.Group("/student")
-	studentCtrlRoutes.Use(mw.Authenticate(), mw.Authorization("admin")) // Apply middleware here
-	studentCtrlRoutes.Post("/create", adminCtrl.CreateStudent)
-	studentCtrlRoutes.Get("/all", adminCtrl.GetAllStudents)
+	studentRoutes := adminRoutes.Group("/student")
+	studentRoutes.Use(mw.Authenticate(), mw.Authorization("admin")) // Apply middleware here
+	studentRoutes.Post("/create", admin.CreateStudent)
+	studentRoutes.Get("/all", admin.GetAllStudents)
 }

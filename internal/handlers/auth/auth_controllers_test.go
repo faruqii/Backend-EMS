@@ -1,4 +1,4 @@
-package controllers
+package handlers
 
 import (
 	"encoding/json"
@@ -74,7 +74,7 @@ func TestAuthController_LogIn(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctrl := gomock.NewController(t)
-			c := NewAuthController(tt.mockSvc(ctrl))
+			c := NewAuthHandler(tt.mockSvc(ctrl))
 			ctx := tt.args()
 
 			c.LogIn(ctx)

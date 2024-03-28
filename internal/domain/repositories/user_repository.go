@@ -11,6 +11,7 @@ type UserRepository interface {
 	Delete(id string) error
 	FindByUsername(username string) (*entities.User, error)
 	FindById(id string) (*entities.User, error)
+	ChangePassword(user *entities.User, newPassword string) error
 }
 
 type userRepository struct {
@@ -43,6 +44,11 @@ func (r *userRepository) FindById(id string) (*entities.User, error) {
 	var user entities.User
 	err := r.db.Where("id = ?", id).First(&user).Error
 	return &user, err
+}
+
+func (r *userRepository) ChangePassword(user *entities.User, newPassword string) error {
+	user.Password = newPassword
+	return r.db.Save(user).Error
 }
 
 // Path: internal/domain/repositories/student_repository.go

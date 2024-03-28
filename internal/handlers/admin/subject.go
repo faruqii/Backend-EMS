@@ -1,4 +1,4 @@
-package controllers
+package handlers
 
 import (
 	"net/http"
@@ -8,7 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func (c *AdminController) CreateSubject(ctx *fiber.Ctx) (err error) {
+func (c *AdminHandler) CreateSubject(ctx *fiber.Ctx) (err error) {
 
 	req := dto.SubjectRequest{}
 
@@ -45,7 +45,7 @@ func (c *AdminController) CreateSubject(ctx *fiber.Ctx) (err error) {
 	})
 }
 
-func (c *AdminController) GetAllSubject(ctx *fiber.Ctx) (err error) {
+func (c *AdminHandler) GetAllSubject(ctx *fiber.Ctx) (err error) {
 
 	subjects, err := c.adminService.GetAllSubject()
 

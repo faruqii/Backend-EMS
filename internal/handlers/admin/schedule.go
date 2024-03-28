@@ -1,4 +1,4 @@
-package controllers
+package handlers
 
 import (
 	"net/http"
@@ -9,7 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func (c *AdminController) CreateSchedule(ctx *fiber.Ctx) (err error) {
+func (c *AdminHandler) CreateSchedule(ctx *fiber.Ctx) (err error) {
 	var req dto.CreateScheduleRequest
 
 	if err = ctx.BodyParser(&req); err != nil {

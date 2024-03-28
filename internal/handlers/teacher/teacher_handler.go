@@ -1,17 +1,17 @@
-package controllers
+package handlers
 
 import (
 	"github.com/Magetan-Boyz/Backend/internal/middleware"
 	services "github.com/Magetan-Boyz/Backend/internal/services/teacher"
 )
 
-type TeacherController struct {
+type TeacherHandler struct {
 	teacherSvc        services.TeacherService
 	middlewareManager middleware.Middleware
 }
 
-func NewTeacherController(teacherSvc services.TeacherService, middlewareManager middleware.Middleware) *TeacherController {
-	return &TeacherController{
+func NewTeacherHandler(teacherSvc services.TeacherService, middlewareManager middleware.Middleware) *TeacherHandler {
+	return &TeacherHandler{
 		teacherSvc:        teacherSvc,
 		middlewareManager: middlewareManager,
 	}

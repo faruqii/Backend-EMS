@@ -17,8 +17,10 @@ type StudentRepository interface {
 	FindStudentByToken(token string) (string, error)
 	FindRoleByName(name string) (*entities.Role, error)
 	FindByUsername(username string) (*entities.User, error)
-	InsertStudentToClass(studentID, classID string) error
+	InsertStudentToClass(studentID, classID string) (*entities.Student, error)
 	GetAllStudents() ([]entities.Student, error)
+	IsStudentAlreadyInClass(studentID string) (bool, error)
+	GetAllStudentsByClassID(classID string) ([]entities.Student, error)
 }
 
 type studentRepository struct {
@@ -88,27 +90,44 @@ func (r *studentRepository) FindByUsername(username string) (*entities.User, err
 	return &user, err
 }
 
-func (r *studentRepository) InsertStudentToClass(studentID, classID string) error {
-	student := new(entities.Student)
-	if err := r.db.First(student, studentID).Error; err != nil {
-		return err
+func (r *studentRepository) InsertStudentToClass(studentID, classID string) (*entities.Student, error) {
+	// Fetch the student along with the associated class
+	var student entities.Student
+	if err := r.db.Preload("Class").Where("id = ?", studentID).First(&student).Error; err != nil {
+		return nil, err
 	}
 
-	class := new(entities.Class)
-	if err := r.db.First(class, classID).Error; err != nil {
-		return err
+	// Update the class ID
+	student.ClassID = &classID
+	if err := r.db.Save(&student).Error; err != nil {
+		return nil, err
 	}
 
-	if err := r.db.Model(class).Association("Students").Append(student); err != nil {
-		return err
-	}
-
-	return nil
+	return &student, nil
 }
 
 func (r *studentRepository) GetAllStudents() ([]entities.Student, error) {
 	var students []entities.Student
 	if err := r.db.Find(&students).Error; err != nil {
+		return nil, err
+	}
+	return students, nil
+}
+
+func (r *studentRepository) IsStudentAlreadyInClass(studentID string) (bool, error) {
+	var student entities.Student
+	if err := r.db.Where("id = ?", studentID).First(&student).Error; err != nil {
+		return false, err
+	}
+	if student.ClassID == nil {
+		return false, nil
+	}
+	return true, nil
+}
+
+func (r *studentRepository) GetAllStudentsByClassID(classID string) ([]entities.Student, error) {
+	var students []entities.Student
+	if err := r.db.Where("class_id = ?", classID).Find(&students).Error; err != nil {
 		return nil, err
 	}
 	return students, nil

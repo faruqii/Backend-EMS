@@ -1,4 +1,4 @@
-package controllers
+package handlers
 
 import (
 	"net/http"
@@ -8,7 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func (c *AdminController) CreateStudent(ctx *fiber.Ctx) (err error) {
+func (c *AdminHandler) CreateStudent(ctx *fiber.Ctx) (err error) {
 
 	var req dto.StudentRequest
 
@@ -53,7 +53,7 @@ func (c *AdminController) CreateStudent(ctx *fiber.Ctx) (err error) {
 	})
 }
 
-func (c *AdminController) GetAllStudents(ctx *fiber.Ctx) (err error) {
+func (c *AdminHandler) GetAllStudents(ctx *fiber.Ctx) (err error) {
 	students, err := c.adminService.GetAllStudents()
 
 	if err != nil {

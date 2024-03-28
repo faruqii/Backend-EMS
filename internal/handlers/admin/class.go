@@ -1,4 +1,4 @@
-package controllers
+package handlers
 
 import (
 	"net/http"
@@ -9,7 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func (c *AdminController) CreateClass(ctx *fiber.Ctx) (err error) {
+func (h *AdminHandler) CreateClass(ctx *fiber.Ctx) (err error) {
 
 	var req dto.CreateClassRequest
 
@@ -23,7 +23,7 @@ func (c *AdminController) CreateClass(ctx *fiber.Ctx) (err error) {
 		Name: req.Name,
 	}
 
-	err = c.adminService.CreateClass(&class)
+	err = h.adminService.CreateClass(&class)
 
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
@@ -43,10 +43,10 @@ func (c *AdminController) CreateClass(ctx *fiber.Ctx) (err error) {
 	})
 }
 
-func (c *AdminController) AssignHomeroomTeacher(ctx *fiber.Ctx) (err error) {
+func (h *AdminHandler) AssignHomeroomTeacher(ctx *fiber.Ctx) (err error) {
 	classID := ctx.Params("id")
 
-	class, err := c.adminService.FindClassByID(classID)
+	class, err := h.adminService.FindClassByID(classID)
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
@@ -61,14 +61,14 @@ func (c *AdminController) AssignHomeroomTeacher(ctx *fiber.Ctx) (err error) {
 		})
 	}
 
-	teacher, err := c.adminService.FindTeacherByID(req.TeacherID)
+	teacher, err := h.adminService.FindTeacherByID(req.TeacherID)
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
 		})
 	}
 
-	err = c.adminService.AssignHomeroomTeacher(classID, req.TeacherID)
+	err = h.adminService.AssignHomeroomTeacher(classID, req.TeacherID)
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
@@ -87,9 +87,9 @@ func (c *AdminController) AssignHomeroomTeacher(ctx *fiber.Ctx) (err error) {
 	})
 }
 
-func (c *AdminController) GetAllClass(ctx *fiber.Ctx) (err error) {
+func (h *AdminHandler) GetAllClass(ctx *fiber.Ctx) (err error) {
 
-	classes, err := c.adminService.GetAllClass()
+	classes, err := h.adminService.GetAllClass()
 
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
@@ -113,7 +113,7 @@ func (c *AdminController) GetAllClass(ctx *fiber.Ctx) (err error) {
 	})
 }
 
-func (c *AdminController) UpdateTeacherHomeroomStatus(ctx *fiber.Ctx) (err error) {
+func (h *AdminHandler) UpdateTeacherHomeroomStatus(ctx *fiber.Ctx) (err error) {
 	teacherID := ctx.Params("id")
 
 	req := dto.UpdateHomeroomStatusRequest{}
@@ -124,7 +124,7 @@ func (c *AdminController) UpdateTeacherHomeroomStatus(ctx *fiber.Ctx) (err error
 		})
 	}
 
-	err = c.adminService.UpdateTeacherHomeroomStatus(teacherID, req.Status)
+	err = h.adminService.UpdateTeacherHomeroomStatus(teacherID, req.Status)
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
@@ -136,10 +136,10 @@ func (c *AdminController) UpdateTeacherHomeroomStatus(ctx *fiber.Ctx) (err error
 	})
 }
 
-func (c *AdminController) GetClassSchedule(ctx *fiber.Ctx) (err error) {
+func (h *AdminHandler) GetClassSchedule(ctx *fiber.Ctx) (err error) {
 	classID := ctx.Params("id")
 
-	schedules, err := c.adminService.GetClassSchedule(classID)
+	schedules, err := h.adminService.GetClassSchedule(classID)
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),

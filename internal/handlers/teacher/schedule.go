@@ -1,4 +1,4 @@
-package controllers
+package handlers
 
 import (
 	"net/http"
@@ -9,7 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func (t *TeacherController) GetTodaySchedule(ctx *fiber.Ctx) error {
+func (t *TeacherHandler) GetTodaySchedule(ctx *fiber.Ctx) error {
 	token := ctx.Locals("user").(string)
 
 	teacher, err := t.teacherSvc.GetTeacherIDByUserID(token)

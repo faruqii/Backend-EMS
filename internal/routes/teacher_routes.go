@@ -1,18 +1,18 @@
 package routes
 
 import (
-	controllers "github.com/Magetan-Boyz/Backend/internal/controllers/teacher"
+	handlers "github.com/Magetan-Boyz/Backend/internal/handlers/teacher"
 	"github.com/Magetan-Boyz/Backend/internal/middleware"
 	services "github.com/Magetan-Boyz/Backend/internal/services/teacher"
 	"github.com/gofiber/fiber/v2"
 )
 
-func TeacherRoutes(router fiber.Router, teacherSvc services.TeacherService, mw *middleware.Middleware) {
-	teacherCtrl := controllers.NewTeacherController(teacherSvc, *mw)
+func TeacherRoutes(router fiber.Router, teacherService services.TeacherService, mw *middleware.Middleware) {
+	teacherController := handlers.NewTeacherHandler(teacherService, *mw)
 
-	teacherCtrlRoutes := router.Group("/teacher")
+	teacherControllerRoutes := router.Group("/teacher")
 
-	teacherScheduleCtrlRoutes := teacherCtrlRoutes.Group("/schedule")
-	teacherScheduleCtrlRoutes.Use(mw.Authenticate(), mw.Authorization("teacher"))
-	teacherScheduleCtrlRoutes.Get("/today", teacherCtrl.GetTodaySchedule)
+	teacherScheduleControllerRoutes := teacherControllerRoutes.Group("/schedule")
+	teacherScheduleControllerRoutes.Use(mw.Authenticate(), mw.Authorization("teacher"))
+	teacherScheduleControllerRoutes.Get("/today", teacherController.GetTodaySchedule)
 }

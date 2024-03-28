@@ -1,17 +1,17 @@
-package controllers
+package handlers
 
 import (
 	"github.com/Magetan-Boyz/Backend/internal/middleware"
 	services "github.com/Magetan-Boyz/Backend/internal/services/admin"
 )
 
-type AdminController struct {
+type AdminHandler struct {
 	adminService      services.AdminService
 	middlewareManager middleware.Middleware
 }
 
-func NewAdminController(adminService services.AdminService, middlewareManager middleware.Middleware) *AdminController {
-	return &AdminController{
+func NewAdminHandler(adminService services.AdminService, middlewareManager middleware.Middleware) *AdminHandler {
+	return &AdminHandler{
 		adminService:      adminService,
 		middlewareManager: middlewareManager,
 	}

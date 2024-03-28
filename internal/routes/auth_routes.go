@@ -1,15 +1,15 @@
 package routes
 
 import (
-	controllers "github.com/Magetan-Boyz/Backend/internal/controllers/auth"
+	handlers "github.com/Magetan-Boyz/Backend/internal/handlers/auth"
 	"github.com/Magetan-Boyz/Backend/internal/services"
 	"github.com/gofiber/fiber/v2"
 )
 
 func AuthRoutes(router fiber.Router, authService services.AuthService) {
-	authController := controllers.NewAuthController(authService)
+	authHandler := handlers.NewAuthHandler(authService)
 
-	authControllerRoutes := router.Group("/auth")
+	authRoutes := router.Group("/auth")
 
-	authControllerRoutes.Post("/login", authController.LogIn)
+	authRoutes.Post("/login", authHandler.LogIn)
 }

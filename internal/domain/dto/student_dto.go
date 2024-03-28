@@ -18,3 +18,12 @@ type StudentResponse struct {
 	Birthplace string `json:"birthplace"`
 	Birthdate  string `json:"birthdate"`
 }
+
+type InsertStudentToClass struct {
+	StudentID string `json:"student_id"`
+}
+
+type StudentClassResponse struct {
+	ClassName   string `json:"class_name"`
+	StudentName string `json:"student_name"`
+}
