@@ -81,3 +81,32 @@ func (c *AdminHandler) GetAllStudents(ctx *fiber.Ctx) (err error) {
 		"data": response,
 	})
 }
+
+func (c *AdminHandler) InsertStudentToClass(ctx *fiber.Ctx) (err error) {
+	classID := ctx.Params("id")
+
+	var req dto.InsertStudentToClass
+
+	if err = ctx.BodyParser(&req); err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	student, err := c.adminService.InsertStudentToClass(req.StudentID, classID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	response := dto.StudentClassResponse{
+		ClassName:   student.Class.Name,
+		StudentName: student.Name,
+	}
+
+	return ctx.Status(http.StatusCreated).JSON(fiber.Map{
+		"message": "Student inserted to class successfully",
+		"data":    response,
+	})
+}
