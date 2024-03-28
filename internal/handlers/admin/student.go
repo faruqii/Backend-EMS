@@ -101,7 +101,6 @@ func (c *AdminHandler) InsertStudentToClass(ctx *fiber.Ctx) (err error) {
 	}
 
 	response := dto.StudentClassResponse{
-		ClassName:   student.Class.Name,
 		StudentName: student.Name,
 	}
 

@@ -24,6 +24,5 @@ type InsertStudentToClass struct {
 }
 
 type StudentClassResponse struct {
-	ClassName   string `json:"class_name"`
 	StudentName string `json:"student_name"`
 }
