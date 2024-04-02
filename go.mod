@@ -12,7 +12,10 @@ require (
 	gorm.io/gorm v1.25.5
 )
 
-require go.uber.org/mock v0.4.0
+require (
+	github.com/lib/pq v1.10.9
+	go.uber.org/mock v0.4.0
+)
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
