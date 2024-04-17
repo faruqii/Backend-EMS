@@ -32,10 +32,6 @@ type MiddlewareError struct {
 	StatusCode int
 }
 
-func (e MiddlewareError) Error() string {
-	return e.Message
-}
-
 // Authenticate middleware checks if the user is authenticated and sets user data in context locals
 func (m *Middleware) Authenticate() fiber.Handler {
 	return func(c *fiber.Ctx) error {

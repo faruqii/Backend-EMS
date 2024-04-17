@@ -2,7 +2,6 @@ package seeder
 
 import (
 	"log"
-	"os"
 
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"golang.org/x/crypto/bcrypt"
@@ -15,10 +14,9 @@ type Seed struct {
 
 func (s *Seed) SeedAll() {
 	s.RoleSeeder()
-	s.SuperAdminSeeder()
-	s.AdminSeeder()
-	s.StudentSeeder()
 	s.UserSeeder()
+	s.StudentSeeder()
+
 }
 
 func (s *Seed) RoleSeeder() {
@@ -41,39 +39,35 @@ func (s *Seed) RoleSeeder() {
 
 }
 
-func (s *Seed) SuperAdminSeeder() {
-	var lenghtTable int64
-	s.DB.Model(&entities.SuperAdmin{}).Count(&lenghtTable)
-	if lenghtTable == 0 {
-		superAdmin := entities.SuperAdmin{
-			User: entities.User{
-				Username: "superadmin",
-				Password: os.Getenv("SUPER_ADMIN_PASSWORD"),
+func (s *Seed) UserSeeder() {
+	var lengthTable int64
+	s.DB.Model(&entities.User{}).Count(&lengthTable)
+	if lengthTable == 0 {
+		users := []entities.User{
+			{
+				Username: "user",
+				Password: "user",
 			},
-		}
-
-		err := s.DB.Create(&superAdmin).Error
-		if err != nil {
-			log.Fatalf("Failed to seed super admin: %v", err)
-		}
-	}
-
-}
-
-func (s *Seed) AdminSeeder() {
-	var lenghtTable int64
-	s.DB.Model(&entities.Admin{}).Count(&lenghtTable)
-	if lenghtTable == 0 {
-		admin := entities.Admin{
-			User: entities.User{
+			{
 				Username: "admin",
-				Password: os.Getenv("ADMIN_PASSWORD"),
+				Password: "admin",
 			},
+			// Add more users as needed
 		}
 
-		err := s.DB.Create(&admin).Error
-		if err != nil {
-			log.Fatalf("Failed to seed admin: %v", err)
+		for _, user := range users {
+			password, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.MinCost)
+			if err != nil {
+				log.Fatalf("Failed to generate password: %v", err)
+			}
+
+			user.Password = string(password)
+
+			err = s.DB.Create(&user).Error
+			if err != nil {
+				log.Fatalf("Failed to seed user: %v", err)
+			}
+
 		}
 	}
 }
@@ -107,24 +101,9 @@ func (s *Seed) StudentSeeder() {
 	}
 }
 
-func (s *Seed) UserSeeder() {
-	var lenghtTable int64
-	s.DB.Model(&entities.User{}).Count(&lenghtTable)
-	if lenghtTable == 0 {
-		user := entities.User{
-			Username: "user",
-		}
-
-		password, err := bcrypt.GenerateFromPassword([]byte("user"), bcrypt.MinCost)
-		if err != nil {
-			log.Fatalf("Failed to generate password: %v", err)
-		}
-
-		user.Password = string(password)
-
-		err = s.DB.Create(&user).Error
-		if err != nil {
-			log.Fatalf("Failed to seed user: %v", err)
-		}
-	}
-}
+// seed -> create data dummy
+// user_roles = id_role, id_user
+// id before create
+// select id from roles where name = 'superadmin' -> id_role
+// select id from users where username = 'superadmin' -> id_user
+// insert into user_roles (id_role, id_user) values (id_role, id_user)

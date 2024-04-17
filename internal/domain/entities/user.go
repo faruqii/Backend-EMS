@@ -23,10 +23,3 @@ type UserRole struct {
 	Role   Role
 }
 
-type SuperAdmin struct {
-	User
-}
-
-type Admin struct {
-	User
-}

@@ -46,3 +46,41 @@ func (t *TeacherHandler) GetTodaySchedule(ctx *fiber.Ctx) error {
 		"data": teacherSchedules,
 	})
 }
+
+func (t *TeacherHandler) GetAllTeacherSchedule(ctx *fiber.Ctx) error {
+	token := ctx.Locals("user").(string)
+
+	teacher, err := t.teacherSvc.GetTeacherIDByUserID(token)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	schedules, err := t.teacherSvc.GetAllTeacherSchedule(teacher)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	var teacherSchedules []dto.TeacherSchedule
+	for _, schedule := range schedules {
+		dayOfWeekToInt := helper.WeekdayToInt(schedule.DayOfWeek)
+		dayOfWeek := helper.ScheduleToDay(dayOfWeekToInt)
+
+		teacherSchedules = append(teacherSchedules, dto.TeacherSchedule{
+			SubjectName: schedule.Subject.Name,
+			ClassName:   schedule.Class.Name,
+			Day:         dayOfWeek,
+			StartTime:   schedule.StartTime,
+			EndTime:     schedule.EndTime,
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"data": teacherSchedules,
+	})
+}
+
+

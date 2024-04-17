@@ -25,7 +25,7 @@ type Grade struct {
 	PerformanceScores   pq.Float32Array `json:"performance_scores" gorm:"type:float[]"` // Performance scores
 	ProductScores       pq.Float32Array `json:"product_scores" gorm:"type:float[]"`     // Product scores
 	AtendanceScores     pq.Float32Array `json:"atendance_scores" gorm:"type:float[]"`   // Atendance scores
-	FinalGrade          float32         `json:"final_grade" gorm:"type:float[]"`        // Final grade
+	FinalGrade          float32         `json:"final_grade"`                            // Final grade
 }
 
 func (g *Grade) BeforeCreate(tx *gorm.DB) (err error) {

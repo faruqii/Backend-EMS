@@ -15,4 +15,5 @@ func TeacherRoutes(router fiber.Router, teacherService services.TeacherService, 
 	teacherScheduleControllerRoutes := teacherControllerRoutes.Group("/schedule")
 	teacherScheduleControllerRoutes.Use(mw.Authenticate(), mw.Authorization("teacher"))
 	teacherScheduleControllerRoutes.Get("/today", teacherController.GetTodaySchedule)
+	teacherScheduleControllerRoutes.Get("/all", teacherController.GetAllTeacherSchedule)
 }
