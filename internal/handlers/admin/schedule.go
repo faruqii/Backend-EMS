@@ -18,6 +18,20 @@ func (c *AdminHandler) CreateSchedule(ctx *fiber.Ctx) (err error) {
 		})
 	}
 
+	// check if teacher is assigned to subject
+	isAssigned, err := c.adminService.IsTeacherAssignedToSubject(req.TeacherID, req.SubjectID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	if !isAssigned {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Teacher is not assigned to the subject",
+		})
+	}
+
 	// check if schedule already exists in the class and subject combination
 	exists, err := c.adminService.IsScheduleExists(req.ClassID, req.SubjectID)
 	if err != nil {
