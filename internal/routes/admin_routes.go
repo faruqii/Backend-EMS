@@ -36,6 +36,7 @@ func AdminRoutes(router fiber.Router, adminSvc services.AdminService, mw *middle
 	classRoutes.Get("/all", admin.GetAllClass)
 	classRoutes.Get("/:id/schedule", admin.GetClassSchedule)
 	classRoutes.Post("/:id/students", admin.InsertStudentToClass)
+	classRoutes.Get("/:id/students", admin.GetAllStudentsBelongToClass)
 
 	// Schedule routes with middleware chaining
 	scheduleRoutes := adminRoutes.Group("/schedule")

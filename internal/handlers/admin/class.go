@@ -139,6 +139,19 @@ func (h *AdminHandler) UpdateTeacherHomeroomStatus(ctx *fiber.Ctx) (err error) {
 func (h *AdminHandler) GetClassSchedule(ctx *fiber.Ctx) (err error) {
 	classID := ctx.Params("id")
 
+	classExist, err := h.adminService.ClassExists(classID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	if !classExist {
+		return ctx.Status(http.StatusNotFound).JSON(fiber.Map{
+			"error": "Class not found",
+		})
+	}
+
 	schedules, err := h.adminService.GetClassSchedule(classID)
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
@@ -161,6 +174,30 @@ func (h *AdminHandler) GetClassSchedule(ctx *fiber.Ctx) (err error) {
 			EndTime:   schedule.EndTime,
 		}
 		response = append(response, scheduleRes)
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"data": response,
+	})
+}
+
+func (h *AdminHandler) GetAllStudentsBelongToClass(ctx *fiber.Ctx) (err error) {
+	classID := ctx.Params("id")
+
+	students, err := h.adminService.GetAllStudentsBelongToClass(classID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	var response []dto.StudentClassResponse
+
+	for _, student := range students {
+		studentRes := dto.StudentClassResponse{
+			Name: student.Name,
+		}
+		response = append(response, studentRes)
 	}
 
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{

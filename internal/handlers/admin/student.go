@@ -101,7 +101,7 @@ func (c *AdminHandler) InsertStudentToClass(ctx *fiber.Ctx) (err error) {
 	}
 
 	response := dto.StudentClassResponse{
-		StudentName: student.Name,
+		Name: student.Name,
 	}
 
 	return ctx.Status(http.StatusCreated).JSON(fiber.Map{

@@ -11,6 +11,8 @@ type AdminClassService interface {
 	FindClassByID(id string) (*entities.Class, error)
 	GetAllClass() ([]entities.Class, error)
 	GetClassSchedule(classID string) ([]entities.Schedule, error)
+	GetAllStudentsBelongToClass(studentID string) ([]entities.Student, error)
+	ClassExists(classID string) (bool, error)
 }
 
 func (s *adminService) CreateClass(class *entities.Class) error {
@@ -68,4 +70,14 @@ func (s *adminService) GetAllClass() ([]entities.Class, error) {
 func (s *adminService) GetClassSchedule(classID string) ([]entities.Schedule, error) {
 	schedules, err := s.scheduleRepo.FindByClassID(classID)
 	return schedules, services.HandleError(err, "Failed to fetch class schedule", 500)
+}
+
+func (s *adminService) GetAllStudentsBelongToClass(classID string) ([]entities.Student, error) {
+	students, err := s.classRepo.GetAllStudents(classID)
+	return students, services.HandleError(err, "Failed to fetch students", 500)
+}
+
+func (s *adminService) ClassExists(classID string) (bool, error) {
+	exists, err := s.classRepo.ClassExists(classID)
+	return exists, services.HandleError(err, "Failed to check class existence", 500)
 }

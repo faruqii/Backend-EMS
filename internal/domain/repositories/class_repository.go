@@ -13,6 +13,8 @@ type ClassRepository interface {
 	FindByTeacherID(teacherID string) ([]entities.Class, error)
 	GetAll() ([]entities.Class, error)
 	FindByName(name string) (*entities.Class, error)
+	GetAllStudents(classID string) ([]entities.Student, error)
+	ClassExists(classID string) (bool, error)
 }
 
 type classRepository struct {
@@ -75,4 +77,21 @@ func (r *classRepository) FindByName(name string) (*entities.Class, error) {
 		return nil, err
 	}
 	return &class, nil
+}
+
+func (r *classRepository) GetAllStudents(classID string) ([]entities.Student, error) {
+	var students []entities.Student
+	if err := r.db.Where("class_id = ?", classID).Find(&students).Error; err != nil {
+		return nil, err
+	}
+	return students, nil
+}
+
+func (r *classRepository) ClassExists(classID string) (bool, error) {
+	var count int64
+	if err := r.db.Model(&entities.Class{}).Where("id = ?", classID).Count(&count).Error; err != nil {
+		return false, err
+	}
+	return count > 0, nil
+
 }
