@@ -46,7 +46,7 @@ func Start() {
 
 	//Routes
 	api := app.Group("/api")
-	routes.AuthRoutes(api, authService)
+	routes.AuthRoutes(api, authService, middleware)
 	routes.AdminRoutes(api, adminService, middleware)
 	routes.TeacherRoutes(api, teacherService, middleware)
 

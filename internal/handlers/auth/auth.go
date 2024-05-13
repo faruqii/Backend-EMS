@@ -42,3 +42,29 @@ func (a *AuthHandler) LogIn(ctx *fiber.Ctx) (err error) {
 	})
 
 }
+
+// ChangePassword handler
+func (a *AuthHandler) ChangePassword(ctx *fiber.Ctx) (err error) {
+	var req dto.ChangePasswordRequest
+
+	if err = ctx.BodyParser(&req); err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	// Retrieve user from context locals and deserialize it
+	userID := ctx.Locals("user").(string)
+
+	err = a.authService.ChangePassword(userID, req.OldPassword, req.NewPassword)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Password changed successfully",
+	})
+
+}

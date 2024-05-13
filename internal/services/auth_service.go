@@ -15,6 +15,8 @@ type AuthService interface {
 	LogIn(username, password string) (*entities.User, error)
 	CreateUserToken(user *entities.User, role string) (string, error)
 	GetUserByToken(token string) (*entities.User, error)
+	ChangePassword(userID string, oldPassword, newPassword string) error
+	FindUserByToken(token string) (string, error)
 }
 
 type authService struct {
@@ -101,4 +103,29 @@ func (s *authService) GetUserByToken(token string) (*entities.User, error) {
 	}
 
 	return user, nil
+}
+
+func (s *authService) ChangePassword(userID string, oldPassword, newPassword string) error {
+	if !s.userRepository.IsPasswordMatch(userID, oldPassword) {
+		return &ErrorMessages{
+			Message:    "Wrong password",
+			StatusCode: 401,
+		}
+	}
+
+	err := s.userRepository.ChangePassword(userID, newPassword)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *authService) FindUserByToken(token string) (string, error) {
+	userName, err := s.tokenRepository.FindUserByToken(token)
+	if err != nil {
+		return "", err
+	}
+
+	return userName, nil
 }
