@@ -7,7 +7,6 @@ import (
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"github.com/Magetan-Boyz/Backend/internal/domain/repositories"
 	"github.com/golang-jwt/jwt/v4"
-	"golang.org/x/crypto/bcrypt"
 )
 
 //go:generate mockgen -source=auth_service.go -destination=mock_auth_service.go -package=mock
@@ -36,7 +35,6 @@ func NewAuthService(userRepository repositories.UserRepository,
 
 func (s *authService) LogIn(username, password string) (*entities.User, error) {
 	user, err := s.userRepository.FindByUsername(username)
-
 	if err != nil {
 		return nil, &ErrorMessages{
 			Message:    "User not found",
@@ -44,8 +42,7 @@ func (s *authService) LogIn(username, password string) (*entities.User, error) {
 		}
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
-
+	err = s.userRepository.ComparePassword(user.Password, password)
 	if err != nil {
 		return nil, &ErrorMessages{
 			Message:    "Wrong password",

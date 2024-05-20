@@ -10,6 +10,7 @@ type Agenda struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	Location    string `json:"location"`
+	Date        string `json:"date"`
 	StartAt     string `json:"start_at"`
 	EndAt       string `json:"end_at"`
 }

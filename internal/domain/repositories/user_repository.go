@@ -14,6 +14,7 @@ type UserRepository interface {
 	FindById(id string) (*entities.User, error)
 	ChangePassword(userID string, newPassword string) error
 	IsPasswordMatch(userID string, password string) bool
+	ComparePassword(hashedPwd, password string) error
 }
 
 type userRepository struct {
@@ -61,6 +62,10 @@ func (r *userRepository) IsPasswordMatch(userID string, password string) bool {
 	r.db.Where("id = ?", userID).First(&user)
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	return err == nil
+}
+
+func (r *userRepository) ComparePassword(hashedPwd, password string) error {
+	return bcrypt.CompareHashAndPassword([]byte(hashedPwd), []byte(password))
 }
 
 // Path: internal/domain/repositories/student_repository.go
