@@ -14,6 +14,8 @@ type teacherService struct {
 	scheduleRepo repositories.ScheduleRepository
 	tokenRepo    repositories.TokenRepository
 	taskRepo     repositories.TaskRepository
+	classRepo    repositories.ClassRepository
+	subjectRepo  repositories.SubjectRepository
 }
 
 func NewTeacherService(
@@ -21,11 +23,15 @@ func NewTeacherService(
 	scheduleRepo repositories.ScheduleRepository,
 	tokenRepo repositories.TokenRepository,
 	taskRepo repositories.TaskRepository,
+	classRepo repositories.ClassRepository,
+	subjectRepo repositories.SubjectRepository,
 ) *teacherService {
 	return &teacherService{
 		teacherRepo:  teacherRepo,
 		scheduleRepo: scheduleRepo,
 		tokenRepo:    tokenRepo,
 		taskRepo:     taskRepo,
+		classRepo:    classRepo,
+		subjectRepo:  subjectRepo,
 	}
 }

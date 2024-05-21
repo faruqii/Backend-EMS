@@ -15,6 +15,7 @@ type ClassRepository interface {
 	FindByName(name string) (*entities.Class, error)
 	GetAllStudents(classID string) ([]entities.Student, error)
 	ClassExists(classID string) (bool, error)
+	IsTeacherTeachTheClass(classID string) (bool, error)
 }
 
 type classRepository struct {
@@ -94,4 +95,12 @@ func (r *classRepository) ClassExists(classID string) (bool, error) {
 	}
 	return count > 0, nil
 
+}
+
+func (r *classRepository) IsTeacherTeachTheClass(classID string) (bool, error) {
+	var count int64
+    if err := r.db.Model(&entities.Class{}).Where("id =?", classID).Count(&count).Error; err!= nil {
+        return false, err
+    }
+    return count > 0, nil
 }
