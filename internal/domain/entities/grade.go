@@ -15,6 +15,7 @@ type Grade struct {
 	TeacherID           string          `json:"teacher_id"`
 	Teacher             Teacher         `json:"teacher" gorm:"foreignKey:TeacherID"`
 	Semester            int             `json:"semester"`
+	AcademicYear        string          `json:"academic_year"`
 	FormativeScores     pq.Float32Array `json:"formative_scores" gorm:"type:float[]"`   // Formative scores
 	SummativeScores     pq.Float32Array `json:"summative_scores" gorm:"type:float[]"`   // Summative scores
 	ProjectScores       pq.Float32Array `json:"project_scores" gorm:"type:float[]"`     // Project scores

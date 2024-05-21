@@ -7,6 +7,7 @@ import (
 // AdminService is a contract for AdminService
 // Use case: Admin can manage subjects, teachers, classes, and schedules
 // Below is dependency injection for AdminService such as Subject, Teacher, Class, and Schedule Services
+//go:generate mockgen -source=admin_service.go -destination=mock_admin_service.go -package=mock
 type AdminService interface {
 	AdminSubjectService
 	AdminTeacherService

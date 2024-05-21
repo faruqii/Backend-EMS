@@ -24,3 +24,5 @@ func (s *Schedule) BeforeCreate(tx *gorm.DB) (err error) {
 	s.ID = uuid.NewString()
 	return nil
 }
+
+
