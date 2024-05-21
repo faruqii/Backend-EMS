@@ -116,7 +116,7 @@ func (h *AdminHandler) GetAllClass(ctx *fiber.Ctx) (err error) {
 func (h *AdminHandler) UpdateTeacherHomeroomStatus(ctx *fiber.Ctx) (err error) {
 	teacherID := ctx.Params("id")
 
-	req := dto.UpdateHomeroomStatusRequest{}
+	req := dto.UpdateTeacherStatusRequest{}
 
 	if err = ctx.BodyParser(&req); err != nil {
 		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{

@@ -15,6 +15,7 @@ type AdminTeacherService interface {
 	GetTeachersBySubjectID(subjectID string) ([]dto.TeacherSubjectResponse, error)
 	GetTeacherSubjects(teacherID string) ([]dto.TeacherSubjectsResponse, error)
 	UpdateTeacherHomeroomStatus(teacherID string, isHomeroom bool) error
+	UpdateTeacherIsCouncelorStatus(teacherID string, isCouncelor bool) error
 }
 
 func (s *adminService) CreateTeacher(teacher *entities.Teacher) error {
@@ -120,6 +121,21 @@ func (s *adminService) UpdateTeacherHomeroomStatus(teacherID string, isHomeroom 
 	}
 
 	teacher.IsHomeroom = isHomeroom
+	err = s.teacherRepo.Update(teacher)
+	return services.HandleError(err, "Failed to update teacher", 500)
+}
+
+func (s *adminService) UpdateTeacherIsCouncelorStatus(teacherID string, isCouncelor bool) error {
+	teacher, err := s.teacherRepo.FindByID(teacherID)
+	if err != nil {
+		return services.HandleError(err, "Teacher not found", 400)
+	}
+
+	if teacher.IsCouncelor == isCouncelor {
+		return services.HandleError(err, "Councelor status already updated", 400)
+	}
+
+	teacher.IsCouncelor = isCouncelor
 	err = s.teacherRepo.Update(teacher)
 	return services.HandleError(err, "Failed to update teacher", 500)
 }

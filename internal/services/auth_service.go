@@ -16,6 +16,7 @@ type AuthService interface {
 	GetUserByToken(token string) (*entities.User, error)
 	ChangePassword(userID string, oldPassword, newPassword string) error
 	FindUserByToken(token string) (string, error)
+	LogOut(userID string) error
 }
 
 type authService struct {
@@ -125,4 +126,13 @@ func (s *authService) FindUserByToken(token string) (string, error) {
 	}
 
 	return userName, nil
+}
+
+func (s *authService) LogOut(userID string) error {
+	err := s.tokenRepository.DeleteToken(userID)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

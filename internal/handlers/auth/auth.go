@@ -68,3 +68,19 @@ func (a *AuthHandler) ChangePassword(ctx *fiber.Ctx) (err error) {
 	})
 
 }
+
+func (a *AuthHandler) LogOut(ctx *fiber.Ctx) (err error) {
+	// Retrieve user from context locals and deserialize it
+	userID := ctx.Locals("user").(string)
+
+	err = a.authService.LogOut(userID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Logged out successfully",
+	})
+}

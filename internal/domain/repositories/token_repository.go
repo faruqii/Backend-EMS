@@ -13,6 +13,7 @@ type TokenRepository interface {
 	GetUserIDByToken(token string) (string, error)
 	FindRoleTypeBasedOnToken(token string) (string, error)
 	GetTeacherIDByUserID(userID string) (string, error)
+	DeleteToken(userID string) error
 }
 
 type tokenRepository struct {
@@ -84,4 +85,8 @@ func (r *tokenRepository) GetTeacherIDByUserID(userID string) (string, error) {
 		return "", err
 	}
 	return teacher.ID, nil
+}
+
+func (r *tokenRepository) DeleteToken(userID string) error {
+	return r.db.Delete(&entities.Token{}, "user_id = ?", userID).Error
 }
