@@ -13,6 +13,7 @@ type TokenRepository interface {
 	GetUserIDByToken(token string) (string, error)
 	FindRoleTypeBasedOnToken(token string) (string, error)
 	GetTeacherIDByUserID(userID string) (string, error)
+	GetStudentIDByUserID(userID string) (string, error)
 	DeleteToken(userID string) error
 }
 
@@ -85,6 +86,15 @@ func (r *tokenRepository) GetTeacherIDByUserID(userID string) (string, error) {
 		return "", err
 	}
 	return teacher.ID, nil
+}
+
+func (r *tokenRepository) GetStudentIDByUserID(userID string) (string, error) {
+	var student entities.Student
+	err := r.db.Where("user_id =?", userID).First(&student).Error
+	if err != nil {
+		return "", err
+	}
+	return student.ID, nil
 }
 
 func (r *tokenRepository) DeleteToken(userID string) error {

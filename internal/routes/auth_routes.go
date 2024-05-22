@@ -17,4 +17,5 @@ func AuthRoutes(router fiber.Router, authService services.AuthService, mw *middl
 	profileRoutes := authRoutes.Group("/profile")
 	profileRoutes.Use(mw.Authenticate(), mw.Authorization("user", "admin", "teacher", "student", "parent"))
 	profileRoutes.Post(("change-password"), authHandler.ChangePassword)
+	profileRoutes.Post(("/logout"), authHandler.LogOut)
 }

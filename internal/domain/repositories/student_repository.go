@@ -21,6 +21,7 @@ type StudentRepository interface {
 	GetAllStudents() ([]entities.Student, error)
 	IsStudentAlreadyInClass(studentID string) (bool, error)
 	GetAllStudentsByClassID(classID string) ([]entities.Student, error)
+	FindStudentClassIDByStudentID(studentID string) (string, error)
 }
 
 type studentRepository struct {
@@ -131,6 +132,14 @@ func (r *studentRepository) GetAllStudentsByClassID(classID string) ([]entities.
 		return nil, err
 	}
 	return students, nil
+}
+
+func (r *studentRepository) FindStudentClassIDByStudentID(studentID string) (string, error) {
+	var classID string
+	if err := r.db.Raw("SELECT class_id FROM students WHERE id =?", studentID).Scan(&classID).Error; err != nil {
+		return "", err
+	}
+	return classID, nil
 }
 
 // Path: internal/domain/repositories/student_repository.go
