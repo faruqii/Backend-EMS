@@ -16,4 +16,7 @@ func StudentRoutes(router fiber.Router, studentSvc services.StudentService, mw *
 	studentTaskRoutes := studentRoutes.Group("/task")
 	studentTaskRoutes.Get("", student.GetTask)
 
+	studentScheduleRoutes := studentRoutes.Group("/schedule")
+	studentScheduleRoutes.Get("", student.GetSchedule)
+
 }

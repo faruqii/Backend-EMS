@@ -9,10 +9,10 @@ import (
 
 type StudentAssignment struct {
 	ID         string    `json:"id" gorm:"primaryKey, type:uuid, default:uuid_generate_v4()"`
-	StudentID  string    `json:"student_id"`
-	Student    Student   `json:"student" gorm:"foreignKey:StudentID"`
 	TaskID     string    `json:"task_id"`
 	Task       Task      `json:"task" gorm:"foreignKey:TaskID"`
+	StudentID  string    `json:"student_id"`
+	Student    Student   `json:"student" gorm:"foreignKey:StudentID"`
 	Submission string    `json:"submission"`
 	Grade      float64   `json:"grade"`
 	Feedback   string    `json:"feedback"`
