@@ -73,3 +73,38 @@ func (t *TeacherHandler) CreateTask(ctx *fiber.Ctx) (err error) {
 		"data":    response,
 	})
 }
+
+func (t *TeacherHandler) GetAllTask(ctx *fiber.Ctx) (err error) {
+	userID := ctx.Locals("user").(string)
+
+	task, err := t.teacherSvc.GetAllTasks(userID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	var tasks []dto.TaskResponse
+	for _, task := range task {
+		taskRes := dto.TaskResponse{
+			ID:          task.ID,
+			ClassName:   task.Class.Name,
+			SubjectName: task.Subject.Name,
+			TeacherName: task.Teacher.Name,
+			Title:       task.Title,
+			TypeOfTask:  task.TypeOfTask,
+			Description: task.Description,
+			Deadline:    task.Deadline,
+			Link:        task.Link,
+			CreatedAt:   task.CreatedAt,
+			UpdatedAt:   task.UpdatedAt,
+		}
+		tasks = append(tasks, taskRes)
+
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Tasks fetched successfully",
+		"data":    tasks,
+	})
+}

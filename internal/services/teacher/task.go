@@ -10,6 +10,7 @@ import (
 type TeacherTaskService interface {
 	CreateTask(task *entities.Task) error
 	GetTask(id string) (*entities.Task, error)
+	GetAllTasks(userID string) ([]entities.Task, error)
 }
 
 func (s *teacherService) CreateTask(task *entities.Task) error {
@@ -43,4 +44,18 @@ func (s *teacherService) CreateTask(task *entities.Task) error {
 func (s *teacherService) GetTask(id string) (*entities.Task, error) {
 	task, err := s.taskRepo.GetTask(id)
 	return task, services.HandleError(err, "Failed to fetch task", 500)
+}
+
+func (s *teacherService) GetAllTasks(userID string) ([]entities.Task, error) {
+	teacherID, err := s.tokenRepo.GetTeacherIDByUserID(userID)
+    if err!= nil {
+        return nil, services.HandleError(err, "Failed to fetch teacher", 500)
+    }
+
+    tasks, err := s.taskRepo.GetTaskByTeacherID(teacherID)
+    if err!= nil {
+        return nil, services.HandleError(err, "Failed to fetch tasks", 500)
+    }
+
+	return tasks, nil
 }

@@ -37,12 +37,13 @@ func Start() {
 	scheduleRepo := repositories.NewScheduleRepository(db)
 	studentRepo := repositories.NewStudentRepository(db)
 	taskRepo := repositories.NewTaskRepository(db)
+	assisgnmentRepo := repositories.NewAssignmentRepository(db)
 
 	// Services
 	authService := services.NewAuthService(userRepo, tokenRepo, roleRepo)
 	adminService := adminSvc.NewAdminService(subjectRepo, teacherRepo, userRepo, roleRepo, classRepo, scheduleRepo, studentRepo)
 	teacherService := teacherSvc.NewTeacherService(teacherRepo, scheduleRepo, tokenRepo, taskRepo, classRepo, subjectRepo)
-	studentService := studentSvc.NewStudentService(scheduleRepo, taskRepo, studentRepo, tokenRepo)
+	studentService := studentSvc.NewStudentService(scheduleRepo, taskRepo, studentRepo, tokenRepo, assisgnmentRepo)
 
 	// Middleware
 	middleware := middleware.NewMiddleware(tokenRepo, roleRepo)
