@@ -7,6 +7,7 @@ import (
 type TeacherService interface {
 	TeacherScheduleService
 	TeacherTaskService
+	QuizService
 }
 
 type teacherService struct {
@@ -16,6 +17,7 @@ type teacherService struct {
 	taskRepo     repositories.TaskRepository
 	classRepo    repositories.ClassRepository
 	subjectRepo  repositories.SubjectRepository
+	quizRepo     repositories.QuizRepository
 }
 
 func NewTeacherService(
@@ -25,6 +27,7 @@ func NewTeacherService(
 	taskRepo repositories.TaskRepository,
 	classRepo repositories.ClassRepository,
 	subjectRepo repositories.SubjectRepository,
+	quizRepo repositories.QuizRepository,
 ) *teacherService {
 	return &teacherService{
 		teacherRepo:  teacherRepo,
@@ -33,5 +36,6 @@ func NewTeacherService(
 		taskRepo:     taskRepo,
 		classRepo:    classRepo,
 		subjectRepo:  subjectRepo,
+		quizRepo:     quizRepo,
 	}
 }

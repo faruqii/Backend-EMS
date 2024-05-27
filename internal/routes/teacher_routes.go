@@ -11,14 +11,17 @@ func TeacherRoutes(router fiber.Router, teacherService services.TeacherService, 
 	teacherController := handlers.NewTeacherHandler(teacherService, *mw)
 
 	teacherControllerRoutes := router.Group("/teacher")
+	teacherControllerRoutes.Use(mw.Authenticate(), mw.Authorization("teacher"))
 
 	teacherScheduleControllerRoutes := teacherControllerRoutes.Group("/schedule")
-	teacherScheduleControllerRoutes.Use(mw.Authenticate(), mw.Authorization("teacher"))
 	teacherScheduleControllerRoutes.Get("/today", teacherController.GetTodaySchedule)
 	teacherScheduleControllerRoutes.Get("/all", teacherController.GetAllTeacherSchedule)
 
 	teacherTaskControllerRoutes := teacherControllerRoutes.Group("/task")
-	teacherTaskControllerRoutes.Use(mw.Authenticate(), mw.Authorization("teacher"))
 	teacherTaskControllerRoutes.Post("/create", teacherController.CreateTask)
 	teacherTaskControllerRoutes.Get("/all", teacherController.GetAllTask)
+
+	teacherQuizControllerRoutes := teacherControllerRoutes.Group("/quiz")
+	teacherQuizControllerRoutes.Post("/create", teacherController.CreateQuiz)
+
 }
