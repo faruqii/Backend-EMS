@@ -17,16 +17,16 @@ func (t *TeacherHandler) CreateQuiz(ctx *fiber.Ctx) error {
 		})
 	}
 
-	subjectId := ctx.Params("subjectID")
-	if subjectId == "" {
+	subjectID := ctx.Params("subjectID")
+	if subjectID == "" {
 		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
 			"error": "Subject ID is required",
 		})
 	}
 
-	id := ctx.Locals("user").(string)
+	userID := ctx.Locals("user").(string)
 
-	teacherID, err := t.teacherSvc.GetTeacherIDByUserID(id)
+	teacherID, err := t.teacherSvc.GetTeacherIDByUserID(userID)
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
@@ -41,17 +41,7 @@ func (t *TeacherHandler) CreateQuiz(ctx *fiber.Ctx) error {
 		})
 	}
 
-	quiz := entities.Quiz{
-		ClassID:     classID,
-		SubjectID:   subjectId,
-		TeacherID:   teacherID,
-		Title:       req.Title,
-		TypeOfQuiz:  req.TypeOfQuiz,
-		Description: req.Description,
-		Deadline:    req.Deadline,
-		Questions:   req.Questions,
-	}
-
+	// Convert req.Questions from []dto.QuestionRequest to []entities.Question
 	var questions []entities.Question
 	for _, q := range req.Questions {
 		question := entities.Question{
@@ -62,8 +52,18 @@ func (t *TeacherHandler) CreateQuiz(ctx *fiber.Ctx) error {
 		questions = append(questions, question)
 	}
 
-	err = t.teacherSvc.CreateQuiz(&quiz, questions)
+	quiz := entities.Quiz{
+		ClassID:     classID,
+		SubjectID:   subjectID,
+		TeacherID:   teacherID,
+		Title:       req.Title,
+		TypeOfQuiz:  req.TypeOfQuiz,
+		Description: req.Description,
+		Deadline:    req.Deadline,
+		Questions:   questions, // Use the converted questions
+	}
 
+	err = t.teacherSvc.CreateQuiz(&quiz, questions)
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),

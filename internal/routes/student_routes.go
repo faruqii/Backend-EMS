@@ -20,4 +20,7 @@ func StudentRoutes(router fiber.Router, studentSvc services.StudentService, mw *
 	studentScheduleRoutes := studentRoutes.Group("/schedule")
 	studentScheduleRoutes.Get("", student.GetSchedule)
 
+	StudentQuizRoutes := studentRoutes.Group("/quiz")
+	StudentQuizRoutes.Get("", student.GetQuiz)
+
 }

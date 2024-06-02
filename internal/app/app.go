@@ -44,7 +44,7 @@ func Start() {
 	authService := services.NewAuthService(userRepo, tokenRepo, roleRepo)
 	adminService := adminSvc.NewAdminService(subjectRepo, teacherRepo, userRepo, roleRepo, classRepo, scheduleRepo, studentRepo)
 	teacherService := teacherSvc.NewTeacherService(teacherRepo, scheduleRepo, tokenRepo, taskRepo, classRepo, subjectRepo, quizRepo)
-	studentService := studentSvc.NewStudentService(scheduleRepo, taskRepo, studentRepo, tokenRepo, assisgnmentRepo)
+	studentService := studentSvc.NewStudentService(scheduleRepo, taskRepo, studentRepo, tokenRepo, assisgnmentRepo, quizRepo)
 
 	// Middleware
 	middleware := middleware.NewMiddleware(tokenRepo, roleRepo)

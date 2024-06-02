@@ -5,6 +5,7 @@ import "github.com/Magetan-Boyz/Backend/internal/domain/repositories"
 type StudentService interface {
 	StudentTaskService
 	StudentAssignmentService
+	StudentQuizService
 }
 
 type studentService struct {
@@ -13,6 +14,7 @@ type studentService struct {
 	studentRepo    repositories.StudentRepository
 	tokenRepo      repositories.TokenRepository
 	assignmentRepo repositories.AssignmentRepository
+	quizRepo       repositories.QuizRepository
 }
 
 func NewStudentService(
@@ -21,6 +23,7 @@ func NewStudentService(
 	studentRepo repositories.StudentRepository,
 	tokenRepo repositories.TokenRepository,
 	assignmentRepo repositories.AssignmentRepository,
+	quizRepo repositories.QuizRepository,
 ) *studentService {
 	return &studentService{
 		scheduleRepo:   scheduleRepo,
@@ -28,5 +31,6 @@ func NewStudentService(
 		studentRepo:    studentRepo,
 		tokenRepo:      tokenRepo,
 		assignmentRepo: assignmentRepo,
+		quizRepo:       quizRepo,
 	}
 }

@@ -6,6 +6,15 @@ WORKDIR /go/src/app
 
 COPY . .
 
+ENV DB_HOST=backend-db-1 
+ENV DB_PORT=5432
+ENV DB_USER=postgres
+ENV DB_PASSWORD=postgres
+ENV DB_NAME=postgres
+ENV DB_SSLMODE=disable
+
+ENV PORT=3000
+
 RUN go mod download && go mod verify
 
 RUN go mod tidy && go mod vendor
