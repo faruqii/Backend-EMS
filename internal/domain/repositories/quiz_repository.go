@@ -14,6 +14,7 @@ type QuizRepository interface {
 	GetQuizByClassID(classID string) ([]entities.Quiz, error)
 	GetQuestion(quizID string) (*entities.Question, error)
 	GetQuizBySubjectID(subjectID string) (*entities.Quiz, error)
+	GetQuizByTeacherID(teacherID string) ([]entities.Quiz, error)
 }
 
 type quizRepository struct {
@@ -76,7 +77,7 @@ func (r *quizRepository) GetQuiz(id string) (*entities.Quiz, error) {
 func (r *quizRepository) GetQuizByClassID(classID string) ([]entities.Quiz, error) {
 	var quiz []entities.Quiz
 	// preload quiz
-	if err := r.db.Preload("Class").Preload("Subject").Preload("Teacher").Preload("Questions").Where("class_id = ?", classID).First(&quiz).Error; err != nil {
+	if err := r.db.Preload("Class").Preload("Subject").Preload("Teacher").Preload("Questions").Where("class_id = ?", classID).Find(&quiz).Error; err != nil {
 		return nil, err
 	}
 
@@ -99,4 +100,14 @@ func (r *quizRepository) GetQuizBySubjectID(subjectID string) (*entities.Quiz, e
 	}
 
 	return &quiz, nil
+}
+
+func (r *quizRepository) GetQuizByTeacherID(teacherID string) ([]entities.Quiz, error) {
+	var quiz []entities.Quiz
+	// preload quiz
+	if err := r.db.Preload("Class").Preload("Subject").Preload("Teacher").Preload("Questions").Where("teacher_id = ?", teacherID).Find(&quiz).Error; err != nil {
+		return nil, err
+	}
+
+	return quiz, nil
 }

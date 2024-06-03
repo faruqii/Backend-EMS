@@ -22,12 +22,15 @@ type QuizResponse struct {
 }
 
 type QuestionRequest struct {
-	Text          string   `json:"text"`
-	Options       []string `json:"options"`
-	CorrectAnswer string   `json:"correct_answer"`
+	Text           string   `json:"text"`
+	TypeOfQuestion string   `json:"type_of_question"` // multiple-choice or essay
+	Options        []string `json:"options"`
+	CorrectAnswer  string   `json:"correct_answer"`
 }
 
 type QuestionBrief struct {
-	Text    string   `json:"text"`
-	Options []string `json:"options"`
+	Text           string   `json:"text"`
+	TypeOfQuestion string   `json:"type_of_question"` // multiple-choice or essay
+	Options        []string `json:"options"`
+	CorrectAnswer  string   `json:"correct_answer"`
 }

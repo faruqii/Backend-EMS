@@ -108,3 +108,55 @@ func (t *TeacherHandler) GetAllTask(ctx *fiber.Ctx) (err error) {
 		"data":    tasks,
 	})
 }
+
+func (t *TeacherHandler) GetAllStudentAssignment(ctx *fiber.Ctx) (err error) {
+	taskID := ctx.Params("taskID")
+
+	studentAssignments, err := t.teacherSvc.GetStudentTaskAssignment(taskID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	var studentAssignmentsRes []dto.StudentAssignmentResponse
+	for _, studentAssignment := range studentAssignments {
+		studentAssignmentRes := dto.StudentAssignmentResponse{
+			ID:         studentAssignment.ID,
+			Task:       studentAssignment.Task.Title,
+			Student:    studentAssignment.Student.Name,
+			Submission: studentAssignment.Submission,
+			Grade:      studentAssignment.Grade,
+			Feedback:   studentAssignment.Feedback,
+			SubmitAt:   studentAssignment.SubmitAt,
+		}
+		studentAssignmentsRes = append(studentAssignmentsRes, studentAssignmentRes)
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Student assignments fetched successfully",
+		"data":    studentAssignmentsRes,
+	})
+}
+
+func (t *TeacherHandler) UpdateStudentTaskAssignment(ctx *fiber.Ctx) (err error) {
+	assignmentID := ctx.Params("assignmentID")
+
+	var req dto.UpdateStudentTaskAssignmentRequest
+	if err = ctx.BodyParser(&req); err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	err = t.teacherSvc.UpdateStudentTaskAssignment(assignmentID, req.Grade, req.Feedback)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Student assignment updated successfully",
+	})
+}

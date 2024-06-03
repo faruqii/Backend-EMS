@@ -11,13 +11,14 @@ type TeacherService interface {
 }
 
 type teacherService struct {
-	teacherRepo  repositories.TeacherRepository
-	scheduleRepo repositories.ScheduleRepository
-	tokenRepo    repositories.TokenRepository
-	taskRepo     repositories.TaskRepository
-	classRepo    repositories.ClassRepository
-	subjectRepo  repositories.SubjectRepository
-	quizRepo     repositories.QuizRepository
+	teacherRepo           repositories.TeacherRepository
+	scheduleRepo          repositories.ScheduleRepository
+	tokenRepo             repositories.TokenRepository
+	taskRepo              repositories.TaskRepository
+	classRepo             repositories.ClassRepository
+	subjectRepo           repositories.SubjectRepository
+	quizRepo              repositories.QuizRepository
+	studentAssignmentRepo repositories.AssignmentRepository
 }
 
 func NewTeacherService(
@@ -28,14 +29,16 @@ func NewTeacherService(
 	classRepo repositories.ClassRepository,
 	subjectRepo repositories.SubjectRepository,
 	quizRepo repositories.QuizRepository,
+	studentAssignmentRepo repositories.AssignmentRepository,
 ) *teacherService {
 	return &teacherService{
-		teacherRepo:  teacherRepo,
-		scheduleRepo: scheduleRepo,
-		tokenRepo:    tokenRepo,
-		taskRepo:     taskRepo,
-		classRepo:    classRepo,
-		subjectRepo:  subjectRepo,
-		quizRepo:     quizRepo,
+		teacherRepo:           teacherRepo,
+		scheduleRepo:          scheduleRepo,
+		tokenRepo:             tokenRepo,
+		taskRepo:              taskRepo,
+		classRepo:             classRepo,
+		subjectRepo:           subjectRepo,
+		quizRepo:              quizRepo,
+		studentAssignmentRepo: studentAssignmentRepo,
 	}
 }

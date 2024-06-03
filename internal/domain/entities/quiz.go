@@ -26,12 +26,13 @@ type Quiz struct {
 }
 
 type Question struct {
-	ID            string         `json:"id" gorm:"primaryKey, type:uuid, default:uuid_generate_v4()"`
-	QuizID        string         `json:"quiz_id"`
-	Quiz          Quiz           `json:"quiz" gorm:"foreignKey:QuizID"`
-	Text          string         `json:"text"`
-	Options       pq.StringArray `json:"options" gorm:"type:varchar(255)[]"`
-	CorrectAnswer string         `json:"correct_answer"`
+	ID             string         `json:"id" gorm:"primaryKey, type:uuid, default:uuid_generate_v4()"`
+	QuizID         string         `json:"quiz_id"`
+	Quiz           Quiz           `json:"quiz" gorm:"foreignKey:QuizID"`
+	Text           string         `json:"text"`
+	TypeOfQuestion string         `json:"type_of_question"` // multiple-choice or essay
+	Options        pq.StringArray `json:"options" gorm:"type:varchar(255)[]"`
+	CorrectAnswer  string         `json:"correct_answer"`
 }
 
 func (q *Quiz) BeforeCreate(tx *gorm.DB) (err error) {

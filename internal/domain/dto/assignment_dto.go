@@ -15,3 +15,8 @@ type StudentAssignmentResponse struct {
 	Feedback   string    `json:"feedback"`
 	SubmitAt   time.Time `json:"submit_at"`
 }
+
+type UpdateStudentTaskAssignmentRequest struct {
+	Grade    float64 `json:"grade"`
+	Feedback string  `json:"feedback"`
+}

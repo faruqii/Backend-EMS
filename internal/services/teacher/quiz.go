@@ -9,6 +9,7 @@ import (
 
 type QuizService interface {
 	CreateQuiz(quiz *entities.Quiz, questions []entities.Question) error
+	GetQuizByTeacherID(userID string) ([]entities.Quiz, error)
 }
 
 func (s *teacherService) CreateQuiz(quiz *entities.Quiz, questions []entities.Question) error {
@@ -49,4 +50,19 @@ func (s *teacherService) CreateQuiz(quiz *entities.Quiz, questions []entities.Qu
 	}
 
 	return nil
+}
+
+func (s *teacherService) GetQuizByTeacherID(userID string) ([]entities.Quiz, error) {
+	// get teacherID from token
+	teacherID, err := s.tokenRepo.GetTeacherIDByUserID(userID)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to fetch teacher", 500)
+	}
+
+	quiz, err := s.quizRepo.GetQuizByTeacherID(teacherID)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to fetch quiz", 500)
+	}
+
+	return quiz, nil
 }

@@ -8,8 +8,10 @@ import (
 type AssignmentRepository interface {
 	Insert(assignment *entities.StudentAssignment) error
 	Update(assignment *entities.StudentAssignment) error
+	FindByID(id string) (*entities.StudentAssignment, error)
 	FindByTaskID(taskID string) (*entities.StudentAssignment, error)
 	FindByStudentID(studentID string) (*entities.StudentAssignment, error)
+	FindAll(taskID string) ([]entities.StudentAssignment, error)
 }
 
 type assignmentRepository struct {
@@ -28,6 +30,15 @@ func (r *assignmentRepository) Update(assignment *entities.StudentAssignment) er
 	return r.db.Save(assignment).Error
 }
 
+func (r *assignmentRepository) FindByID(id string) (*entities.StudentAssignment, error) {
+	assignment := entities.StudentAssignment{}
+	if err := r.db.Preload("Task").Preload("Student").Where("id = ?", id).Find(&assignment).Error; err != nil {
+		return nil, err
+	}
+
+	return &assignment, nil
+}
+
 func (r *assignmentRepository) FindByTaskID(taskID string) (*entities.StudentAssignment, error) {
 	assignment := entities.StudentAssignment{}
 	if err := r.db.Preload("Task").Preload("Student").Where("task_id = ?", taskID).Find(&assignment).Error; err != nil {
@@ -44,4 +55,13 @@ func (r *assignmentRepository) FindByStudentID(studentID string) (*entities.Stud
 	}
 
 	return &assignments, nil
+}
+
+func (r *assignmentRepository) FindAll(taskID string) ([]entities.StudentAssignment, error) {
+	assignments := []entities.StudentAssignment{}
+	if err := r.db.Preload("Task").Preload("Student").Where("task_id = ?", taskID).Find(&assignments).Error; err != nil {
+		return nil, err
+	}
+
+	return assignments, nil
 }

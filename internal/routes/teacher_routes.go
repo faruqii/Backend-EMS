@@ -20,8 +20,11 @@ func TeacherRoutes(router fiber.Router, teacherService services.TeacherService, 
 	teacherTaskControllerRoutes := teacherControllerRoutes.Group("/task")
 	teacherTaskControllerRoutes.Post("/create", teacherController.CreateTask)
 	teacherTaskControllerRoutes.Get("/all", teacherController.GetAllTask)
+	teacherTaskControllerRoutes.Get("/:taskID/assignment", teacherController.GetAllStudentAssignment)
+	teacherTaskControllerRoutes.Put("/:assignmentID/grade", teacherController.UpdateStudentTaskAssignment)
 
 	teacherQuizControllerRoutes := teacherControllerRoutes.Group("/quiz")
 	teacherQuizControllerRoutes.Post("/:classID/:subjectID/create", teacherController.CreateQuiz)
+	teacherQuizControllerRoutes.Get("", teacherController.GetQuiz)
 
 }

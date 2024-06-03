@@ -22,8 +22,9 @@ func (h *StudentHandler) GetQuiz(ctx *fiber.Ctx) error {
 		var questions []dto.QuestionBrief
 		for _, question := range q.Questions {
 			questionBrief := dto.QuestionBrief{
-				Text:    question.Text,
-				Options: question.Options,
+				Text:           question.Text,
+				TypeOfQuestion: question.TypeOfQuestion,
+				Options:        question.Options,
 			}
 			questions = append(questions, questionBrief)
 		}

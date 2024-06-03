@@ -11,6 +11,8 @@ type TeacherTaskService interface {
 	CreateTask(task *entities.Task) error
 	GetTask(id string) (*entities.Task, error)
 	GetAllTasks(userID string) ([]entities.Task, error)
+	GetStudentTaskAssignment(taskID string) ([]entities.StudentAssignment, error)
+	UpdateStudentTaskAssignment(assignmentID string, grade float64, feedback string) error
 }
 
 func (s *teacherService) CreateTask(task *entities.Task) error {
@@ -48,14 +50,40 @@ func (s *teacherService) GetTask(id string) (*entities.Task, error) {
 
 func (s *teacherService) GetAllTasks(userID string) ([]entities.Task, error) {
 	teacherID, err := s.tokenRepo.GetTeacherIDByUserID(userID)
-    if err!= nil {
-        return nil, services.HandleError(err, "Failed to fetch teacher", 500)
-    }
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to fetch teacher", 500)
+	}
 
-    tasks, err := s.taskRepo.GetTaskByTeacherID(teacherID)
-    if err!= nil {
-        return nil, services.HandleError(err, "Failed to fetch tasks", 500)
-    }
+	tasks, err := s.taskRepo.GetTaskByTeacherID(teacherID)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to fetch tasks", 500)
+	}
 
 	return tasks, nil
+}
+
+func (s *teacherService) GetStudentTaskAssignment(taskID string) ([]entities.StudentAssignment, error) {
+	studentAssignments, err := s.studentAssignmentRepo.FindAll(taskID)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to fetch student assignments", 500)
+	}
+
+	return studentAssignments, nil
+}
+
+func (s *teacherService) UpdateStudentTaskAssignment(assignmentID string, grade float64, feedback string) error {
+	assignment, err := s.studentAssignmentRepo.FindByID(assignmentID)
+	if err != nil {
+		return services.HandleError(err, "Failed to fetch student assignment", 500)
+	}
+
+	assignment.Grade = grade
+	assignment.Feedback = feedback
+
+	err = s.studentAssignmentRepo.Update(assignment)
+	if err != nil {
+		return services.HandleError(err, "Failed to update student assignment", 500)
+	}
+
+	return nil
 }

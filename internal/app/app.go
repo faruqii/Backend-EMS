@@ -43,7 +43,7 @@ func Start() {
 	// Services
 	authService := services.NewAuthService(userRepo, tokenRepo, roleRepo)
 	adminService := adminSvc.NewAdminService(subjectRepo, teacherRepo, userRepo, roleRepo, classRepo, scheduleRepo, studentRepo)
-	teacherService := teacherSvc.NewTeacherService(teacherRepo, scheduleRepo, tokenRepo, taskRepo, classRepo, subjectRepo, quizRepo)
+	teacherService := teacherSvc.NewTeacherService(teacherRepo, scheduleRepo, tokenRepo, taskRepo, classRepo, subjectRepo, quizRepo, assisgnmentRepo)
 	studentService := studentSvc.NewStudentService(scheduleRepo, taskRepo, studentRepo, tokenRepo, assisgnmentRepo, quizRepo)
 
 	// Middleware

@@ -88,3 +88,29 @@ func (h *StudentHandler) SubmitTaskAssignment(ctx *fiber.Ctx) (err error) {
 	})
 
 }
+
+func (h *StudentHandler) GetAssignment(ctx *fiber.Ctx) (err error) {
+	assignmentID := ctx.Params("assignmentID")
+
+	assignment, err := h.studentService.GetAssignment(assignmentID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	response := dto.StudentAssignmentResponse{
+		ID:         assignment.ID,
+		Task:       assignment.TaskID,
+		Student:    assignment.StudentID,
+		Submission: assignment.Submission,
+		Grade:      assignment.Grade,
+		Feedback:   assignment.Feedback,
+		SubmitAt:   assignment.SubmitAt,
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "success get assignment",
+		"data":    response,
+	})
+}
