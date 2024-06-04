@@ -12,6 +12,7 @@ type AssignmentRepository interface {
 	FindByTaskID(taskID string) (*entities.StudentAssignment, error)
 	FindByStudentID(studentID string) (*entities.StudentAssignment, error)
 	FindAll(taskID string) ([]entities.StudentAssignment, error)
+	FindByTaskIDAndAssignmentID(taskID string, assignmentID string) (*entities.StudentAssignment, error)
 }
 
 type assignmentRepository struct {
@@ -64,4 +65,13 @@ func (r *assignmentRepository) FindAll(taskID string) ([]entities.StudentAssignm
 	}
 
 	return assignments, nil
+}
+
+func (r *assignmentRepository) FindByTaskIDAndAssignmentID(taskID string, assignmentID string) (*entities.StudentAssignment, error) {
+	assignment := entities.StudentAssignment{}
+	if err := r.db.Preload("Task").Preload("Student").Where("task_id = ? AND id = ?", taskID, assignmentID).Find(&assignment).Error; err != nil {
+		return nil, err
+	}
+
+	return &assignment, nil
 }

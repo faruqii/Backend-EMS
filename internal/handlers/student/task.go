@@ -90,9 +90,9 @@ func (h *StudentHandler) SubmitTaskAssignment(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *StudentHandler) GetAssignment(ctx *fiber.Ctx) (err error) {
-	assignmentID := ctx.Params("assignmentID")
+	taskID := ctx.Params("id")
 
-	assignment, err := h.studentService.GetAssignment(assignmentID)
+	assignment, err := h.studentService.GetAssignment(taskID)
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
@@ -101,8 +101,8 @@ func (h *StudentHandler) GetAssignment(ctx *fiber.Ctx) (err error) {
 
 	response := dto.StudentAssignmentResponse{
 		ID:         assignment.ID,
-		Task:       assignment.TaskID,
-		Student:    assignment.StudentID,
+		Task:       assignment.Task.Title,
+		Student:    assignment.Student.Name,
 		Submission: assignment.Submission,
 		Grade:      assignment.Grade,
 		Feedback:   assignment.Feedback,

@@ -7,7 +7,7 @@ import (
 
 type StudentAssignmentService interface {
 	SubmitAssignment(assignment *entities.StudentAssignment) error
-	GetAssignment(assignmentID string) (*entities.StudentAssignment, error)
+	GetAssignment(taskID string) (*entities.StudentAssignment, error)
 }
 
 func (s *studentService) SubmitAssignment(assignment *entities.StudentAssignment) error {
@@ -19,8 +19,8 @@ func (s *studentService) SubmitAssignment(assignment *entities.StudentAssignment
 	return nil
 }
 
-func (s *studentService) GetAssignment(assignmentID string) (*entities.StudentAssignment, error) {
-	assignment, err := s.assignmentRepo.FindByID(assignmentID)
+func (s *studentService) GetAssignment(taskID string) (*entities.StudentAssignment, error) {
+	assignment, err := s.assignmentRepo.FindByTaskID(taskID)
 	if err != nil {
 		return nil, services.HandleError(err, "Failed to fetch assignment", 500)
 	}
