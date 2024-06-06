@@ -8,7 +8,7 @@ import (
 type TaskRepository interface {
 	Insert(task *entities.Task) error
 	GetTask(id string) (*entities.Task, error)
-	GetTaskByClassID(classID string) (*entities.Task, error)
+	GetTaskByClassID(classID string) ([]entities.Task, error)
 	GetTaskByTeacherID(teacherID string) ([]entities.Task, error)
 }
 
@@ -42,19 +42,19 @@ func (r *taskRepository) GetTask(id string) (*entities.Task, error) {
 	return &task, nil
 }
 
-func (r *taskRepository) GetTaskByClassID(classID string) (*entities.Task, error) {
-	var task entities.Task
+func (r *taskRepository) GetTaskByClassID(classID string) ([]entities.Task, error) {
+	var task []entities.Task
 
 	if err := r.db.
 		Preload("Class").
 		Preload("Subject").
 		Preload("Teacher").
 		Where("class_id = ?", classID).
-		First(&task).Error; err != nil {
+		Find(&task).Error; err != nil {
 		return nil, err
 	}
 
-	return &task, nil
+	return task, nil
 }
 
 func (r *taskRepository) GetTaskByTeacherID(teacherID string) ([]entities.Task, error) {

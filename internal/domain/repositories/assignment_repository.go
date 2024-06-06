@@ -13,6 +13,7 @@ type AssignmentRepository interface {
 	FindByStudentID(studentID string) (*entities.StudentAssignment, error)
 	FindAll(taskID string) ([]entities.StudentAssignment, error)
 	FindByTaskIDAndAssignmentID(taskID string, assignmentID string) (*entities.StudentAssignment, error)
+	InsertQuiz(assignment *entities.StudentQuizAssignment) error
 }
 
 type assignmentRepository struct {
@@ -74,4 +75,8 @@ func (r *assignmentRepository) FindByTaskIDAndAssignmentID(taskID string, assign
 	}
 
 	return &assignment, nil
+}
+
+func (r *assignmentRepository) InsertQuiz(assignment *entities.StudentQuizAssignment) error {
+	return r.db.Create(assignment).Error
 }

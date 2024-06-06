@@ -6,10 +6,11 @@ import (
 )
 
 type Class struct {
-	ID                string  `json:"id" gorm:"primaryKey, type:uuid, default:uuid_generate_v4()"`
-	Name              string  `json:"name"`
-	HomeRoomTeacherID *string `json:"homeRoomTeacherID"`
-	HomeRoomTeacher   Teacher `json:"homeRoomTeacher" gorm:"foreignKey:HomeRoomTeacherID;references:ID"`
+	ID                string         `json:"id" gorm:"primaryKey, type:uuid, default:uuid_generate_v4()"`
+	Name              string         `json:"name"`
+	HomeRoomTeacherID *string        `json:"homeRoomTeacherID"`
+	HomeRoomTeacher   Teacher        `json:"homeRoomTeacher" gorm:"foreignKey:HomeRoomTeacherID;references:ID"`
+	ClassSubjects     []ClassSubject `json:"class_subjects" gorm:"foreignKey:ClassID"`
 }
 
 func (c *Class) BeforeCreate(tx *gorm.DB) (err error) {

@@ -1,0 +1,56 @@
+package handlers
+
+import (
+	"net/http"
+
+	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
+	"github.com/gofiber/fiber/v2"
+)
+
+func (h *StudentHandler) GetClass(ctx *fiber.Ctx) error {
+	userID := ctx.Locals("user").(string)
+
+	class, err := h.studentService.MyClass(userID)
+	if err != nil {
+		return ctx.Status(500).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	response := dto.ClassResponse{
+		ID:              class.ID,
+		Name:            class.Name,
+		HomeRoomTeacher: class.HomeRoomTeacher.Name,
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "success get class",
+		"data":    response,
+	})
+}
+
+func (h *StudentHandler) GetSubjects(ctx *fiber.Ctx) error {
+	userID := ctx.Locals("user").(string)
+
+	subjects, err := h.studentService.MySubjects(userID)
+	if err != nil {
+		return ctx.Status(500).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	var response []dto.ClassSubjectResponse
+
+	for _, subject := range subjects {
+		response = append(response, dto.ClassSubjectResponse{
+			ClassName:   subject.Class.Name,
+			SubjectName: subject.Subject.Name,
+			TeacherName: subject.Teacher.Name,
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "success get subjects",
+		"data":    response,
+	})
+}

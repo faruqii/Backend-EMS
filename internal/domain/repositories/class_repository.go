@@ -49,7 +49,7 @@ func (r *classRepository) Delete(id string) error {
 
 func (r *classRepository) FindByID(id string) (*entities.Class, error) {
 	var class entities.Class
-	if err := r.db.First(&class, "id = ?", id).Error; err != nil {
+	if err := r.db.Preload("HomeRoomTeacher").First(&class, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 	return &class, nil
@@ -99,8 +99,8 @@ func (r *classRepository) ClassExists(classID string) (bool, error) {
 
 func (r *classRepository) IsTeacherTeachTheClass(classID string) (bool, error) {
 	var count int64
-    if err := r.db.Model(&entities.Class{}).Where("id =?", classID).Count(&count).Error; err!= nil {
-        return false, err
-    }
-    return count > 0, nil
+	if err := r.db.Model(&entities.Class{}).Where("id =?", classID).Count(&count).Error; err != nil {
+		return false, err
+	}
+	return count > 0, nil
 }

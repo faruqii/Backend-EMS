@@ -71,3 +71,26 @@ func (c *AdminHandler) GetAllSubject(ctx *fiber.Ctx) (err error) {
 		"data": response,
 	})
 }
+
+func (c *AdminHandler) AssignSubjectToClass(ctx *fiber.Ctx) (err error) {
+	classID := ctx.Params("id")
+
+	var req dto.AssignSubjectToClassRequest
+
+	if err = ctx.BodyParser(&req); err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	err = c.adminService.AssignSubjectToClass(req.SubjectID, req.TeacherID, classID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Subject assigned to class successfully",
+	})
+}

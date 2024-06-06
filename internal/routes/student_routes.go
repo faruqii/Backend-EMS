@@ -13,6 +13,10 @@ func StudentRoutes(router fiber.Router, studentSvc services.StudentService, mw *
 	studentRoutes := router.Group("/student")
 	studentRoutes.Use(mw.Authenticate(), mw.Authorization("student"))
 
+	studentClassRoutes := studentRoutes.Group("/class")
+	studentClassRoutes.Get("", student.GetClass)
+	studentClassRoutes.Get("/subjects", student.GetSubjects)
+
 	studentTaskRoutes := studentRoutes.Group("/task")
 	studentTaskRoutes.Get("", student.GetTask)
 	studentTaskRoutes.Post("/:id/assignment", student.SubmitTaskAssignment)

@@ -13,6 +13,7 @@ type AdminClassService interface {
 	GetClassSchedule(classID string) ([]entities.Schedule, error)
 	GetAllStudentsBelongToClass(studentID string) ([]entities.Student, error)
 	ClassExists(classID string) (bool, error)
+	AssignSubjectToClass(subjectID, teacherID, classID string) error
 }
 
 func (s *adminService) CreateClass(class *entities.Class) error {
@@ -80,4 +81,34 @@ func (s *adminService) GetAllStudentsBelongToClass(classID string) ([]entities.S
 func (s *adminService) ClassExists(classID string) (bool, error) {
 	exists, err := s.classRepo.ClassExists(classID)
 	return exists, services.HandleError(err, "Failed to check class existence", 500)
+}
+
+func (s *adminService) AssignSubjectToClass(subjectID, teacherID, classID string) error {
+	_, err := s.teacherRepo.FindByID(teacherID)
+	if err != nil {
+		return services.HandleError(err, "Teacher not found", 400)
+	}
+
+	_, err = s.classRepo.FindByID(classID)
+	if err != nil {
+		return services.HandleError(err, "Class not found", 400)
+	}
+
+	_, err = s.subjectRepo.FindByID(subjectID)
+	if err != nil {
+		return services.HandleError(err, "Subject not found", 400)
+	}
+
+	isAssigned, err := s.subjectRepo.IsTeacherAssignedToSubject(teacherID, subjectID)
+	if err != nil {
+		return services.HandleError(err, "Failed to check teacher assignment", 500)
+	}
+
+	if !isAssigned {
+		return services.HandleError(err, "Teacher is not assigned to subject", 400)
+	}
+
+	_, err = s.subjectRepo.AssignSubjectToClass(subjectID, teacherID, classID)
+	return services.HandleError(err, "Failed to assign subject to class", 500)
+
 }

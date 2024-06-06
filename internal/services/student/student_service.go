@@ -6,6 +6,7 @@ type StudentService interface {
 	StudentTaskService
 	StudentAssignmentService
 	StudentQuizService
+	StudentClassService
 }
 
 type studentService struct {
@@ -15,6 +16,8 @@ type studentService struct {
 	tokenRepo      repositories.TokenRepository
 	assignmentRepo repositories.AssignmentRepository
 	quizRepo       repositories.QuizRepository
+	classRepo      repositories.ClassRepository
+	subjectRepo    repositories.SubjectRepository
 }
 
 func NewStudentService(
@@ -24,6 +27,8 @@ func NewStudentService(
 	tokenRepo repositories.TokenRepository,
 	assignmentRepo repositories.AssignmentRepository,
 	quizRepo repositories.QuizRepository,
+	classRepo repositories.ClassRepository,
+	subjectRepo repositories.SubjectRepository,
 ) *studentService {
 	return &studentService{
 		scheduleRepo:   scheduleRepo,
@@ -32,5 +37,7 @@ func NewStudentService(
 		tokenRepo:      tokenRepo,
 		assignmentRepo: assignmentRepo,
 		quizRepo:       quizRepo,
+		classRepo:      classRepo,
+		subjectRepo:    subjectRepo,
 	}
 }

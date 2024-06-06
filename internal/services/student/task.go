@@ -7,7 +7,7 @@ import (
 
 type StudentTaskService interface {
 	GetScedule(userID string) ([]entities.Schedule, error)
-	GetTask(userID string) (*entities.Task, error)
+	GetTask(userID string) ([]entities.Task, error)
 	GetStudentIDByUserID(userID string) (string, error)
 }
 
@@ -26,7 +26,7 @@ func (s *studentService) GetScedule(userID string) ([]entities.Schedule, error) 
 	return schedules, services.HandleError(err, "Failed to fetch schedules", 500)
 }
 
-func (s *studentService) GetTask(userID string) (*entities.Task, error) {
+func (s *studentService) GetTask(userID string) ([]entities.Task, error) {
 	studentID, err := s.tokenRepo.GetStudentIDByUserID(userID)
 	if err != nil {
 		return nil, services.HandleError(err, "Failed to fetch student", 500)

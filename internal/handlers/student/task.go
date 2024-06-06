@@ -19,18 +19,20 @@ func (h *StudentHandler) GetTask(ctx *fiber.Ctx) (err error) {
 		})
 	}
 
-	response := dto.TaskResponse{
-		ID:          task.ID,
-		ClassName:   task.Class.Name,
-		SubjectName: task.Subject.Name,
-		TeacherName: task.Teacher.Name,
-		Title:       task.Title,
-		TypeOfTask:  task.TypeOfTask,
-		Description: task.Description,
-		Deadline:    task.Deadline,
-		Link:        task.Link,
-		CreatedAt:   task.CreatedAt,
-		UpdatedAt:   task.UpdatedAt,
+	response := []dto.TaskResponse{}
+	for _, t := range task {
+		response = append(response, dto.TaskResponse{
+			ID:          t.ID,
+			ClassName:   t.Class.Name,
+			SubjectName: t.Subject.Name,
+			TeacherName: t.Teacher.Name,
+			Title:       t.Title,
+			TypeOfTask:  t.TypeOfTask,
+			Description: t.Description,
+			Deadline:    t.Deadline,
+			Link:        t.Link,
+		})
+
 	}
 
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
