@@ -1,6 +1,7 @@
 package app
 
 import (
+	"log"
 	"os"
 
 	"github.com/Magetan-Boyz/Backend/internal/config/database"
@@ -13,53 +14,96 @@ import (
 	studentSvc "github.com/Magetan-Boyz/Backend/internal/services/student"
 	teacherSvc "github.com/Magetan-Boyz/Backend/internal/services/teacher"
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 )
 
 func Start() {
-
 	app := fiber.New()
 
+	// Database connection
 	db, err := database.Connect()
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to connect to database: %v", err)
 	}
 
+	// Seed data
 	seed := seeder.Seed{DB: db}
 	seed.SeedAll()
 
 	// Repositories
-	userRepo := repositories.NewUserRepository(db)
-	tokenRepo := repositories.NewTokenRepository(db)
-	roleRepo := repositories.NewRoleRepository(db)
-	subjectRepo := repositories.NewSubjectRepository(db)
-	teacherRepo := repositories.NewTeacherRepository(db)
-	classRepo := repositories.NewClassRepository(db)
-	scheduleRepo := repositories.NewScheduleRepository(db)
-	studentRepo := repositories.NewStudentRepository(db)
-	taskRepo := repositories.NewTaskRepository(db)
-	assisgnmentRepo := repositories.NewAssignmentRepository(db)
-	quizRepo := repositories.NewQuizRepository(db)
+	repos := initRepositories(db)
 
 	// Services
-	authService := services.NewAuthService(userRepo, tokenRepo, roleRepo)
-	adminService := adminSvc.NewAdminService(subjectRepo, teacherRepo, userRepo, roleRepo, classRepo, scheduleRepo, studentRepo)
-	teacherService := teacherSvc.NewTeacherService(teacherRepo, scheduleRepo, tokenRepo, taskRepo, classRepo, subjectRepo, quizRepo, assisgnmentRepo)
-	studentService := studentSvc.NewStudentService(scheduleRepo, taskRepo, studentRepo, tokenRepo, assisgnmentRepo, quizRepo, classRepo, subjectRepo)
+	services := initServices(repos)
 
 	// Middleware
-	middleware := middleware.NewMiddleware(tokenRepo, roleRepo)
+	mw := middleware.NewMiddleware(repos.tokenRepo, repos.roleRepo)
 
-	//Routes
-	api := app.Group("/api")
-	routes.AuthRoutes(api, authService, middleware)
-	routes.AdminRoutes(api, adminService, middleware)
-	routes.TeacherRoutes(api, teacherService, middleware)
-	routes.StudentRoutes(api, studentService, middleware)
+	// Routes
+	setupRoutes(app, services, mw)
 
-	err = app.Listen(":" + os.Getenv("PORT"))
-
-	if err != nil {
-		panic(err)
+	// Start server
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3000" // Default port if not specified
 	}
 
+	err = app.Listen(":" + port)
+	if err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+	}
+}
+
+type Repositories struct {
+	userRepo      repositories.UserRepository
+	tokenRepo     repositories.TokenRepository
+	roleRepo      repositories.RoleRepository
+	subjectRepo   repositories.SubjectRepository
+	teacherRepo   repositories.TeacherRepository
+	classRepo     repositories.ClassRepository
+	scheduleRepo  repositories.ScheduleRepository
+	studentRepo   repositories.StudentRepository
+	taskRepo      repositories.TaskRepository
+	assignmentRepo repositories.AssignmentRepository
+	quizRepo      repositories.QuizRepository
+}
+
+func initRepositories(db *gorm.DB) *Repositories {
+	return &Repositories{
+		userRepo:      repositories.NewUserRepository(db),
+		tokenRepo:     repositories.NewTokenRepository(db),
+		roleRepo:      repositories.NewRoleRepository(db),
+		subjectRepo:   repositories.NewSubjectRepository(db),
+		teacherRepo:   repositories.NewTeacherRepository(db),
+		classRepo:     repositories.NewClassRepository(db),
+		scheduleRepo:  repositories.NewScheduleRepository(db),
+		studentRepo:   repositories.NewStudentRepository(db),
+		taskRepo:      repositories.NewTaskRepository(db),
+		assignmentRepo: repositories.NewAssignmentRepository(db),
+		quizRepo:      repositories.NewQuizRepository(db),
+	}
+}
+
+type Services struct {
+	authService    services.AuthService
+	adminService   adminSvc.AdminService
+	teacherService teacherSvc.TeacherService
+	studentService studentSvc.StudentService
+}
+
+func initServices(repos *Repositories) *Services {
+	return &Services{
+		authService:    services.NewAuthService(repos.userRepo, repos.tokenRepo, repos.roleRepo),
+		adminService:   adminSvc.NewAdminService(repos.subjectRepo, repos.teacherRepo, repos.userRepo, repos.roleRepo, repos.classRepo, repos.scheduleRepo, repos.studentRepo),
+		teacherService: teacherSvc.NewTeacherService(repos.teacherRepo, repos.scheduleRepo, repos.tokenRepo, repos.taskRepo, repos.classRepo, repos.subjectRepo, repos.quizRepo, repos.assignmentRepo),
+		studentService: studentSvc.NewStudentService(repos.scheduleRepo, repos.taskRepo, repos.studentRepo, repos.tokenRepo, repos.assignmentRepo, repos.quizRepo, repos.classRepo, repos.subjectRepo),
+	}
+}
+
+func setupRoutes(app *fiber.App, services *Services, mw *middleware.Middleware) {
+	api := app.Group("/api")
+	routes.AuthRoutes(api, services.authService, mw)
+	routes.AdminRoutes(api, services.adminService, mw)
+	routes.TeacherRoutes(api, services.teacherService, mw)
+	routes.StudentRoutes(api, services.studentService, mw)
 }
