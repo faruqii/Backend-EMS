@@ -14,6 +14,8 @@ type AssignmentRepository interface {
 	FindAll(taskID string) ([]entities.StudentAssignment, error)
 	FindByTaskIDAndAssignmentID(taskID string, assignmentID string) (*entities.StudentAssignment, error)
 	InsertQuiz(assignment *entities.StudentQuizAssignment) error
+	FindByQuizID(quizID string) (*entities.StudentQuizAssignment, error)
+	UpdateQuizAssignment(assignment *entities.StudentQuizAssignment) error
 }
 
 type assignmentRepository struct {
@@ -79,4 +81,16 @@ func (r *assignmentRepository) FindByTaskIDAndAssignmentID(taskID string, assign
 
 func (r *assignmentRepository) InsertQuiz(assignment *entities.StudentQuizAssignment) error {
 	return r.db.Create(assignment).Error
+}
+
+func (r *assignmentRepository) FindByQuizID(id string) (*entities.StudentQuizAssignment, error) {
+	var assignment entities.StudentQuizAssignment
+	if err := r.db.Preload("Quiz.Questions").First(&assignment, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+	return &assignment, nil
+}
+
+func (r *assignmentRepository) UpdateQuizAssignment(assignment *entities.StudentQuizAssignment) error {
+	return r.db.Save(assignment).Error
 }

@@ -27,5 +27,6 @@ func StudentRoutes(router fiber.Router, studentSvc services.StudentService, mw *
 
 	StudentQuizRoutes := studentRoutes.Group("/quiz")
 	StudentQuizRoutes.Get("", student.GetQuiz)
+	StudentQuizRoutes.Post("/:quizID/submit", student.SubmitQuizAnswer)
 
 }

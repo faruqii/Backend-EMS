@@ -20,3 +20,7 @@ type UpdateStudentTaskAssignmentRequest struct {
 	Grade    float64 `json:"grade"`
 	Feedback string  `json:"feedback"`
 }
+
+type SubmitQuizRequest struct {
+	Answers []string `json:"answers"`
+}
