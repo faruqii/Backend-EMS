@@ -8,6 +8,7 @@ type TeacherService interface {
 	TeacherScheduleService
 	TeacherTaskService
 	QuizService
+	TeacherSubjectService
 }
 
 type teacherService struct {
