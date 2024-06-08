@@ -24,3 +24,12 @@ type UpdateStudentTaskAssignmentRequest struct {
 type SubmitQuizRequest struct {
 	Answers []string `json:"answers"`
 }
+
+type StudentQuizAssignmentResponse struct {
+	ID          string    `json:"id"`
+	StudentName string    `json:"student_name"`
+	NISN        string    `json:"nisn"`
+	Grade       float64   `json:"grade"`
+	Status      string    `json:"status"`
+	SubmitAt    time.Time `json:"submit_at"`
+}

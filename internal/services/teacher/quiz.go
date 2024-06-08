@@ -10,6 +10,7 @@ import (
 type QuizService interface {
 	CreateQuiz(quiz *entities.Quiz, questions []entities.Question) error
 	GetQuizByTeacherID(userID string) ([]entities.Quiz, error)
+	GetAllQuizAssignment(quizID string) ([]entities.StudentQuizAssignment, error)
 }
 
 func (s *teacherService) CreateQuiz(quiz *entities.Quiz, questions []entities.Question) error {
@@ -65,4 +66,13 @@ func (s *teacherService) GetQuizByTeacherID(userID string) ([]entities.Quiz, err
 	}
 
 	return quiz, nil
+}
+
+func (s *teacherService) GetAllQuizAssignment(quizID string) ([]entities.StudentQuizAssignment, error) {
+	quizAssignment, err := s.studentAssignmentRepo.GetAllQuizAssignment(quizID)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to fetch quiz assignment", 500)
+	}
+
+	return quizAssignment, nil
 }

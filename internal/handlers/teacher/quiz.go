@@ -118,3 +118,36 @@ func (t *TeacherHandler) GetQuiz(ctx *fiber.Ctx) error {
 	})
 
 }
+
+func (t *TeacherHandler) GetAllQuizAssignment(ctx *fiber.Ctx) error {
+	quizID := ctx.Params("quizID")
+	if quizID == "" {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Quiz ID is required",
+		})
+	}
+
+	quizAssignment, err := t.teacherSvc.GetAllQuizAssignment(quizID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	response := []dto.StudentQuizAssignmentResponse{}
+	for _, qa := range quizAssignment {
+		response = append(response, dto.StudentQuizAssignmentResponse{
+			ID:          qa.ID,
+			StudentName: qa.Student.Name,
+			NISN:        qa.Student.NISN,
+			Grade:       qa.Grade,
+			Status:      qa.Status,
+			SubmitAt:    qa.SubmitAt,
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Success get all quiz assignment",
+		"data":    response,
+	})
+}

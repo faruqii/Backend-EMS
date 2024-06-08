@@ -37,3 +37,8 @@ type StudentQuizAssignment struct {
 	Status    string         `json:"status"` // submitted, graded
 	Grade     float64        `json:"grade"`
 }
+
+func (sqa *StudentQuizAssignment) BeforeCreate(tx *gorm.DB) (err error) {
+	sqa.ID = uuid.NewString()
+	return nil
+}
