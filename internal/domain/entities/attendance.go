@@ -13,8 +13,8 @@ type Atendance struct {
 	Student         Student   `json:"student" gorm:"foreignKey:StudentID"`
 	SubjectID       string    `json:"subject_id"`
 	Subject         Subject   `json:"subject" gorm:"foreignKey:SubjectID"`
-	AttendaceAt     time.Time `json:"attendace_at"`
 	AttendaceStatus string    `json:"attendace_status"` //izin, sakit,alfa,hadir,terlambat
+	AttendaceAt     time.Time `json:"attendace_at"`
 }
 
 func (a *Atendance) BeforeCreate(tx *gorm.DB) (err error) {
