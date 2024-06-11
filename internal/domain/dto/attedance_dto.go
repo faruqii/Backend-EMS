@@ -14,3 +14,11 @@ type AttendanceResponse struct {
 	AttendaceStatus string    `json:"attendace_status"`
 	AttendaceAt     time.Time `json:"attendace_at"`
 }
+
+type StudentAttedanceResponse struct {
+	ID              string    `json:"id"`
+	StudentName     string    `json:"student_name"`
+	SubjectName     string    `json:"subject_name"`
+	AttedanceStatus string    `json:"attedance_status"`
+	AttedanceAt     time.Time `json:"attedance_at"`
+}

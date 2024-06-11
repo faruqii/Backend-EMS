@@ -61,7 +61,7 @@ func initServices(repos *Repositories) *Services {
 		authService:    services.NewAuthService(repos.userRepo, repos.tokenRepo, repos.roleRepo),
 		adminService:   adminSvc.NewAdminService(repos.subjectRepo, repos.teacherRepo, repos.userRepo, repos.roleRepo, repos.classRepo, repos.scheduleRepo, repos.studentRepo),
 		teacherService: teacherSvc.NewTeacherService(repos.teacherRepo, repos.scheduleRepo, repos.tokenRepo, repos.taskRepo, repos.classRepo, repos.subjectRepo, repos.quizRepo, repos.assignmentRepo, repos.attedanceRepo),
-		studentService: studentSvc.NewStudentService(repos.scheduleRepo, repos.taskRepo, repos.studentRepo, repos.tokenRepo, repos.assignmentRepo, repos.quizRepo, repos.classRepo, repos.subjectRepo),
+		studentService: studentSvc.NewStudentService(repos.scheduleRepo, repos.taskRepo, repos.studentRepo, repos.tokenRepo, repos.assignmentRepo, repos.quizRepo, repos.classRepo, repos.subjectRepo, repos.attedanceRepo),
 	}
 }
 

@@ -10,6 +10,7 @@ type AttedanceRepository interface {
 	GetAttedanceBySubjectID(subjectID string) ([]entities.Atendance, error)
 	GetAttedanceByClassID(classID string) ([]entities.Atendance, error)
     GetAttedanceBySubjectAndClassID(subjectID, classID string) ([]entities.Atendance, error)
+	GetMyAttedance(studentID string) ([]entities.Atendance, error)
 }
 
 type attendaceRepository struct {
@@ -55,4 +56,14 @@ func (r *attendaceRepository) GetAttedanceBySubjectAndClassID(subjectID, classID
     }
 
     return attedances, nil
+}
+
+func (r *attendaceRepository) GetMyAttedance(studentID string) ([]entities.Atendance, error) {
+	var attedances []entities.Atendance
+	// preload student and subject
+	if err := r.db.Preload("Student").Preload("Subject").Where("student_id = ?", studentID).Find(&attedances).Error; err != nil {
+		return nil, err
+	}
+
+	return attedances, nil
 }
