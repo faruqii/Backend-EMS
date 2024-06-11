@@ -80,6 +80,11 @@ func (s *adminService) GetTeachersBySubjectID(subjectID string) ([]dto.TeacherSu
 }
 
 func (s *adminService) GetTeacherSubjects(teacherID string) ([]dto.TeacherSubjectsResponse, error) {
+	// check cache first
+	if cachedSubjects, found := s.cache.Get(teacherID); found {
+		return *cachedSubjects.(*[]dto.TeacherSubjectsResponse), nil
+	}
+
 	teacherSubjects, err := s.subjectRepo.GetTeacherSubjects(teacherID)
 	if err != nil {
 		return nil, services.HandleError(err, "Failed to fetch teacher subjects", 500)

@@ -1,12 +1,16 @@
 package services
 
 import (
+	"time"
+
 	"github.com/Magetan-Boyz/Backend/internal/domain/repositories"
+	"github.com/patrickmn/go-cache"
 )
 
 // AdminService is a contract for AdminService
 // Use case: Admin can manage subjects, teachers, classes, and schedules
 // Below is dependency injection for AdminService such as Subject, Teacher, Class, and Schedule Services
+//
 //go:generate mockgen -source=admin_service.go -destination=mock_admin_service.go -package=mock
 type AdminService interface {
 	AdminSubjectService
@@ -25,6 +29,7 @@ type adminService struct {
 	classRepo    repositories.ClassRepository
 	scheduleRepo repositories.ScheduleRepository
 	studentRepo  repositories.StudentRepository
+	cache        *cache.Cache
 }
 
 // NewAdminService is a constructor for adminService
@@ -38,6 +43,7 @@ func NewAdminService(
 	scheduleRepo repositories.ScheduleRepository,
 	studentRepo repositories.StudentRepository,
 ) *adminService {
+	c := cache.New(5*time.Minute, 10*time.Minute)
 	return &adminService{
 		subjectRepo:  subjectRepo,
 		teacherRepo:  teacherRepo,
@@ -46,5 +52,6 @@ func NewAdminService(
 		classRepo:    classRepo,
 		scheduleRepo: scheduleRepo,
 		studentRepo:  studentRepo,
+		cache:        c,
 	}
 }

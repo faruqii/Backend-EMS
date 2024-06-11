@@ -14,6 +14,7 @@ require (
 require (
 	github.com/go-playground/validator/v10 v10.19.0
 	github.com/lib/pq v1.10.9
+	github.com/patrickmn/go-cache v2.1.0+incompatible
 	go.uber.org/mock v0.4.0
 )
 
