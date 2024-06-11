@@ -10,6 +10,7 @@ type TeacherService interface {
 	QuizService
 	TeacherSubjectService
 	AttedanceService
+	TeacherClassService
 }
 
 type teacherService struct {

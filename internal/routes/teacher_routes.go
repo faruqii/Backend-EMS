@@ -32,4 +32,8 @@ func TeacherRoutes(router fiber.Router, teacherService services.TeacherService, 
 	teacherSubjectControllerRoutes.Get("/:classID/:subjectID/student", teacherController.CountStudent)
 	teacherSubjectControllerRoutes.Post("/:subjectID/attendance", teacherController.CreateAttendance)
 
+	teacherClassRoutes := teacherControllerRoutes.Group("/class")
+	teacherClassRoutes.Get("", teacherController.GetWhereIamTeachTheClass)
+	teacherClassRoutes.Get("/:classID/attendance", teacherController.GetAttendanceByClassID)
+
 }

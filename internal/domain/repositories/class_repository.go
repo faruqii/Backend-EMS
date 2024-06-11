@@ -16,6 +16,8 @@ type ClassRepository interface {
 	GetAllStudents(classID string) ([]entities.Student, error)
 	ClassExists(classID string) (bool, error)
 	IsTeacherTeachTheClass(classID string) (bool, error)
+	IsTeacherHomeRoomTeacher(teacherID, classID string) (bool, error)
+	
 }
 
 type classRepository struct {
@@ -100,6 +102,14 @@ func (r *classRepository) ClassExists(classID string) (bool, error) {
 func (r *classRepository) IsTeacherTeachTheClass(classID string) (bool, error) {
 	var count int64
 	if err := r.db.Model(&entities.Class{}).Where("id =?", classID).Count(&count).Error; err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
+
+func (r *classRepository) IsTeacherHomeRoomTeacher(teacherID, classID string) (bool, error) {
+	var count int64
+	if err := r.db.Model(&entities.Class{}).Where("home_room_teacher_id = ? AND id = ?", teacherID, classID).Count(&count).Error; err != nil {
 		return false, err
 	}
 	return count > 0, nil

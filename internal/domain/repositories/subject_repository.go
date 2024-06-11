@@ -19,6 +19,7 @@ type SubjectRepository interface {
 	AssignSubjectToClass(subjectID, teacherID, classID string) (*entities.ClassSubject, error)
 	GetClassSubjects(classID string) ([]entities.ClassSubject, error)
 	GetStudentsByClassAndSubjectID(classID, subjectID string) ([]entities.Student, error)
+	GetWhereIamTeachTheClass(teacherID string) ([]entities.ClassSubject, error)
 }
 
 // subjectRepository is a concrete implementation of SubjectRepository.
@@ -153,3 +154,12 @@ func (r *subjectRepository) GetStudentsByClassAndSubjectID(classID, subjectID st
 	return students, nil
 }
 
+func (r *subjectRepository) GetWhereIamTeachTheClass(teacherID string) ([]entities.ClassSubject, error) {
+	var classSubjects []entities.ClassSubject
+	err := r.db.Preload("Subject").Preload("Class").Preload("Teacher").
+		Where("teacher_id = ?", teacherID).Find(&classSubjects).Error
+	if err != nil {
+		return nil, err
+	}
+	return classSubjects, nil
+}
