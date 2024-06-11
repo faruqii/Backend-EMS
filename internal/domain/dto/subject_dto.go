@@ -24,8 +24,9 @@ type TeacherSubjectResponse struct {
 }
 
 type TeacherSubjectsResponse struct {
-	TeacherName string   `json:"teacher_name"`
-	SubjectName []string `json:"subject_name"`
+	TeacherID   string            `json:"teacher_id"`
+	TeacherName string            `json:"teacher_name"`
+	Subjects     []SubjectResponse `json:"subject"`
 }
 
 type AssignSubjectToClassRequest struct {

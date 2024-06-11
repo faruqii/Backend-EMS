@@ -85,26 +85,31 @@ func (s *adminService) GetTeacherSubjects(teacherID string) ([]dto.TeacherSubjec
 		return nil, services.HandleError(err, "Failed to fetch teacher subjects", 500)
 	}
 
-	var subjects []dto.TeacherSubjectsResponse
+	teacherSubjectsMap := make(map[string]dto.TeacherSubjectsResponse)
+	for _, ts := range teacherSubjects {
+		subject := dto.SubjectResponse{
+			ID:          ts.Subject.ID,
+			Name:        ts.Subject.Name,
+			Description: ts.Subject.Description,
+			Semester:    ts.Subject.Semester,
+		}
 
-	if len(teacherSubjects) == 0 {
-		subjects = append(subjects, dto.TeacherSubjectsResponse{
-			TeacherName: "",
-			SubjectName: []string{},
-		})
-	} else {
-		subjectMap := make(map[string]bool)
-		for _, ts := range teacherSubjects {
-			subjectMap[ts.Subject.Name] = true
+		if _, exists := teacherSubjectsMap[ts.Teacher.ID]; !exists {
+			teacherSubjectsMap[ts.Teacher.ID] = dto.TeacherSubjectsResponse{
+				TeacherID:   ts.Teacher.ID,
+				TeacherName: ts.Teacher.Name,
+				Subjects:    []dto.SubjectResponse{subject},
+			}
+		} else {
+			tsr := teacherSubjectsMap[ts.Teacher.ID]
+			tsr.Subjects = append(tsr.Subjects, subject)
+			teacherSubjectsMap[ts.Teacher.ID] = tsr
 		}
-		firstTeacherName := teacherSubjects[0].Teacher.Name
-		subjects = append(subjects, dto.TeacherSubjectsResponse{
-			TeacherName: firstTeacherName,
-			SubjectName: make([]string, 0, len(subjectMap)),
-		})
-		for subject := range subjectMap {
-			subjects[0].SubjectName = append(subjects[0].SubjectName, subject)
-		}
+	}
+
+	var subjects []dto.TeacherSubjectsResponse
+	for _, tsr := range teacherSubjectsMap {
+		subjects = append(subjects, tsr)
 	}
 
 	return subjects, nil

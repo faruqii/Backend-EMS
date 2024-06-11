@@ -1,6 +1,8 @@
 package repositories
 
 import (
+	"errors"
+
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"gorm.io/gorm"
 )
@@ -114,6 +116,11 @@ func (r *subjectRepository) GetTeacherSubjects(teacherID string) ([]entities.Tea
 		Where("teacher_id = ?", teacherID).Find(&teacherSubjects).Error; err != nil {
 		return nil, err
 	}
+
+	if len(teacherSubjects) == 0 {
+		return nil, errors.New("no subjects found for the given teacher ID")
+	}
+
 	return teacherSubjects, nil
 }
 
