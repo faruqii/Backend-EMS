@@ -17,6 +17,12 @@ func StudentRoutes(router fiber.Router, studentSvc services.StudentService, mw *
 	studentClassRoutes.Get("", student.GetClass)
 	studentClassRoutes.Get("/subjects", student.GetSubjects)
 
+	studentSubjectRoutes := studentRoutes.Group("/subject")
+	studentSubjectRoutes.Get("/:classID", student.GetSubjectByClassID)
+	studentSubjectRoutes.Get("/:subjectID/detail", student.GetDetailSubject)
+	studentSubjectRoutes.Get("/:subjectID/matter", student.GetSubjectMatterBySubjectID)
+	studentSubjectRoutes.Get("/matter/:subjectMatterID/detail", student.GetDetailSubjectMatter)
+
 	studentTaskRoutes := studentRoutes.Group("/task")
 	studentTaskRoutes.Get("", student.GetTask)
 	studentTaskRoutes.Post("/:id/assignment", student.SubmitTaskAssignment)

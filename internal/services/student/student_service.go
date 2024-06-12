@@ -8,6 +8,7 @@ type StudentService interface {
 	StudentQuizService
 	StudentClassService
 	StudentAttendanceService
+	StudentSubjectRepository
 }
 
 type studentService struct {

@@ -25,6 +25,7 @@ type SubjectRepository interface {
 	CreateSubjectMatter(subjectMatter *entities.SubjectMattter) error
 	GetSubjectMatterBySubjectID(subjectID string) ([]entities.SubjectMattter, error)
 	GetDetailSubjectMatter(subjectMatterID string) (*entities.SubjectMattter, error)
+	GetAllSubjectInClass(classID string) ([]entities.ClassSubject, error)
 }
 
 // subjectRepository is a concrete implementation of SubjectRepository.
@@ -151,6 +152,7 @@ func (r *subjectRepository) GetClassSubjects(classID string) ([]entities.ClassSu
 	return classSubjects, nil
 }
 
+// GetStudentsByClassAndSubjectID returns all students in a class and subject.
 func (r *subjectRepository) GetStudentsByClassAndSubjectID(classID, subjectID string) ([]entities.Student, error) {
 	var students []entities.Student
 	err := r.db.Model(&entities.Student{}).
@@ -164,6 +166,7 @@ func (r *subjectRepository) GetStudentsByClassAndSubjectID(classID, subjectID st
 	return students, nil
 }
 
+// GetWhereIamTeachTheClass returns all class subjects where a teacher is assigned.
 func (r *subjectRepository) GetWhereIamTeachTheClass(teacherID string) ([]entities.ClassSubject, error) {
 	var classSubjects []entities.ClassSubject
 	err := r.db.Preload("Subject").Preload("Class").Preload("Teacher").
@@ -174,6 +177,7 @@ func (r *subjectRepository) GetWhereIamTeachTheClass(teacherID string) ([]entiti
 	return classSubjects, nil
 }
 
+// CreateSubjectMatter creates a new subject matter.
 func (r *subjectRepository) CreateSubjectMatter(subjectMatter *entities.SubjectMattter) error {
 	if err := r.db.Create(subjectMatter).Error; err != nil {
 		return err
@@ -181,6 +185,7 @@ func (r *subjectRepository) CreateSubjectMatter(subjectMatter *entities.SubjectM
 	return nil
 }
 
+// GetSubjectMatterBySubjectID returns all subject matters for a subject.
 func (r *subjectRepository) GetSubjectMatterBySubjectID(subjectID string) ([]entities.SubjectMattter, error) {
 	// preload subject
 	var subjectMatters []entities.SubjectMattter
@@ -191,10 +196,20 @@ func (r *subjectRepository) GetSubjectMatterBySubjectID(subjectID string) ([]ent
 	return subjectMatters, nil
 }
 
+// GetDetailSubjectMatter returns the detail of a subject matter by ID.
 func (r *subjectRepository) GetDetailSubjectMatter(subjectMatterID string) (*entities.SubjectMattter, error) {
 	var subjectMatter entities.SubjectMattter
 	if err := r.db.Preload("Subject").Where("id = ?", subjectMatterID).First(&subjectMatter).Error; err != nil {
 		return nil, err
 	}
 	return &subjectMatter, nil
+}
+
+// GetAllSubjectInClass returns all subjects assigned to a class.
+func (r *subjectRepository) GetAllSubjectInClass(classID string) ([]entities.ClassSubject, error) {
+	var classSubjects []entities.ClassSubject
+	if err := r.db.Preload("Class").Preload("Subject").Preload("Teacher").Where("class_id = ?", classID).Find(&classSubjects).Error; err != nil {
+		return nil, err
+	}
+	return classSubjects, nil
 }
