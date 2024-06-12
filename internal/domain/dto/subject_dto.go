@@ -26,7 +26,7 @@ type TeacherSubjectResponse struct {
 type TeacherSubjectsResponse struct {
 	TeacherID   string            `json:"teacher_id"`
 	TeacherName string            `json:"teacher_name"`
-	Subjects     []SubjectResponse `json:"subject"`
+	Subjects    []SubjectResponse `json:"subject"`
 }
 
 type AssignSubjectToClassRequest struct {
@@ -39,4 +39,18 @@ type ClassSubjectResponse struct {
 	ClassName   string `json:"class_name"`
 	SubjectName string `json:"subject_name"`
 	TeacherName string `json:"teacher_name"`
+}
+
+type SubjectMattterRequest struct {
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Content     string `json:"content"`
+}
+
+type SubjectMattterResponse struct {
+	ID          string `json:"id"`
+	Subject     string `json:"subject"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Content     string `json:"content"`
 }

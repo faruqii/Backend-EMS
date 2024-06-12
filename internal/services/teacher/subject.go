@@ -2,12 +2,16 @@ package services
 
 import (
 	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
+	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"github.com/Magetan-Boyz/Backend/internal/services"
 )
 
 type TeacherSubjectService interface {
 	CountStudent(classID, subjectID string) ([]dto.StudentResponse, error)
 	GetMySubjects(userID string) ([]dto.TeacherSubjectsResponse, error)
+	CreateSubjectMatter(subjectMatter *entities.SubjectMattter) error
+	GetSubjectMatterBySubjectID(subjectID string) ([]entities.SubjectMattter, error)
+	GetDetailSubjectMatter(subjectMatterID string) (*entities.SubjectMattter, error)
 }
 
 func (s *teacherService) CountStudent(classID, subjectID string) ([]dto.StudentResponse, error) {
@@ -71,4 +75,27 @@ func (s *teacherService) GetMySubjects(userID string) ([]dto.TeacherSubjectsResp
 
 	return subjects, nil
 
+}
+
+func (s *teacherService) CreateSubjectMatter(subjectMatter *entities.SubjectMattter) error {
+	if err := s.subjectRepo.CreateSubjectMatter(subjectMatter); err != nil {
+		return services.HandleError(err, "Failed to create subject matter", 500)
+	}
+	return nil
+}
+
+func (s *teacherService) GetSubjectMatterBySubjectID(subjectID string) ([]entities.SubjectMattter, error) {
+	subjectMatters, err := s.subjectRepo.GetSubjectMatterBySubjectID(subjectID)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to get subject matters", 500)
+	}
+	return subjectMatters, nil
+}
+
+func (s *teacherService) GetDetailSubjectMatter(subjectMatterID string) (*entities.SubjectMattter, error) {
+	subjectMatter, err := s.subjectRepo.GetDetailSubjectMatter(subjectMatterID)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to get subject matter", 500)
+	}
+	return subjectMatter, nil
 }

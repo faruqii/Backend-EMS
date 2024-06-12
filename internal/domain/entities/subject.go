@@ -35,3 +35,22 @@ type ClassSubject struct {
 	TeacherID string  `json:"teacher_id"`
 	Teacher   Teacher `json:"teacher" gorm:"foreignKey:TeacherID"`
 }
+
+func (cs *ClassSubject) BeforeCreate(tx *gorm.DB) (err error) {
+	cs.ID = uuid.NewString()
+	return nil
+}
+
+type SubjectMattter struct {
+	ID          string  `json:"id" gorm:"primaryKey, type:uuid, default:uuid_generate_v4()"`
+	SubjectID   string  `json:"subject_id"`
+	Subject     Subject `json:"subject" gorm:"foreignKey:SubjectID"`
+	Title       string  `json:"title"`
+	Description string  `json:"description"`
+	Content     string  `json:"content"` // content of the subject matter like pdf, video, etc in link
+}
+
+func (sm *SubjectMattter) BeforeCreate(tx *gorm.DB) (err error) {
+	sm.ID = uuid.NewString()
+	return nil
+}

@@ -22,6 +22,9 @@ type SubjectRepository interface {
 	GetClassSubjects(classID string) ([]entities.ClassSubject, error)
 	GetStudentsByClassAndSubjectID(classID, subjectID string) ([]entities.Student, error)
 	GetWhereIamTeachTheClass(teacherID string) ([]entities.ClassSubject, error)
+	CreateSubjectMatter(subjectMatter *entities.SubjectMattter) error
+	GetSubjectMatterBySubjectID(subjectID string) ([]entities.SubjectMattter, error)
+	GetDetailSubjectMatter(subjectMatterID string) (*entities.SubjectMattter, error)
 }
 
 // subjectRepository is a concrete implementation of SubjectRepository.
@@ -169,4 +172,29 @@ func (r *subjectRepository) GetWhereIamTeachTheClass(teacherID string) ([]entiti
 		return nil, err
 	}
 	return classSubjects, nil
+}
+
+func (r *subjectRepository) CreateSubjectMatter(subjectMatter *entities.SubjectMattter) error {
+	if err := r.db.Create(subjectMatter).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *subjectRepository) GetSubjectMatterBySubjectID(subjectID string) ([]entities.SubjectMattter, error) {
+	// preload subject
+	var subjectMatters []entities.SubjectMattter
+	if err := r.db.Preload("Subject").Where("subject_id = ?", subjectID).Find(&subjectMatters).Error; err != nil {
+		return nil, err
+	}
+
+	return subjectMatters, nil
+}
+
+func (r *subjectRepository) GetDetailSubjectMatter(subjectMatterID string) (*entities.SubjectMattter, error) {
+	var subjectMatter entities.SubjectMattter
+	if err := r.db.Preload("Subject").Where("id = ?", subjectMatterID).First(&subjectMatter).Error; err != nil {
+		return nil, err
+	}
+	return &subjectMatter, nil
 }
