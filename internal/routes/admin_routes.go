@@ -45,4 +45,10 @@ func AdminRoutes(router fiber.Router, adminSvc services.AdminService, mw *middle
 	studentRoutes := adminRoutes.Group("/student")
 	studentRoutes.Post("/create", admin.CreateStudent)
 	studentRoutes.Get("/all", admin.GetAllStudents)
+
+	// Parent routes
+	parentRoutes := adminRoutes.Group("/parent")
+	parentRoutes.Post("/create", admin.CreateParentAccount)
+	parentRoutes.Post("/assign-student", admin.AssignParentToStudent)
+
 }

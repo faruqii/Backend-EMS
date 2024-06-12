@@ -12,7 +12,7 @@ type StudentRepository interface {
 	Insert(student *entities.Student) error
 	Update(student *entities.Student) error
 	Delete(student *entities.Student) error
-	FindById(id int) (*entities.Student, error)
+	FindById(id string) (*entities.Student, error)
 	FindByNISN(nisn string) (*entities.Student, error)
 	FindStudentByToken(token string) (string, error)
 	FindRoleByName(name string) (*entities.Role, error)
@@ -53,7 +53,7 @@ func (r *studentRepository) Delete(student *entities.Student) error {
 	return nil
 }
 
-func (r *studentRepository) FindById(id int) (*entities.Student, error) {
+func (r *studentRepository) FindById(id string) (*entities.Student, error) {
 	student := new(entities.Student)
 	if err := r.db.First(student, id).Error; err != nil {
 		return nil, err

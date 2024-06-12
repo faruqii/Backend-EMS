@@ -55,7 +55,6 @@ func Connect() (*gorm.DB, error) {
 		&entities.ClassSubject{},
 		&entities.Grade{},
 		&entities.Atendance{},
-		&entities.Permits{},
 		&entities.Task{},
 		&entities.Complaint{},
 		&entities.Dispensation{},

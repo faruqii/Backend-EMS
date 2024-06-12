@@ -21,19 +21,3 @@ func (a *Atendance) BeforeCreate(tx *gorm.DB) (err error) {
 	a.ID = uuid.NewString()
 	return nil
 }
-
-type Permits struct {
-	ID           string    `json:"id" gorm:"primaryKey, type:uuid, default:uuid_generate_v4()"`
-	StudentID    string    `json:"student_id"`
-	Student      Student   `json:"student" gorm:"foreignKey:StudentID"`
-	PermitAt     time.Time `json:"permit_at"`
-	PermitType   string    `json:"permit_type"`   //izin, sakit
-	PermitStatus string    `json:"permit_status"` //diterima, ditolak
-	PermitReason string    `json:"permit_reason"`
-	Evidence     string    `json:"evidence"` // file type
-}
-
-func (p *Permits) BeforeCreate(tx *gorm.DB) (err error) {
-	p.ID = uuid.NewString()
-	return nil
-}

@@ -50,7 +50,6 @@ func (r *attendaceRepository) GetAttedanceByClassID(classID string) ([]entities.
 	return attendances, nil
 }
 
-
 func (r *attendaceRepository) GetAttedanceBySubjectAndClassID(subjectID, classID string) ([]entities.Atendance, error) {
 	var attedances []entities.Atendance
 	// preload student and subject
