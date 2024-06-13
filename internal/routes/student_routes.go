@@ -38,4 +38,8 @@ func StudentRoutes(router fiber.Router, studentSvc services.StudentService, mw *
 	studentAttedanceRoutes := studentRoutes.Group("/attedance")
 	studentAttedanceRoutes.Get("", student.MyAttedance)
 
+	studentAchivementRoutes := studentRoutes.Group("/achivement")
+	studentAchivementRoutes.Post("/create", student.CreateAchivement)
+	studentAchivementRoutes.Get("", student.GetMyAchievements)
+
 }
