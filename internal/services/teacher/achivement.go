@@ -9,7 +9,7 @@ type TeacherStudentAchivementService interface {
 	GetAllAchivement() ([]entities.StudentAchivement, error)
 	GetAchivementByID(achivementID string) (*entities.StudentAchivement, error)
 	GetAllAchivementByStudentID(studentID string) ([]entities.StudentAchivement, error)
-	UpdateAchivement(achivement *entities.StudentAchivement) (*entities.StudentAchivement, error)
+	UpdateAchivement(id string, achivement *entities.StudentAchivement) (*entities.StudentAchivement, error)
 	DeleteAchivement(achivementID string) error
 }
 
@@ -40,14 +40,8 @@ func (s *teacherService) GetAllAchivementByStudentID(studentID string) ([]entiti
 	return achivements, nil
 }
 
-func (s *teacherService) UpdateAchivement(achivement *entities.StudentAchivement) (*entities.StudentAchivement, error) {
-	// find achivement by id
-	_, err := s.achivementRepo.GetAchivementByID(achivement.ID)
-	if err != nil {
-		return nil, services.HandleError(err, "Failed to get achivement", 500)
-	}
-
-	achivement, err = s.achivementRepo.UpdateAchivement(achivement)
+func (s *teacherService) UpdateAchivement(id string, achivement *entities.StudentAchivement) (*entities.StudentAchivement, error) {
+	achivement, err := s.achivementRepo.UpdateAchivement(id, achivement)
 	if err != nil {
 		return nil, services.HandleError(err, "Failed to update achivement", 500)
 	}

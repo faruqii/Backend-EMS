@@ -10,7 +10,7 @@ type AchivementRepository interface {
 	GetAchivementByID(achivementID string) (*entities.StudentAchivement, error)
 	GetAllAchivementByStudentID(studentID string) ([]entities.StudentAchivement, error)
 	GetAllAchivement() ([]entities.StudentAchivement, error)
-	UpdateAchivement(achivement *entities.StudentAchivement) (*entities.StudentAchivement, error)
+	UpdateAchivement(id string, achivement *entities.StudentAchivement) (*entities.StudentAchivement, error)
 	DeleteAchivement(achivementID string) error
 }
 
@@ -57,8 +57,8 @@ func (r *achivementRepository) GetAllAchivement() ([]entities.StudentAchivement,
 	return achivements, nil
 }
 
-func (r *achivementRepository) UpdateAchivement(achivement *entities.StudentAchivement) (*entities.StudentAchivement, error) {
-	if err := r.db.Save(achivement).Error; err != nil {
+func (r *achivementRepository) UpdateAchivement(id string, achivement *entities.StudentAchivement) (*entities.StudentAchivement, error) {
+	if err := r.db.Where("id = ?", id).Updates(achivement).Error; err != nil {
 		return nil, err
 	}
 

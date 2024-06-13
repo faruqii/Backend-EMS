@@ -42,9 +42,9 @@ func TeacherRoutes(router fiber.Router, teacherService services.TeacherService, 
 
 	teacherAchivementRoutes := teacherControllerRoutes.Group("/achivement")
 	teacherAchivementRoutes.Get("/all", teacherController.GetAllAchivement)
-	teacherAchivementRoutes.Get("/:achivementID", teacherController.GetAchivementByID)
-	teacherAchivementRoutes.Get("/:studentID/all", teacherController.GetAllAchivementByStudentID)
-	teacherAchivementRoutes.Put("/:achivementID/update", teacherController.UpdateAchivement)
-	teacherAchivementRoutes.Delete("/:achivementID/delete", teacherController.DeleteAchivement)
+	teacherAchivementRoutes.Get("/:id", teacherController.GetAchivementByID)
+	teacherAchivementRoutes.Get("/:id/all", teacherController.GetAllAchivementByStudentID)
+	teacherAchivementRoutes.Put("/:id/update", teacherController.UpdateAchivement)
+	teacherAchivementRoutes.Delete("/:id/delete", teacherController.DeleteAchivement)
 
 }

@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
-	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -106,12 +105,16 @@ func (h *TeacherHandler) UpdateAchivement(ctx *fiber.Ctx) (err error) {
 		})
 	}
 
-	achivement := &entities.StudentAchivement{
-		ID:     achivementID,
-		Status: req.Status,
+	achivement, err := h.teacherSvc.GetAchivementByID(achivementID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
 	}
 
-	_, err = h.teacherSvc.UpdateAchivement(achivement)
+	achivement.Status = req.Status
+
+	_, err = h.teacherSvc.UpdateAchivement(achivementID, achivement)
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
@@ -121,6 +124,7 @@ func (h *TeacherHandler) UpdateAchivement(ctx *fiber.Ctx) (err error) {
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
 		"message": "success update achivement",
 	})
+
 }
 
 func (h *TeacherHandler) DeleteAchivement(ctx *fiber.Ctx) (err error) {
