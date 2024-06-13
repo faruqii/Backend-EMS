@@ -14,6 +14,7 @@ type StudentAchivement struct {
 	Participation    string  `json:"participation"` // winner, participant
 	Level            string  `json:"level"`         // school, regional, national, international
 	Evidence         string  `json:"evidence"`
+	Status           string  `json:"status"` // pending, approved, rejected
 }
 
 func (sa *StudentAchivement) BeforeCreate(tx *gorm.DB) (err error) {
