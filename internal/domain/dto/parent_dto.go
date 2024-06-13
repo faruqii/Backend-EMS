@@ -25,7 +25,6 @@ type ParentStudentRequest struct {
 }
 
 type ParentStudentResponse struct {
-	ID        string `json:"id"`
 	ParentID  string `json:"parent_id"`
 	StudentID string `json:"student_id"`
 }

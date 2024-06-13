@@ -55,7 +55,7 @@ func (r *studentRepository) Delete(student *entities.Student) error {
 
 func (r *studentRepository) FindById(id string) (*entities.Student, error) {
 	student := new(entities.Student)
-	if err := r.db.First(student, id).Error; err != nil {
+	if err := r.db.Where("id = ?", id).First(student).Error; err != nil {
 		return nil, err
 	}
 	return student, nil
