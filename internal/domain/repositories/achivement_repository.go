@@ -8,8 +8,9 @@ import (
 type AchivementRepository interface {
 	InsertAchivement(achivement *entities.StudentAchivement) (*entities.StudentAchivement, error)
 	GetAchivementByID(achivementID string) (*entities.StudentAchivement, error)
-	GetAllAchivement(studentID string) ([]entities.StudentAchivement, error)
-	UpdateAchivement(achivement *entities.StudentAchivement) (*entities.StudentAchivement, error)
+	GetAllAchivementByStudentID(studentID string) ([]entities.StudentAchivement, error)
+	GetAllAchivement() ([]entities.StudentAchivement, error)
+	UpdateAchivement(id string, achivement *entities.StudentAchivement) (*entities.StudentAchivement, error)
 	DeleteAchivement(achivementID string) error
 }
 
@@ -38,7 +39,7 @@ func (r *achivementRepository) GetAchivementByID(achivementID string) (*entities
 	return &achivement, nil
 }
 
-func (r *achivementRepository) GetAllAchivement(studentID string) ([]entities.StudentAchivement, error) {
+func (r *achivementRepository) GetAllAchivementByStudentID(studentID string) ([]entities.StudentAchivement, error) {
 	achivements := []entities.StudentAchivement{}
 	if err := r.db.Preload("Student").Where("student_id = ?", studentID).Find(&achivements).Error; err != nil {
 		return nil, err
@@ -47,8 +48,17 @@ func (r *achivementRepository) GetAllAchivement(studentID string) ([]entities.St
 	return achivements, nil
 }
 
-func (r *achivementRepository) UpdateAchivement(achivement *entities.StudentAchivement) (*entities.StudentAchivement, error) {
-	if err := r.db.Save(achivement).Error; err != nil {
+func (r *achivementRepository) GetAllAchivement() ([]entities.StudentAchivement, error) {
+	achivements := []entities.StudentAchivement{}
+	if err := r.db.Preload("Student").Find(&achivements).Error; err != nil {
+		return nil, err
+	}
+
+	return achivements, nil
+}
+
+func (r *achivementRepository) UpdateAchivement(id string, achivement *entities.StudentAchivement) (*entities.StudentAchivement, error) {
+	if err := r.db.Where("id = ?", id).Updates(achivement).Error; err != nil {
 		return nil, err
 	}
 

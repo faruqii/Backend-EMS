@@ -41,7 +41,7 @@ func (s *studentService) GetMyAchievements(userID string) ([]entities.StudentAch
 		return nil, services.HandleError(err, "Failed to get student id", 500)
 	}
 
-	achivements, err := s.achivementRepo.GetAllAchivement(studentID)
+	achivements, err := s.achivementRepo.GetAllAchivementByStudentID(studentID)
 	if err != nil {
 		return nil, services.HandleError(err, "Failed to get achivements", 500)
 	}

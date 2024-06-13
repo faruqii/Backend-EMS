@@ -11,6 +11,8 @@ type TeacherService interface {
 	TeacherSubjectService
 	AttedanceService
 	TeacherClassService
+	TeacherStudentAchivementService
+	TeacherGradeService
 }
 
 type teacherService struct {
@@ -23,6 +25,8 @@ type teacherService struct {
 	quizRepo              repositories.QuizRepository
 	studentAssignmentRepo repositories.AssignmentRepository
 	attedanceRepo         repositories.AttedanceRepository
+	achivementRepo        repositories.AchivementRepository
+	gradeRepo             repositories.GradeRepository
 }
 
 func NewTeacherService(
@@ -35,6 +39,8 @@ func NewTeacherService(
 	quizRepo repositories.QuizRepository,
 	studentAssignmentRepo repositories.AssignmentRepository,
 	attedanceRepo repositories.AttedanceRepository,
+	achivementRepo repositories.AchivementRepository,
+	gradeRepo repositories.GradeRepository,
 ) *teacherService {
 	return &teacherService{
 		teacherRepo:           teacherRepo,
@@ -46,5 +52,7 @@ func NewTeacherService(
 		quizRepo:              quizRepo,
 		studentAssignmentRepo: studentAssignmentRepo,
 		attedanceRepo:         attedanceRepo,
+		achivementRepo:        achivementRepo,
+		gradeRepo:             gradeRepo,
 	}
 }

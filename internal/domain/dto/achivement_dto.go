@@ -10,6 +10,7 @@ type AchivementRequest struct {
 
 type AchivementResponse struct {
 	ID               string `json:"id"`
+	StudentID        string `json:"student_id"`
 	StudentName      string `json:"student_name"`
 	Title            string `json:"title"`
 	TypeOfAchivement string `json:"type_of_achivement"`
@@ -17,4 +18,8 @@ type AchivementResponse struct {
 	Level            string `json:"level"`
 	Evidence         string `json:"evidence"`
 	Status           string `json:"status"`
+}
+
+type UpdateAchivementRequest struct {
+	Status string `json:"status"`
 }

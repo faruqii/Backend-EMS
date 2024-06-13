@@ -40,4 +40,18 @@ func TeacherRoutes(router fiber.Router, teacherService services.TeacherService, 
 	teacherClassRoutes.Get("", teacherController.GetWhereIamTeachTheClass)
 	teacherClassRoutes.Get("/:classID/attendance", teacherController.GetAttendanceByClassID)
 
+	teacherAchivementRoutes := teacherControllerRoutes.Group("/achivement")
+	teacherAchivementRoutes.Get("/all", teacherController.GetAllAchivement)
+	teacherAchivementRoutes.Get("/:id", teacherController.GetAchivementByID)
+	teacherAchivementRoutes.Get("/:id/all", teacherController.GetAllAchivementByStudentID)
+	teacherAchivementRoutes.Put("/:id/update", teacherController.UpdateAchivement)
+	teacherAchivementRoutes.Delete("/:id/delete", teacherController.DeleteAchivement)
+
+	teacherGradeRoutes := teacherControllerRoutes.Group("/grade")
+	teacherGradeRoutes.Post("/:subjectID/insert", teacherController.InsertGrade)
+	teacherGradeRoutes.Get("/:gradeID", teacherController.GetGradeByID)
+	teacherGradeRoutes.Get("/student/:studentID", teacherController.GetAllGradeByStudentID)
+	teacherGradeRoutes.Get("/subject/:subjectID", teacherController.GetAllGradeBySubjectID)
+	teacherGradeRoutes.Get("", teacherController.GetAllGrade)
+
 }

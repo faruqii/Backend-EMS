@@ -32,6 +32,7 @@ type Repositories struct {
 	attedanceRepo  repositories.AttedanceRepository
 	parentRepo     repositories.ParentRepository
 	achivementRepo repositories.AchivementRepository
+	gradeRepo      repositories.GradeRepository
 }
 
 func initRepositories(db *gorm.DB) *Repositories {
@@ -50,6 +51,7 @@ func initRepositories(db *gorm.DB) *Repositories {
 		attedanceRepo:  repositories.NewAttedanceRepository(db),
 		parentRepo:     repositories.NewParentRepository(db),
 		achivementRepo: repositories.NewAchivementRepository(db),
+		gradeRepo:      repositories.NewGradeRepository(db),
 	}
 }
 
@@ -64,8 +66,8 @@ func initServices(repos *Repositories) *Services {
 	return &Services{
 		authService:    services.NewAuthService(repos.userRepo, repos.tokenRepo, repos.roleRepo),
 		adminService:   adminSvc.NewAdminService(repos.subjectRepo, repos.teacherRepo, repos.userRepo, repos.roleRepo, repos.classRepo, repos.scheduleRepo, repos.studentRepo, repos.parentRepo),
-		teacherService: teacherSvc.NewTeacherService(repos.teacherRepo, repos.scheduleRepo, repos.tokenRepo, repos.taskRepo, repos.classRepo, repos.subjectRepo, repos.quizRepo, repos.assignmentRepo, repos.attedanceRepo),
-		studentService: studentSvc.NewStudentService(repos.scheduleRepo, repos.taskRepo, repos.studentRepo, repos.tokenRepo, repos.assignmentRepo, repos.quizRepo, repos.classRepo, repos.subjectRepo, repos.attedanceRepo, repos.achivementRepo),
+		teacherService: teacherSvc.NewTeacherService(repos.teacherRepo, repos.scheduleRepo, repos.tokenRepo, repos.taskRepo, repos.classRepo, repos.subjectRepo, repos.quizRepo, repos.assignmentRepo, repos.attedanceRepo, repos.achivementRepo, repos.gradeRepo),
+		studentService: studentSvc.NewStudentService(repos.scheduleRepo, repos.taskRepo, repos.studentRepo, repos.tokenRepo, repos.assignmentRepo, repos.quizRepo, repos.classRepo, repos.subjectRepo, repos.attedanceRepo, repos.achivementRepo, repos.gradeRepo),
 	}
 }
 

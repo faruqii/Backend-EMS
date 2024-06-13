@@ -53,6 +53,8 @@ func (h *StudentHandler) GetMyAchievements(ctx *fiber.Ctx) (err error) {
 	for _, achivement := range achivements {
 		res = append(res, dto.AchivementResponse{
 			ID:               achivement.ID,
+			StudentID:        achivement.StudentID,
+			StudentName:      achivement.Student.Name,
 			Title:            achivement.Title,
 			TypeOfAchivement: achivement.TypeOfAchivement,
 			Participation:    achivement.Participation,
