@@ -46,4 +46,9 @@ func StudentRoutes(router fiber.Router, studentSvc services.StudentService, mw *
 	studentGradeRoutes.Get("", student.GetMyGrades)
 	studentGradeRoutes.Get("/:gradeID", student.GetGradeByID)
 
+	studentDispensationRoutes := studentRoutes.Group("/dispensation")
+	studentDispensationRoutes.Post("/create", student.CreateDispensation)
+	studentDispensationRoutes.Get("/:dispensationID", student.GetDispensationByID)
+	studentDispensationRoutes.Get("", student.GetMyDispensations)
+
 }
