@@ -22,6 +22,7 @@ type StudentRepository interface {
 	IsStudentAlreadyInClass(studentID string) (bool, error)
 	GetAllStudentsByClassID(classID string) ([]entities.Student, error)
 	FindStudentClassIDByStudentID(studentID string) (string, error)
+	GetStudentByUserID(userID string) (*entities.Student, error)
 }
 
 type studentRepository struct {
@@ -140,6 +141,14 @@ func (r *studentRepository) FindStudentClassIDByStudentID(studentID string) (str
 		return "", err
 	}
 	return classID, nil
+}
+
+func (r *studentRepository) GetStudentByUserID(userID string) (*entities.Student, error) {
+	var student entities.Student
+	if err := r.db.Where("user_id = ?", userID).First(&student).Error; err != nil {
+		return nil, err
+	}
+	return &student, nil
 }
 
 // Path: internal/domain/repositories/student_repository.go
