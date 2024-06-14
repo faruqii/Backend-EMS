@@ -70,7 +70,7 @@ func initServices(repos *Repositories) *Services {
 		adminService:   adminSvc.NewAdminService(repos.subjectRepo, repos.teacherRepo, repos.userRepo, repos.roleRepo, repos.classRepo, repos.scheduleRepo, repos.studentRepo, repos.parentRepo),
 		teacherService: teacherSvc.NewTeacherService(repos.teacherRepo, repos.scheduleRepo, repos.tokenRepo, repos.taskRepo, repos.classRepo, repos.subjectRepo, repos.quizRepo, repos.assignmentRepo, repos.attedanceRepo, repos.achivementRepo, repos.gradeRepo),
 		studentService: studentSvc.NewStudentService(repos.scheduleRepo, repos.taskRepo, repos.studentRepo, repos.tokenRepo, repos.assignmentRepo, repos.quizRepo, repos.classRepo, repos.subjectRepo, repos.attedanceRepo, repos.achivementRepo, repos.gradeRepo),
-		parentService:  parentSvc.NewParentService(repos.parentRepo, repos.scheduleRepo, repos.studentRepo, repos.tokenRepo, repos.assignmentRepo, repos.quizRepo, repos.classRepo, repos.subjectRepo, repos.attedanceRepo, repos.achivementRepo, repos.gradeRepo),
+		parentService:  parentSvc.NewParentService(repos.parentRepo, repos.scheduleRepo, repos.studentRepo, repos.tokenRepo, repos.assignmentRepo, repos.quizRepo, repos.classRepo, repos.subjectRepo, repos.attedanceRepo, repos.achivementRepo, repos.gradeRepo, repos.taskRepo),
 	}
 }
 

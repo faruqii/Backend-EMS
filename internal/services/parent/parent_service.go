@@ -4,6 +4,7 @@ import "github.com/Magetan-Boyz/Backend/internal/domain/repositories"
 
 type ParentService interface {
 	ParentStudentSchedule
+	ParentTaskService
 }
 
 type parentService struct {
@@ -18,6 +19,7 @@ type parentService struct {
 	attedanceRepo  repositories.AttedanceRepository
 	achivementRepo repositories.AchivementRepository
 	gradeRepo      repositories.GradeRepository
+	taskRepo       repositories.TaskRepository
 }
 
 func NewParentService(
@@ -32,6 +34,7 @@ func NewParentService(
 	attedanceRepo repositories.AttedanceRepository,
 	achivementRepo repositories.AchivementRepository,
 	gradeRepo repositories.GradeRepository,
+	taskRepo repositories.TaskRepository,
 ) *parentService {
 	return &parentService{
 		parentRepo:     parentRepo,
@@ -45,5 +48,6 @@ func NewParentService(
 		attedanceRepo:  attedanceRepo,
 		achivementRepo: achivementRepo,
 		gradeRepo:      gradeRepo,
+		taskRepo:       taskRepo,
 	}
 }

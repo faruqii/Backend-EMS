@@ -15,4 +15,7 @@ func ParentRoutes(router fiber.Router, teacherSvc service.ParentService, mw *mid
 
 	parentScheduleControllerRoutes := parentControllerRoutes.Group("/schedule")
 	parentScheduleControllerRoutes.Get("", parentController.GetSchedule)
+
+	parentTaskControllerRoutes := parentControllerRoutes.Group("/task")
+	parentTaskControllerRoutes.Get("", parentController.GetTask)
 }
