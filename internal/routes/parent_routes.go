@@ -22,4 +22,7 @@ func ParentRoutes(router fiber.Router, teacherSvc service.ParentService, mw *mid
 	parentAchievementControllerRoutes := parentControllerRoutes.Group("/achievement")
 	parentAchievementControllerRoutes.Get("", parentController.GetAchivement)
 
+	parentQuizControllerRoutes := parentControllerRoutes.Group("/quiz")
+	parentQuizControllerRoutes.Get("", parentController.GetQuizAssignment)
+
 }

@@ -6,6 +6,7 @@ type ParentService interface {
 	ParentStudentSchedule
 	ParentTaskService
 	ParentStudentAchievementService
+	ParentStudentQuizService
 }
 
 type parentService struct {

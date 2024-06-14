@@ -18,6 +18,7 @@ type AssignmentRepository interface {
 	UpdateQuizAssignment(assignment *entities.StudentQuizAssignment) error
 	GetAllQuizAssignment(quizID string) ([]entities.StudentQuizAssignment, error)
 	GetQuizAssignment(quizAssignmentID string) (*entities.StudentQuizAssignment, error)
+	GetQuizByStudentID(studentID string) ([]entities.StudentQuizAssignment, error)
 }
 
 type assignmentRepository struct {
@@ -99,7 +100,7 @@ func (r *assignmentRepository) UpdateQuizAssignment(assignment *entities.Student
 
 func (r *assignmentRepository) GetAllQuizAssignment(quizID string) ([]entities.StudentQuizAssignment, error) {
 	var assignments []entities.StudentQuizAssignment
-	if err := r.db.Preload("Student").Where("quiz_id = ?", quizID).Find(&assignments).Error; err != nil {
+	if err := r.db.Preload("Quiz").Preload("Student").Where("quiz_id = ?", quizID).Find(&assignments).Error; err != nil {
 		return nil, err
 	}
 	return assignments, nil
@@ -111,4 +112,12 @@ func (r *assignmentRepository) GetQuizAssignment(quizAssignmentID string) (*enti
 		return nil, err
 	}
 	return &assignment, nil
+}
+
+func (r *assignmentRepository) GetQuizByStudentID(studentID string) ([]entities.StudentQuizAssignment, error) {
+	var assignments []entities.StudentQuizAssignment
+	if err := r.db.Preload("Quiz").Preload("Student").Where("student_id = ?", studentID).Find(&assignments).Error; err != nil {
+		return nil, err
+	}
+	return assignments, nil
 }
