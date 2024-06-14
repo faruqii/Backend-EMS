@@ -5,6 +5,7 @@ import "github.com/Magetan-Boyz/Backend/internal/domain/repositories"
 type ParentService interface {
 	ParentStudentSchedule
 	ParentTaskService
+	ParentStudentAchievementService
 }
 
 type parentService struct {
