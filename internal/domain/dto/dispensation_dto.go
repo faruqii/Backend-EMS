@@ -17,3 +17,7 @@ type DispensationResponse struct {
 	Document  string `json:"document"`
 	Status    string `json:"status"`
 }
+
+type DispensationUpdateRequest struct {
+	Status string `json:"status"`
+}

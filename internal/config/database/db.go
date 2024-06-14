@@ -27,7 +27,7 @@ func Connect() (*gorm.DB, error) {
 	config.Read()
 
 	dsn := fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=Asia/Jakarta",
+		"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=Asia/Bangkok",
 		config.Host, config.User, config.Password, config.DBName, config.Port, config.SSLMODE,
 	)
 
