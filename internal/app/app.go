@@ -82,7 +82,7 @@ func initServices(repos *Repositories) *Services {
 			repos.classRepo, repos.subjectRepo,
 			repos.quizRepo, repos.assignmentRepo,
 			repos.attedanceRepo, repos.achivementRepo,
-			repos.gradeRepo, repos.dispensationRepo),
+			repos.gradeRepo, repos.dispensationRepo, repos.literationRepo),
 		studentService: studentSvc.NewStudentService(
 			repos.scheduleRepo, repos.taskRepo,
 			repos.studentRepo, repos.tokenRepo,
