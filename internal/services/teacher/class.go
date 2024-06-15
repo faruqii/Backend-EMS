@@ -8,6 +8,7 @@ import (
 type TeacherClassService interface {
 	GetWhereIamTeachTheClass(userID string) ([]entities.ClassSubject, error)
 	IsIamHomeroomTeacher(userID string, classID string) (bool, error)
+	GetAllStudents(classID string) ([]entities.Student, error)
 }
 
 func (s *teacherService) GetWhereIamTeachTheClass(userID string) ([]entities.ClassSubject, error) {
@@ -36,4 +37,13 @@ func (s *teacherService) IsIamHomeroomTeacher(userID string, classID string) (bo
 	}
 
 	return class, nil
+}
+
+func (s *teacherService) GetAllStudents(classID string) ([]entities.Student, error) {
+	students, err := s.classRepo.GetAllStudents(classID)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to fetch students", 500)
+	}
+
+	return students, nil
 }

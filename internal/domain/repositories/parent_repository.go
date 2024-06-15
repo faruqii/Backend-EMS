@@ -12,6 +12,7 @@ type ParentRepository interface {
 	FindById(id string) (*entities.Parent, error)
 	InsertParentToStudent(parstud *entities.ParentStudent) error
 	FindByParentAndStudent(parentID, studentID string) (*entities.ParentStudent, error)
+	GetStudentIDByParentID(parentID string) (string, error)
 }
 
 type parentRepository struct {
@@ -64,4 +65,12 @@ func (r *parentRepository) FindByParentAndStudent(parentID, studentID string) (*
 		return nil, err
 	}
 	return parstud, nil
+}
+
+func (r *parentRepository) GetStudentIDByParentID(parentID string) (string, error) {
+	parstud := new(entities.ParentStudent)
+	if err := r.db.Where("parent_id = ?", parentID).First(parstud).Error; err != nil {
+		return "", err
+	}
+	return parstud.StudentID, nil
 }

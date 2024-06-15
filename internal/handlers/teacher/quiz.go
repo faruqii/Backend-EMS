@@ -138,6 +138,7 @@ func (t *TeacherHandler) GetAllQuizAssignment(ctx *fiber.Ctx) error {
 	for _, qa := range quizAssignment {
 		response = append(response, dto.StudentQuizAssignmentResponse{
 			ID:          qa.ID,
+			QuizName:    qa.Quiz.Title,
 			StudentName: qa.Student.Name,
 			NISN:        qa.Student.NISN,
 			Grade:       qa.Grade,

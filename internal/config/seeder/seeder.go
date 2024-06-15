@@ -80,11 +80,19 @@ func (s *Seed) StudentSeeder() {
 			User: entities.User{
 				Username: "student",
 			},
-			Name:       "student",
-			NISN:       "1234567890",
-			Address:    "student",
-			Birthplace: "student",
-			Birthdate:  "student",
+			Name:        "student",
+			NISN:        "1234567890",
+			Gender:      "Male",
+			Address:     "student",
+			Birthplace:  "Ngawi",
+			Birthdate:   "student",
+			Province:    "Ngawi",
+			City:        "Ngawi",
+			BloodType:   "O",
+			Religion:    "Islam",
+			Phone:       "1234567890",
+			ParentPhone: "1234567890",
+			Email:       "masrusdi@ngawi.com",
 		}
 
 		password, err := bcrypt.GenerateFromPassword([]byte("student"), bcrypt.MinCost)

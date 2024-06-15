@@ -24,6 +24,14 @@ func (s *adminService) CreateStudent(student *entities.Student) error {
 		return services.HandleError(err, "NISN already exist", 400)
 	}
 
+	existingStudent, err := s.studentRepo.GetStudentByUserID(student.UserID)
+	if err != nil {
+		return err
+	}
+	if existingStudent != nil {
+		return services.HandleError(err, "Student already exist", 400)
+	}
+
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(student.User.Password), bcrypt.MinCost)
 	if err != nil {
 		return services.HandleError(err, "Failed to hash password", 500)

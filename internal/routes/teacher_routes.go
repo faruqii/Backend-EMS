@@ -39,6 +39,7 @@ func TeacherRoutes(router fiber.Router, teacherService services.TeacherService, 
 	teacherClassRoutes := teacherControllerRoutes.Group("/class")
 	teacherClassRoutes.Get("", teacherController.GetWhereIamTeachTheClass)
 	teacherClassRoutes.Get("/:classID/attendance", teacherController.GetAttendanceByClassID)
+	teacherClassRoutes.Get("/:classID/students", teacherController.GetStudents)
 
 	teacherAchivementRoutes := teacherControllerRoutes.Group("/achivement")
 	teacherAchivementRoutes.Get("/all", teacherController.GetAllAchivement)
@@ -53,5 +54,11 @@ func TeacherRoutes(router fiber.Router, teacherService services.TeacherService, 
 	teacherGradeRoutes.Get("/student/:studentID", teacherController.GetAllGradeByStudentID)
 	teacherGradeRoutes.Get("/subject/:subjectID", teacherController.GetAllGradeBySubjectID)
 	teacherGradeRoutes.Get("", teacherController.GetAllGrade)
+
+	teacherDispensationRoutes := teacherControllerRoutes.Group("/dispensation")
+	teacherDispensationRoutes.Get("/:dispensationID", teacherController.GetDispenpationByID)
+	teacherDispensationRoutes.Get("", teacherController.GetAllDispensations)
+	teacherDispensationRoutes.Get("/student/:studentID", teacherController.GetDispensationsByStudentID)
+	teacherDispensationRoutes.Put("/:dispensationID/update", teacherController.UpdateDispensationStatus)
 
 }
