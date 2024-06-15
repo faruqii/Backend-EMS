@@ -7,6 +7,8 @@ type ParentService interface {
 	ParentTaskService
 	ParentStudentAchievementService
 	ParentStudentQuizService
+	ParentStudentGradeService
+	ParentTokenService
 }
 
 type parentService struct {
