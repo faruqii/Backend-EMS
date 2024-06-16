@@ -1,6 +1,8 @@
 package services
 
 import (
+	"errors"
+
 	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"github.com/Magetan-Boyz/Backend/internal/services"
@@ -46,16 +48,20 @@ func (s *adminService) GetAllTeacher() ([]entities.Teacher, error) {
 }
 
 func (s *adminService) AssignTeacherToSubject(teacherID, SubjectID string) error {
-	isAssigned, err := s.subjectRepo.IsTeacherAssignedToSubject(teacherID, SubjectID)
+	teacherAlreadyAssigned, err := s.subjectRepo.IsTeacherAssignedToSubject(teacherID, SubjectID)
 	if err != nil {
 		return services.HandleError(err, "Failed to check if teacher is assigned to subject", 500)
 	}
-	if isAssigned {
-		return services.HandleError(err, "Teacher already assigned to subject", 400)
+	if teacherAlreadyAssigned {
+		return services.HandleError(errors.New("teacher already assigned to subject"), "Teacher already assigned to subject", 400)
 	}
 
 	err = s.subjectRepo.AssignTeacherToSubject(teacherID, SubjectID)
-	return services.HandleError(err, "Failed to assign teacher to subject", 500)
+	if err != nil {
+		return services.HandleError(err, "Failed to assign teacher to subject", 500)
+	}
+
+	return nil
 }
 
 func (s *adminService) FindTeacherByID(id string) (*entities.Teacher, error) {

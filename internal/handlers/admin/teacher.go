@@ -85,35 +85,16 @@ func (c *AdminHandler) AssignTeacherToSubject(ctx *fiber.Ctx) (err error) {
 			"error": err.Error(),
 		})
 	}
-	teacher, err := c.adminService.FindTeacherByID(req.TeacherID)
+
+	err = c.adminService.AssignTeacherToSubject(req.TeacherID, subjectID)
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
 		})
-	}
-
-	subject, err := c.adminService.FindSubjectByID(subjectID)
-	if err != nil {
-		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
-	}
-
-	err = c.adminService.AssignTeacherToSubject(teacher.ID, subjectID)
-	if err != nil {
-		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
-	}
-
-	response := dto.TeacherSubjectResponse{
-		SubjectName: subject.Name,
-		TeacherName: teacher.Name,
 	}
 
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
 		"message": "Teacher assigned to subject successfully",
-		"data":    response,
 	})
 }
 

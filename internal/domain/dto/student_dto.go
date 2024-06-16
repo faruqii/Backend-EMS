@@ -5,10 +5,10 @@ type StudentRequest struct {
 	Password    string `json:"password"`
 	Name        string `json:"name"`
 	NISN        string `json:"nisn"`
+	Gender      string `json:"gender"`
 	Address     string `json:"address"`
 	Birthplace  string `json:"birthplace"`
 	Birthdate   string `json:"birthdate"`
-	Gender      string `json:"gender"`
 	Province    string `json:"province"`
 	City        string `json:"city"`
 	BloodType   string `json:"blood_type"`

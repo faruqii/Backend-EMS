@@ -34,7 +34,10 @@ func (r *assignmentRepository) Insert(assignment *entities.StudentAssignment) er
 }
 
 func (r *assignmentRepository) Update(assignment *entities.StudentAssignment) error {
-	return r.db.Save(assignment).Error
+	return r.db.Model(&entities.StudentAssignment{}).
+		Where("id = ?", assignment.ID).
+		Select("Grade", "Feedback"). // Only update these fields
+		Updates(assignment).Error
 }
 
 func (r *assignmentRepository) FindByID(id string) (*entities.StudentAssignment, error) {
