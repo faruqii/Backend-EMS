@@ -47,15 +47,23 @@ func (c *AdminHandler) CreateSchedule(ctx *fiber.Ctx) (err error) {
 		})
 	}
 
+	// parse in location
+	loc, err := time.LoadLocation("Local")
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
 	// parse time
-	startTime, err := time.Parse(time.TimeOnly, req.StartTime)
+	startTime, err := time.ParseInLocation(time.TimeOnly, req.StartTime, loc)
 	if err != nil {
 		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
 			"error": "Invalid start time",
 		})
 	}
 
-	endTime, err := time.Parse(time.TimeOnly, req.EndTime)
+	endTime, err := time.ParseInLocation(time.TimeOnly, req.EndTime, loc)
 	if err != nil {
 		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
 			"error": "Invalid end time",
