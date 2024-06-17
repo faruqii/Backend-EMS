@@ -66,6 +66,7 @@ func Connect() (*gorm.DB, error) {
 		&entities.StudentAchivement{},
 		&entities.Agenda{},
 		&entities.Literation{},
+		&entities.Violation{},
 	)
 
 	if err != nil {

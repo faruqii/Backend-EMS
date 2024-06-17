@@ -36,6 +36,7 @@ type Repositories struct {
 	gradeRepo        repositories.GradeRepository
 	dispensationRepo repositories.DispensationRepository
 	literationRepo   repositories.LiterationRepository
+	violationRepo    repositories.ViolationRepository
 }
 
 func initRepositories(db *gorm.DB) *Repositories {
@@ -57,6 +58,7 @@ func initRepositories(db *gorm.DB) *Repositories {
 		gradeRepo:        repositories.NewGradeRepository(db),
 		dispensationRepo: repositories.NewDispensationRepository(db),
 		literationRepo:   repositories.NewLiterationRepository(db),
+		violationRepo:    repositories.NewViolationRepository(db),
 	}
 }
 
@@ -82,7 +84,8 @@ func initServices(repos *Repositories) *Services {
 			repos.classRepo, repos.subjectRepo,
 			repos.quizRepo, repos.assignmentRepo,
 			repos.attedanceRepo, repos.achivementRepo,
-			repos.gradeRepo, repos.dispensationRepo, repos.literationRepo),
+			repos.gradeRepo, repos.dispensationRepo,
+			repos.literationRepo, repos.violationRepo),
 		studentService: studentSvc.NewStudentService(
 			repos.scheduleRepo, repos.taskRepo,
 			repos.studentRepo, repos.tokenRepo,

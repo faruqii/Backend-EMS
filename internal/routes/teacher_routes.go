@@ -67,4 +67,10 @@ func TeacherRoutes(router fiber.Router, teacherService services.TeacherService, 
 	teacherLiterationRoutes.Get("/:id", teacherController.GetLiterationByID)
 	teacherLiterationRoutes.Get("/student/:id", teacherController.GetLiterationByStudentID)
 
+	teacherViolationRoutes := teacherControllerRoutes.Group("/violation")
+	teacherViolationRoutes.Post("/create", teacherController.CreateViolation)
+	teacherViolationRoutes.Get("/all", teacherController.GetAllViolation)
+	teacherViolationRoutes.Get("/:id", teacherController.GetViolationByID)
+	teacherViolationRoutes.Get("/student/:student_id", teacherController.GetViolationByStudentID)
+
 }
