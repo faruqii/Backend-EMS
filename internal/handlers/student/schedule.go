@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
 	"github.com/Magetan-Boyz/Backend/internal/helper"
@@ -29,8 +30,8 @@ func (h *StudentHandler) GetSchedule(ctx *fiber.Ctx) (err error) {
 			Subject:   schedule.Subject.Name,
 			Teacher:   schedule.Teacher.Name,
 			DayOfWeek: dayOfWeek,
-			StartTime: schedule.StartTime,
-			EndTime:   schedule.EndTime,
+			StartTime: schedule.StartTime.Format(time.TimeOnly),
+			EndTime:   schedule.EndTime.Format(time.TimeOnly),
 		})
 	}
 

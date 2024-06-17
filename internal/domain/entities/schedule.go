@@ -16,8 +16,8 @@ type Schedule struct {
 	TeacherID string       `json:"teacher_id"`
 	Teacher   Teacher      `json:"teacher" gorm:"foreignKey:TeacherID;references:ID"`
 	DayOfWeek time.Weekday `json:"day_of_week"` // Day starts from 0 (Sunday) to 6 (Saturday)
-	StartTime string       `json:"start_time"`  // Format: "15:04"
-	EndTime   string       `json:"end_time"`    // Format: "15:04"
+	StartTime time.Time    `json:"start_time"`  // Format: "15:04"
+	EndTime   time.Time    `json:"end_time"`    // Format: "15:04"
 }
 
 func (s *Schedule) BeforeCreate(tx *gorm.DB) (err error) {

@@ -37,8 +37,8 @@ func (t *TeacherHandler) GetTodaySchedule(ctx *fiber.Ctx) error {
 			SubjectName: schedule.Subject.Name,
 			ClassName:   schedule.Class.Name,
 			Day:         dayOfWeek,
-			StartTime:   schedule.StartTime,
-			EndTime:     schedule.EndTime,
+			StartTime:   schedule.StartTime.Format(time.TimeOnly),
+			EndTime:     schedule.EndTime.Format(time.TimeOnly),
 		})
 	}
 
@@ -73,8 +73,8 @@ func (t *TeacherHandler) GetAllTeacherSchedule(ctx *fiber.Ctx) error {
 			SubjectName: schedule.Subject.Name,
 			ClassName:   schedule.Class.Name,
 			Day:         dayOfWeek,
-			StartTime:   schedule.StartTime,
-			EndTime:     schedule.EndTime,
+			StartTime:   schedule.StartTime.Format(time.TimeOnly),
+			EndTime:     schedule.EndTime.Format(time.TimeOnly),
 		})
 	}
 
@@ -82,5 +82,3 @@ func (t *TeacherHandler) GetAllTeacherSchedule(ctx *fiber.Ctx) error {
 		"data": teacherSchedules,
 	})
 }
-
-

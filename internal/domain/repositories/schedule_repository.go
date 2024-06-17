@@ -19,6 +19,7 @@ type ScheduleRepository interface {
 	IsScheduleExists(classID, subjectID string) (bool, error)
 	GetTeacherTodaySchedule(teacherID string, dayOfWeek time.Weekday) ([]entities.Schedule, error)
 	GetAllTeacherSchedule(teacherID string) ([]entities.Schedule, error)
+	GetStudentTodaySchedule(studentID string, dayOfWeek time.Weekday) ([]entities.Schedule, error)
 }
 
 type scheduleRepository struct {
@@ -122,6 +123,18 @@ func (r *scheduleRepository) GetAllTeacherSchedule(teacherID string) ([]entities
 	// Preload the class, subject, and teacher
 	if err := r.db.Preload("Class").Preload("Subject").Preload("Teacher").
 		Where("teacher_id = ?", teacherID).
+		Find(&schedules).Error; err != nil {
+		return nil, err
+	}
+	return schedules, nil
+}
+
+func (r *scheduleRepository) GetStudentTodaySchedule(studentID string, dayOfWeek time.Weekday) ([]entities.Schedule, error) {
+	var schedules []entities.Schedule
+	// Preload the class, subject, and teacher
+	if err := r.db.Preload("Class").Preload("Subject").Preload("Teacher").
+		Joins("JOIN class_students ON class_students.class_id = schedules.class_id").
+		Where("class_students.student_id = ? AND schedules.day_of_week = ?", studentID, dayOfWeek).
 		Find(&schedules).Error; err != nil {
 		return nil, err
 	}
