@@ -65,12 +65,20 @@ func (c *AdminHandler) GetAllStudents(ctx *fiber.Ctx) (err error) {
 
 	for _, student := range students {
 		res := dto.StudentResponse{
-			ID:         student.ID,
-			Name:       student.Name,
-			NISN:       student.NISN,
-			Address:    student.Address,
-			Birthplace: student.Birthplace,
-			Birthdate:  student.Birthdate,
+			ID:          student.ID,
+			Name:        student.Name,
+			NISN:        student.NISN,
+			Address:     student.Address,
+			Birthplace:  student.Birthplace,
+			Birthdate:   student.Birthdate,
+			Gender:      student.Gender,
+			Province:    student.Province,
+			City:        student.City,
+			BloodType:   student.BloodType,
+			Religion:    student.Religion,
+			Phone:       student.Phone,
+			ParentPhone: student.ParentPhone,
+			Email:       student.Email,
 		}
 
 		response = append(response, res)
