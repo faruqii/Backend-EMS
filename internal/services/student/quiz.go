@@ -7,7 +7,8 @@ import (
 
 type StudentQuizService interface {
 	GetQuiz(userID string) ([]entities.Quiz, error)
-	GetQuizQuestions(quizID string) ([]entities.Question, error)
+	GetQuizQuestions(quizID string, page, pageSize int) ([]entities.Question, error)
+	CountQuizQuestions(quizID string) (int, error)
 	GetQuizByID(id string) (*entities.Quiz, error)
 	GetMyQuizGrade(quizID, userID string) (*entities.StudentQuizAssignment, error)
 }
@@ -31,13 +32,17 @@ func (s *studentService) GetQuiz(userID string) ([]entities.Quiz, error) {
 	return quiz, nil
 }
 
-func (s *studentService) GetQuizQuestions(quizID string) ([]entities.Question, error) {
-	questions, err := s.quizRepo.GetQuestion(quizID)
+func (s *studentService) GetQuizQuestions(quizID string, page, pageSize int) ([]entities.Question, error) {
+	questions, err := s.quizRepo.GetQuestion(quizID, page, pageSize)
 	if err != nil {
 		return nil, services.HandleError(err, "Failed to fetch questions", 500)
 	}
 
 	return questions, nil
+}
+
+func (s *studentService) CountQuizQuestions(quizID string) (int, error) {
+	return s.quizRepo.CountQuestions(quizID)
 }
 
 func (s *studentService) GetQuizByID(id string) (*entities.Quiz, error) {

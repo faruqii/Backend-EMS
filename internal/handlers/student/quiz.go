@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"math"
 	"net/http"
+	"strconv"
 
 	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
@@ -41,8 +43,17 @@ func (h *StudentHandler) GetQuiz(ctx *fiber.Ctx) error {
 
 func (h *StudentHandler) GetQuizQuestions(ctx *fiber.Ctx) error {
 	quizID := ctx.Params("quizID")
+	page, _ := strconv.Atoi(ctx.Query("page", "1"))          // Default to page 1 if not specified
+	pageSize, _ := strconv.Atoi(ctx.Query("pageSize", "10")) // Default to 10 items per page if not specified
 
-	questions, err := h.studentService.GetQuizQuestions(quizID)
+	questions, err := h.studentService.GetQuizQuestions(quizID, page, pageSize)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	totalQuestions, err := h.studentService.CountQuizQuestions(quizID)
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
@@ -52,14 +63,18 @@ func (h *StudentHandler) GetQuizQuestions(ctx *fiber.Ctx) error {
 	response := []dto.StudentQuestionBrief{}
 	for _, q := range questions {
 		response = append(response, dto.StudentQuestionBrief{
-			Text:           q.Text,
-			Options:        q.Options,
+			Text:    q.Text,
+			Options: q.Options,
 		})
 	}
 
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
-		"message": "Success get quiz questions",
-		"data":    response,
+		"message":         "Success get quiz questions",
+		"total_questions": totalQuestions,
+		"total_pages":     int(math.Ceil(float64(totalQuestions) / float64(pageSize))),
+		"current_page":    page,
+		"page_size":       pageSize,
+		"data":            response,
 	})
 }
 
