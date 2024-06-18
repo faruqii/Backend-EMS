@@ -46,7 +46,6 @@ func (t *TeacherHandler) CreateQuiz(ctx *fiber.Ctx) error {
 	for _, q := range req.Questions {
 		question := entities.Question{
 			Text:           q.Text,
-			TypeOfQuestion: q.TypeOfQuestion,
 			Options:        q.Options,
 			CorrectAnswer:  q.CorrectAnswer,
 		}
@@ -92,7 +91,6 @@ func (t *TeacherHandler) GetQuiz(ctx *fiber.Ctx) error {
 		for _, question := range q.Questions {
 			questionBrief := dto.QuestionBrief{
 				Text:           question.Text,
-				TypeOfQuestion: question.TypeOfQuestion,
 				Options:        question.Options,
 				CorrectAnswer:  question.CorrectAnswer,
 			}

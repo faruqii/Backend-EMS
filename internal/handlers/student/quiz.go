@@ -53,7 +53,6 @@ func (h *StudentHandler) GetQuizQuestions(ctx *fiber.Ctx) error {
 	for _, q := range questions {
 		response = append(response, dto.StudentQuestionBrief{
 			Text:           q.Text,
-			TypeOfQuestion: q.TypeOfQuestion,
 			Options:        q.Options,
 		})
 	}
