@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
@@ -141,7 +142,7 @@ func (t *TeacherHandler) GetAllQuizAssignment(ctx *fiber.Ctx) error {
 			NISN:        qa.Student.NISN,
 			Grade:       qa.Grade,
 			Status:      qa.Status,
-			SubmitAt:    qa.SubmitAt,
+			SubmitAt:    qa.SubmitAt.Format(time.DateOnly),
 		})
 	}
 

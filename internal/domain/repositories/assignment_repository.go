@@ -128,7 +128,7 @@ func (r *assignmentRepository) GetQuizByStudentID(studentID string) ([]entities.
 
 func (r *assignmentRepository) GetStudentQuizAssignment(quizID, studentID string) (*entities.StudentQuizAssignment, error) {
 	var assignment entities.StudentQuizAssignment
-	if err := r.db.Preload("Student").First(&assignment, "quiz_id = ? AND student_id = ?", quizID, studentID).Error; err != nil {
+	if err := r.db.Preload("Quiz").Preload("Student").First(&assignment, "quiz_id = ? AND student_id = ?", quizID, studentID).Error; err != nil {
 		return nil, err
 	}
 	return &assignment, nil

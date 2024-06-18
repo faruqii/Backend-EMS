@@ -4,6 +4,7 @@ import (
 	"math"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
@@ -118,10 +119,13 @@ func (h *StudentHandler) GetMyQuizGrade(ctx *fiber.Ctx) error {
 	}
 
 	response := dto.StudentQuizAssignmentResponse{
+		ID:          quizAssignment.ID,
 		QuizName:    quizAssignment.Quiz.Title,
 		StudentName: quizAssignment.Student.Name,
+		NISN:        quizAssignment.Student.NISN,
 		Grade:       quizAssignment.Grade,
 		Status:      quizAssignment.Status,
+		SubmitAt:    quizAssignment.SubmitAt.Format(time.DateTime),
 	}
 
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
