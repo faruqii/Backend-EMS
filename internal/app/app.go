@@ -14,6 +14,7 @@ import (
 	parentSvc "github.com/Magetan-Boyz/Backend/internal/services/parent"
 	studentSvc "github.com/Magetan-Boyz/Backend/internal/services/student"
 	teacherSvc "github.com/Magetan-Boyz/Backend/internal/services/teacher"
+	globalSvc "github.com/Magetan-Boyz/Backend/internal/services/global"
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 )
@@ -36,6 +37,8 @@ type Repositories struct {
 	gradeRepo        repositories.GradeRepository
 	dispensationRepo repositories.DispensationRepository
 	literationRepo   repositories.LiterationRepository
+	violationRepo    repositories.ViolationRepository
+	announcementRepo repositories.AnnouncementRepository
 }
 
 func initRepositories(db *gorm.DB) *Repositories {
@@ -57,6 +60,8 @@ func initRepositories(db *gorm.DB) *Repositories {
 		gradeRepo:        repositories.NewGradeRepository(db),
 		dispensationRepo: repositories.NewDispensationRepository(db),
 		literationRepo:   repositories.NewLiterationRepository(db),
+		violationRepo:    repositories.NewViolationRepository(db),
+		announcementRepo: repositories.NewAnnouncementRepository(db),
 	}
 }
 
@@ -66,6 +71,7 @@ type Services struct {
 	teacherService teacherSvc.TeacherService
 	studentService studentSvc.StudentService
 	parentService  parentSvc.ParentService
+	globalService  globalSvc.GlobalService
 }
 
 func initServices(repos *Repositories) *Services {
@@ -75,14 +81,16 @@ func initServices(repos *Repositories) *Services {
 			repos.subjectRepo, repos.teacherRepo,
 			repos.userRepo, repos.roleRepo,
 			repos.classRepo, repos.scheduleRepo,
-			repos.studentRepo, repos.parentRepo),
+			repos.studentRepo, repos.parentRepo,
+			repos.announcementRepo),
 		teacherService: teacherSvc.NewTeacherService(
 			repos.teacherRepo, repos.scheduleRepo,
 			repos.tokenRepo, repos.taskRepo,
 			repos.classRepo, repos.subjectRepo,
 			repos.quizRepo, repos.assignmentRepo,
 			repos.attedanceRepo, repos.achivementRepo,
-			repos.gradeRepo, repos.dispensationRepo),
+			repos.gradeRepo, repos.dispensationRepo,
+			repos.literationRepo, repos.violationRepo),
 		studentService: studentSvc.NewStudentService(
 			repos.scheduleRepo, repos.taskRepo,
 			repos.studentRepo, repos.tokenRepo,
@@ -102,7 +110,7 @@ func initServices(repos *Repositories) *Services {
 
 func setupRoutes(app *fiber.App, services *Services, mw *middleware.Middleware) {
 	api := app.Group("/api")
-	routes.AuthRoutes(api, services.authService, mw)
+	routes.AuthRoutes(api, services.authService, services.globalService, mw)
 	routes.AdminRoutes(api, services.adminService, mw)
 	routes.TeacherRoutes(api, services.teacherService, mw)
 	routes.StudentRoutes(api, services.studentService, mw)

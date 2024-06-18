@@ -1,6 +1,9 @@
 package services
 
 import (
+	"fmt"
+	"log"
+
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"github.com/Magetan-Boyz/Backend/internal/services"
 	"golang.org/x/crypto/bcrypt"
@@ -15,20 +18,6 @@ type AdminStudentService interface {
 func (s *adminService) CreateStudent(student *entities.Student) error {
 	_, err := s.studentRepo.FindByUsername(student.User.Username)
 	if err == nil {
-		return services.HandleError(err, "Student already exist", 400)
-	}
-
-	// chek if nisn already exist
-	_, err = s.studentRepo.FindByNISN(student.NISN)
-	if err == nil {
-		return services.HandleError(err, "NISN already exist", 400)
-	}
-
-	existingStudent, err := s.studentRepo.GetStudentByUserID(student.UserID)
-	if err != nil {
-		return err
-	}
-	if existingStudent != nil {
 		return services.HandleError(err, "Student already exist", 400)
 	}
 
@@ -58,22 +47,21 @@ func (s *adminService) GetAllStudents() ([]entities.Student, error) {
 }
 
 func (s *adminService) InsertStudentToClass(studentID, classID string) (*entities.Student, error) {
-	// check if student already in class
+	// Check if student is already in class
 	isStudentInClass, err := s.studentRepo.IsStudentAlreadyInClass(studentID)
+	log.Println("Is student in class:", isStudentInClass)
 	if err != nil {
 		return nil, services.HandleError(err, "Failed to check student in class", 500)
 	}
 
 	if isStudentInClass {
-		return nil, services.HandleError(err, "Student already in class", 400)
+		return nil, services.HandleError(fmt.Errorf("student already in class"), "Student already in class", 400)
 	}
 
 	student, err := s.studentRepo.InsertStudentToClass(studentID, classID)
-
 	if err != nil {
 		return nil, services.HandleError(err, "Failed to insert student to class", 500)
 	}
 
 	return student, nil
-
 }

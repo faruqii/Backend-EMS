@@ -1,6 +1,8 @@
 package services
 
 import (
+	"errors"
+
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"github.com/Magetan-Boyz/Backend/internal/services"
 )
@@ -29,30 +31,30 @@ func (s *adminService) CreateClass(class *entities.Class) error {
 func (s *adminService) AssignHomeroomTeacher(classID, teacherID string) error {
 	teacher, err := s.teacherRepo.FindByID(teacherID)
 	if err != nil {
-		return services.HandleError(err, "Teacher not found", 400)
+		return services.HandleError(errors.New("teacher not found"), "Teacher not found", 400)
 	}
 
 	class, err := s.classRepo.FindByID(classID)
 	if err != nil {
-		return services.HandleError(err, "Class not found", 400)
+		return services.HandleError(errors.New("class not found"), "Class not found", 400)
 	}
 
 	if class.HomeRoomTeacherID != nil {
-		return services.HandleError(err, "Class already has a homeroom teacher", 400)
+		return services.HandleError(errors.New("homeroom teacher already assigned"), "Homeroom teacher already assigned", 400)
 	}
 
 	if teacher.IsHomeroom {
-		return services.HandleError(err, "Teacher is already a homeroom teacher", 400)
+		return services.HandleError(errors.New("teacher is already homeroom"), "Teacher is already homeroom Teacher", 400)
 	}
 
 	class.HomeRoomTeacherID = &teacherID
 	if err := s.classRepo.Update(class); err != nil {
-		return services.HandleError(err, "Failed to assign teacher as homeroom", 500)
+		return services.HandleError(errors.New("failed to update class"), "Failed to update class", 500)
 	}
 
 	teacher.IsHomeroom = true
 	if err := s.teacherRepo.Update(teacher); err != nil {
-		return services.HandleError(err, "Failed to update teacher", 500)
+		return services.HandleError(errors.New("failed to update teacher"), "Failed to update teacher", 500)
 	}
 
 	return nil

@@ -64,7 +64,7 @@ func (c *AdminHandler) AssignParentToStudent(ctx *fiber.Ctx) (err error) {
 		})
 	}
 
-	response := dto.ParentStudentResponse{
+	response := &dto.ParentStudentResponse{
 		ParentID:  req.ParentID,
 		StudentID: req.StudentID,
 	}

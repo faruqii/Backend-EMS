@@ -19,19 +19,21 @@ type AdminService interface {
 	AdminScheduleService
 	AdminStudentService
 	AdminParentService
+	AdminAnnouncementService
 }
 
 // adminService is a struct for AdminService call repository layer so it can communicate with database
 type adminService struct {
-	subjectRepo  repositories.SubjectRepository
-	teacherRepo  repositories.TeacherRepository
-	userRepo     repositories.UserRepository
-	roleRepo     repositories.RoleRepository
-	classRepo    repositories.ClassRepository
-	scheduleRepo repositories.ScheduleRepository
-	studentRepo  repositories.StudentRepository
-	parentRepo   repositories.ParentRepository
-	cache        *cache.Cache
+	subjectRepo      repositories.SubjectRepository
+	teacherRepo      repositories.TeacherRepository
+	userRepo         repositories.UserRepository
+	roleRepo         repositories.RoleRepository
+	classRepo        repositories.ClassRepository
+	scheduleRepo     repositories.ScheduleRepository
+	studentRepo      repositories.StudentRepository
+	parentRepo       repositories.ParentRepository
+	announcementRepo repositories.AnnouncementRepository
+	cache            *cache.Cache
 }
 
 // NewAdminService is a constructor for adminService
@@ -45,17 +47,19 @@ func NewAdminService(
 	scheduleRepo repositories.ScheduleRepository,
 	studentRepo repositories.StudentRepository,
 	parentRepo repositories.ParentRepository,
+	announcementRepo repositories.AnnouncementRepository,
 ) *adminService {
 	c := cache.New(5*time.Minute, 10*time.Minute)
 	return &adminService{
-		subjectRepo:  subjectRepo,
-		teacherRepo:  teacherRepo,
-		userRepo:     userRepo,
-		roleRepo:     roleRepo,
-		classRepo:    classRepo,
-		scheduleRepo: scheduleRepo,
-		studentRepo:  studentRepo,
-		parentRepo:   parentRepo,
-		cache:        c,
+		subjectRepo:      subjectRepo,
+		teacherRepo:      teacherRepo,
+		userRepo:         userRepo,
+		roleRepo:         roleRepo,
+		classRepo:        classRepo,
+		scheduleRepo:     scheduleRepo,
+		studentRepo:      studentRepo,
+		parentRepo:       parentRepo,
+		announcementRepo: announcementRepo,
+		cache:            c,
 	}
 }

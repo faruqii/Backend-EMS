@@ -52,10 +52,15 @@ func (r *teacherRepository) Create(teacher *entities.Teacher) error {
 
 // Update updates an existing teacher.
 func (r *teacherRepository) Update(teacher *entities.Teacher) error {
-	if err := r.db.Save(teacher).Error; err != nil {
+	// only update is_homeroom field
+	if err := r.db.Model(&entities.Teacher{}).
+		Where("id = ?", teacher.ID).
+		Select("is_homeroom"). // Only update this field
+		Updates(teacher).Error; err != nil {
 		return err
 	}
 	return nil
+
 }
 
 // Delete deletes a teacher by ID.

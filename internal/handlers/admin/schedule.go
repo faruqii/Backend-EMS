@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
@@ -46,13 +47,36 @@ func (c *AdminHandler) CreateSchedule(ctx *fiber.Ctx) (err error) {
 		})
 	}
 
+	// parse in location
+	loc, err := time.LoadLocation("Local")
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	// parse time
+	startTime, err := time.ParseInLocation(time.TimeOnly, req.StartTime, loc)
+	if err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid start time",
+		})
+	}
+
+	endTime, err := time.ParseInLocation(time.TimeOnly, req.EndTime, loc)
+	if err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid end time",
+		})
+	}
+
 	schedule := entities.Schedule{
 		ClassID:   req.ClassID,
 		SubjectID: req.SubjectID,
 		TeacherID: req.TeacherID,
 		DayOfWeek: req.DayOfWeek,
-		StartTime: req.StartTime,
-		EndTime:   req.EndTime,
+		StartTime: startTime,
+		EndTime:   endTime,
 	}
 
 	err = c.adminService.CreateSchedule(&schedule)
@@ -79,8 +103,8 @@ func (c *AdminHandler) CreateSchedule(ctx *fiber.Ctx) (err error) {
 		Subject:   schedules.Subject.Name,
 		Teacher:   schedules.Teacher.Name,
 		DayOfWeek: dayOfWeek,
-		StartTime: schedule.StartTime,
-		EndTime:   schedule.EndTime,
+		StartTime: schedule.StartTime.Format(time.TimeOnly),
+		EndTime:   schedule.EndTime.Format(time.TimeOnly),
 	}
 
 	return ctx.Status(http.StatusCreated).JSON(fiber.Map{
