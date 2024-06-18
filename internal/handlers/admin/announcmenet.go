@@ -20,8 +20,8 @@ func (h *AdminHandler) CreateAnnouncement(ctx *fiber.Ctx) (err error) {
 	announcement := &entities.Announcement{
 		Title:       req.Title,
 		Information: req.Information,
-		CreeatedAt:  time.Now().Format("2006-01-02 15:04:05"),
-		UpdatedAt:   time.Now().Format("2006-01-02 15:04:05"),
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
 	}
 
 	announcement, err = h.adminService.CreateAnnouncement(announcement)
@@ -44,4 +44,106 @@ func (h *AdminHandler) CreateAnnouncement(ctx *fiber.Ctx) (err error) {
 		"data":    res,
 	})
 
+}
+
+func (h *AdminHandler) GetAnnouncements(ctx *fiber.Ctx) (err error) {
+	announcements, err := h.adminService.GetAnnouncements()
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to get announcements",
+		})
+	}
+
+	var res []dto.AnnouncementResponse
+	for _, announcement := range announcements {
+		res = append(res, dto.AnnouncementResponse{
+			ID:          announcement.ID,
+			Title:       announcement.Title,
+			Information: announcement.Information,
+			CreatedAt:   announcement.CreatedAt.Format(time.DateTime),
+			UpdatedAt:   announcement.UpdatedAt.Format(time.DateTime),
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"data": res,
+	})
+}
+
+func (h *AdminHandler) GetAnnouncementByID(ctx *fiber.Ctx) (err error) {
+	id := ctx.Params("id")
+	announcement, err := h.adminService.GetAnnouncementByID(id)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to get announcement",
+		})
+	}
+
+	res := dto.AnnouncementResponse{
+		ID:          announcement.ID,
+		Title:       announcement.Title,
+		Information: announcement.Information,
+		CreatedAt:   announcement.CreatedAt.Format(time.DateTime),
+		UpdatedAt:   announcement.UpdatedAt.Format(time.DateTime),
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"data": res,
+	})
+}
+
+func (h *AdminHandler) UpdateAnnouncement(ctx *fiber.Ctx) (err error) {
+	id := ctx.Params("id")
+	var req dto.UpdateAnnouncementRequest
+	if err := ctx.BodyParser(&req); err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid request",
+		})
+	}
+
+	announcement, err := h.adminService.GetAnnouncementByID(id)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to get announcement",
+		})
+	}
+
+	announcement.Title = req.Title
+	announcement.Information = req.Information
+	announcement.UpdatedAt = time.Now()
+
+	announcement, err = h.adminService.UpdateAnnouncement(announcement)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to update announcement",
+		})
+	}
+
+	res := dto.AnnouncementResponse{
+		ID:          announcement.ID,
+		Title:       announcement.Title,
+		Information: announcement.Information,
+		CreatedAt:   announcement.CreatedAt.Format(time.DateTime),
+		UpdatedAt:   announcement.UpdatedAt.Format(time.DateTime),
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Announcement updated successfully",
+		"data":    res,
+	})
+}
+
+func (h *AdminHandler) DeleteAnnouncement(ctx *fiber.Ctx) (err error) {
+	id := ctx.Params("id")
+
+	err = h.adminService.DeleteAnnouncement(id)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to delete announcement",
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Announcement deleted successfully",
+	})
 }

@@ -14,6 +14,7 @@ import (
 	parentSvc "github.com/Magetan-Boyz/Backend/internal/services/parent"
 	studentSvc "github.com/Magetan-Boyz/Backend/internal/services/student"
 	teacherSvc "github.com/Magetan-Boyz/Backend/internal/services/teacher"
+	globalSvc "github.com/Magetan-Boyz/Backend/internal/services/global"
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 )
@@ -70,6 +71,7 @@ type Services struct {
 	teacherService teacherSvc.TeacherService
 	studentService studentSvc.StudentService
 	parentService  parentSvc.ParentService
+	globalService  globalSvc.GlobalService
 }
 
 func initServices(repos *Repositories) *Services {
@@ -108,7 +110,7 @@ func initServices(repos *Repositories) *Services {
 
 func setupRoutes(app *fiber.App, services *Services, mw *middleware.Middleware) {
 	api := app.Group("/api")
-	routes.AuthRoutes(api, services.authService, mw)
+	routes.AuthRoutes(api, services.authService, services.globalService, mw)
 	routes.AdminRoutes(api, services.adminService, mw)
 	routes.TeacherRoutes(api, services.teacherService, mw)
 	routes.StudentRoutes(api, services.studentService, mw)
