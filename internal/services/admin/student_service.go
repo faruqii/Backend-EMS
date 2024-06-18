@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 	"log"
 
@@ -18,7 +19,7 @@ type AdminStudentService interface {
 func (s *adminService) CreateStudent(student *entities.Student) error {
 	_, err := s.studentRepo.FindByUsername(student.User.Username)
 	if err == nil {
-		return services.HandleError(err, "Student already exist", 400)
+		return services.HandleError(errors.New("username already exists"), "Username already exists", 400)
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(student.User.Password), bcrypt.MinCost)

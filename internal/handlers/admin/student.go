@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"encoding/csv"
+	"io"
 	"net/http"
 	"strings"
 
@@ -112,5 +114,78 @@ func (c *AdminHandler) InsertStudentToClass(ctx *fiber.Ctx) (err error) {
 
 	return ctx.Status(http.StatusCreated).JSON(fiber.Map{
 		"message": "Student inserted to class successfully",
+	})
+}
+
+func (c *AdminHandler) CreateStudentAccountFromCsv(ctx *fiber.Ctx) error {
+	file, err := ctx.FormFile("file")
+	if err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Failed to get the file",
+		})
+	}
+
+	f, err := file.Open()
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to open the file",
+		})
+	}
+	defer f.Close()
+
+	reader := csv.NewReader(f)
+	_, err = reader.Read() // Skip the header row
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to read the header row",
+		})
+	}
+
+	var students []entities.Student
+	for {
+		row, err := reader.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Failed to read a row from the CSV file",
+			})
+		}
+
+		student := entities.Student{
+			User: entities.User{
+				Username: row[0],
+				Password: row[1],
+			},
+			Name:        row[2],
+			NISN:        row[3],
+			Gender:      row[4],
+			Address:     row[5],
+			Birthplace:  row[6],
+			Birthdate:   row[7],
+			Province:    row[8],
+			City:        row[9],
+			BloodType:   row[10],
+			Religion:    row[11],
+			Phone:       row[12],
+			ParentPhone: row[13],
+			Email:       row[14],
+		}
+		students = append(students, student)
+	}
+
+	// Process all students using the individual student creation method
+	for _, student := range students {
+		err = c.adminService.CreateStudent(&student) // Adjust this line to match your method
+		if err != nil {
+			return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Failed to create student account",
+			})
+		}
+	}
+
+	return ctx.Status(http.StatusCreated).JSON(fiber.Map{
+		"message": "Students created successfully",
 	})
 }
