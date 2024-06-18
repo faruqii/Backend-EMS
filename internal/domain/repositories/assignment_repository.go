@@ -19,6 +19,7 @@ type AssignmentRepository interface {
 	GetAllQuizAssignment(quizID string) ([]entities.StudentQuizAssignment, error)
 	GetQuizAssignment(quizAssignmentID string) (*entities.StudentQuizAssignment, error)
 	GetQuizByStudentID(studentID string) ([]entities.StudentQuizAssignment, error)
+	GetStudentQuizAssignment(quizID, studentID string) (*entities.StudentQuizAssignment, error)
 }
 
 type assignmentRepository struct {
@@ -123,4 +124,12 @@ func (r *assignmentRepository) GetQuizByStudentID(studentID string) ([]entities.
 		return nil, err
 	}
 	return assignments, nil
+}
+
+func (r *assignmentRepository) GetStudentQuizAssignment(quizID, studentID string) (*entities.StudentQuizAssignment, error) {
+	var assignment entities.StudentQuizAssignment
+	if err := r.db.Preload("Student").First(&assignment, "quiz_id = ? AND student_id = ?", quizID, studentID).Error; err != nil {
+		return nil, err
+	}
+	return &assignment, nil
 }

@@ -18,19 +18,9 @@ func (h *StudentHandler) GetQuiz(ctx *fiber.Ctx) error {
 		})
 	}
 
-	response := []dto.QuizResponse{}
+	response := []dto.StudentQuizResponse{}
 	for _, q := range quiz {
-		var questions []dto.QuestionBrief
-		for _, question := range q.Questions {
-			questionBrief := dto.QuestionBrief{
-				Text:           question.Text,
-				TypeOfQuestion: question.TypeOfQuestion,
-				Options:        question.Options,
-			}
-			questions = append(questions, questionBrief)
-		}
-
-		response = append(response, dto.QuizResponse{
+		response = append(response, dto.StudentQuizResponse{
 			ID:          q.ID,
 			ClassID:     q.Class.Name,
 			SubjectID:   q.Subject.Name,
@@ -39,7 +29,6 @@ func (h *StudentHandler) GetQuiz(ctx *fiber.Ctx) error {
 			TypeOfQuiz:  q.TypeOfQuiz,
 			Description: q.Description,
 			Deadline:    q.Deadline,
-			Questions:   questions,
 		})
 	}
 
@@ -48,6 +37,31 @@ func (h *StudentHandler) GetQuiz(ctx *fiber.Ctx) error {
 		"data":    response,
 	})
 
+}
+
+func (h *StudentHandler) GetQuizQuestions(ctx *fiber.Ctx) error {
+	quizID := ctx.Params("quizID")
+
+	questions, err := h.studentService.GetQuizQuestions(quizID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	response := []dto.StudentQuestionBrief{}
+	for _, q := range questions {
+		response = append(response, dto.StudentQuestionBrief{
+			Text:           q.Text,
+			TypeOfQuestion: q.TypeOfQuestion,
+			Options:        q.Options,
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Success get quiz questions",
+		"data":    response,
+	})
 }
 
 func (h *StudentHandler) SubmitQuizAnswer(ctx *fiber.Ctx) error {
@@ -75,5 +89,29 @@ func (h *StudentHandler) SubmitQuizAnswer(ctx *fiber.Ctx) error {
 
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
 		"message": "Quiz submitted successfully",
+	})
+}
+
+func (h *StudentHandler) GetMyQuizGrade(ctx *fiber.Ctx) error {
+	userID := ctx.Locals("user").(string)
+	quizID := ctx.Params("quizID")
+
+	quizAssignment, err := h.studentService.GetMyQuizGrade(quizID, userID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	response := dto.StudentQuizAssignmentResponse{
+		QuizName:    quizAssignment.Quiz.Title,
+		StudentName: quizAssignment.Student.Name,
+		Grade:       quizAssignment.Grade,
+		Status:      quizAssignment.Status,
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Success get quiz grade",
+		"data":    response,
 	})
 }

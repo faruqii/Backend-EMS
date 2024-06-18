@@ -12,7 +12,7 @@ type QuizRepository interface {
 	CreateQuestion(question []entities.Question) error
 	GetQuiz(id string) (*entities.Quiz, error)
 	GetQuizByClassID(classID string) ([]entities.Quiz, error)
-	GetQuestion(quizID string) (*entities.Question, error)
+	GetQuestion(quizID string) ([]entities.Question, error)
 	GetQuizBySubjectID(subjectID string) (*entities.Quiz, error)
 	GetQuizByTeacherID(teacherID string) ([]entities.Quiz, error)
 	CountQuestion(quizID string) (int64, error)
@@ -86,12 +86,12 @@ func (r *quizRepository) GetQuizByClassID(classID string) ([]entities.Quiz, erro
 	return quiz, nil
 }
 
-func (r *quizRepository) GetQuestion(quizID string) (*entities.Question, error) {
-	var question entities.Question
+func (r *quizRepository) GetQuestion(quizID string) ([]entities.Question, error) {
+	var question []entities.Question
 	if err := r.db.Where("quiz_id =?", quizID).First(&question).Error; err != nil {
 		return nil, err
 	}
-	return &question, nil
+	return question, nil
 }
 
 func (r *quizRepository) GetQuizBySubjectID(subjectID string) (*entities.Quiz, error) {
