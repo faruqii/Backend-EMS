@@ -11,10 +11,10 @@ import (
 	"github.com/Magetan-Boyz/Backend/internal/routes"
 	"github.com/Magetan-Boyz/Backend/internal/services"
 	adminSvc "github.com/Magetan-Boyz/Backend/internal/services/admin"
+	globalSvc "github.com/Magetan-Boyz/Backend/internal/services/global"
 	parentSvc "github.com/Magetan-Boyz/Backend/internal/services/parent"
 	studentSvc "github.com/Magetan-Boyz/Backend/internal/services/student"
 	teacherSvc "github.com/Magetan-Boyz/Backend/internal/services/teacher"
-	globalSvc "github.com/Magetan-Boyz/Backend/internal/services/global"
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 )
@@ -97,14 +97,16 @@ func initServices(repos *Repositories) *Services {
 			repos.assignmentRepo, repos.quizRepo,
 			repos.classRepo, repos.subjectRepo,
 			repos.attedanceRepo, repos.achivementRepo,
-			repos.gradeRepo, repos.dispensationRepo, repos.literationRepo),
+			repos.gradeRepo, repos.dispensationRepo,
+			repos.literationRepo, repos.violationRepo),
 		parentService: parentSvc.NewParentService(
 			repos.parentRepo, repos.scheduleRepo,
 			repos.studentRepo, repos.tokenRepo,
 			repos.assignmentRepo, repos.quizRepo,
 			repos.classRepo, repos.subjectRepo,
 			repos.attedanceRepo, repos.achivementRepo,
-			repos.gradeRepo, repos.taskRepo),
+			repos.gradeRepo, repos.taskRepo,
+			repos.violationRepo),
 	}
 }
 

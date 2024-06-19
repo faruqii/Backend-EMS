@@ -9,6 +9,7 @@ type ParentService interface {
 	ParentStudentQuizService
 	ParentStudentGradeService
 	ParentTokenService
+	ParentStudentViolationService
 }
 
 type parentService struct {
@@ -24,6 +25,7 @@ type parentService struct {
 	achivementRepo repositories.AchivementRepository
 	gradeRepo      repositories.GradeRepository
 	taskRepo       repositories.TaskRepository
+	violationRepo  repositories.ViolationRepository
 }
 
 func NewParentService(
@@ -39,6 +41,7 @@ func NewParentService(
 	achivementRepo repositories.AchivementRepository,
 	gradeRepo repositories.GradeRepository,
 	taskRepo repositories.TaskRepository,
+	violationRepo repositories.ViolationRepository,
 ) *parentService {
 	return &parentService{
 		parentRepo:     parentRepo,
@@ -53,5 +56,6 @@ func NewParentService(
 		achivementRepo: achivementRepo,
 		gradeRepo:      gradeRepo,
 		taskRepo:       taskRepo,
+		violationRepo:  violationRepo,
 	}
 }
