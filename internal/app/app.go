@@ -107,16 +107,18 @@ func initServices(repos *Repositories) *Services {
 			repos.attedanceRepo, repos.achivementRepo,
 			repos.gradeRepo, repos.taskRepo,
 			repos.violationRepo),
+		globalService: globalSvc.NewGlobalService(repos.announcementRepo),
 	}
 }
 
 func setupRoutes(app *fiber.App, services *Services, mw *middleware.Middleware) {
 	api := app.Group("/api")
-	routes.AuthRoutes(api, services.authService, services.globalService, mw)
+	routes.AuthRoutes(api, services.authService, mw)
 	routes.AdminRoutes(api, services.adminService, mw)
 	routes.TeacherRoutes(api, services.teacherService, mw)
 	routes.StudentRoutes(api, services.studentService, mw)
 	routes.ParentRoutes(api, services.parentService, mw)
+	routes.GlobalRoutes(api, services.globalService)
 }
 
 func Start() {
