@@ -4,12 +4,11 @@ import (
 	handlers "github.com/Magetan-Boyz/Backend/internal/handlers/auth"
 	"github.com/Magetan-Boyz/Backend/internal/middleware"
 	"github.com/Magetan-Boyz/Backend/internal/services"
-	service "github.com/Magetan-Boyz/Backend/internal/services/global"
 	"github.com/gofiber/fiber/v2"
 )
 
-func AuthRoutes(router fiber.Router, authService services.AuthService, globalService service.GlobalService, mw *middleware.Middleware) {
-	authHandler := handlers.NewAuthHandler(authService, globalService, *mw)
+func AuthRoutes(router fiber.Router, authService services.AuthService, mw *middleware.Middleware) {
+	authHandler := handlers.NewAuthHandler(authService, *mw)
 
 	authRoutes := router.Group("/auth")
 
@@ -20,7 +19,4 @@ func AuthRoutes(router fiber.Router, authService services.AuthService, globalSer
 	profileRoutes.Post(("change-password"), authHandler.ChangePassword)
 	profileRoutes.Post(("/logout"), authHandler.LogOut)
 
-	globalRoutes := router.Group("/global")
-	globalRoutes.Get("/announcements", authHandler.GetAnnouncements)
-	globalRoutes.Get("/announcements/:id", authHandler.GetAnnouncementByID)
 }
