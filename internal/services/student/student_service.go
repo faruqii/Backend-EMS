@@ -14,6 +14,7 @@ type StudentService interface {
 	StudentDispensationService
 	StudentLiterationService
 	StudentProfile
+	StudentViolationService
 }
 
 type studentService struct {
@@ -30,6 +31,7 @@ type studentService struct {
 	gradeRepo        repositories.GradeRepository
 	dispensationRepo repositories.DispensationRepository
 	literationRepo   repositories.LiterationRepository
+	violationRepo    repositories.ViolationRepository
 }
 
 func NewStudentService(
@@ -46,6 +48,7 @@ func NewStudentService(
 	gradeRepo repositories.GradeRepository,
 	dispensationRepo repositories.DispensationRepository,
 	literationRepo repositories.LiterationRepository,
+	violationRepo repositories.ViolationRepository,
 ) *studentService {
 	return &studentService{
 		scheduleRepo:     scheduleRepo,
@@ -61,5 +64,6 @@ func NewStudentService(
 		gradeRepo:        gradeRepo,
 		dispensationRepo: dispensationRepo,
 		literationRepo:   literationRepo,
+		violationRepo:    violationRepo,
 	}
 }

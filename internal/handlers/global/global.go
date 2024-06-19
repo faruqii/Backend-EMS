@@ -8,7 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func (h *AuthHandler) GetAnnouncements(ctx *fiber.Ctx) (err error) {
+func (h *GlobalHandler) GetAnnouncements(ctx *fiber.Ctx) (err error) {
 	announcements, err := h.globalService.GetAnnouncements()
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
@@ -33,7 +33,7 @@ func (h *AuthHandler) GetAnnouncements(ctx *fiber.Ctx) (err error) {
 	})
 }
 
-func (h *AuthHandler) GetAnnouncementByID(ctx *fiber.Ctx) (err error) {
+func (h *GlobalHandler) GetAnnouncementByID(ctx *fiber.Ctx) (err error) {
 	announcementID := ctx.Params("id")
 	announcement, err := h.globalService.GetAnnouncementByID(announcementID)
 	if err != nil {

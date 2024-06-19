@@ -61,4 +61,8 @@ func StudentRoutes(router fiber.Router, studentSvc services.StudentService, mw *
 	studentLiterationRoutes.Get("/:id", student.GetLiterationByID)
 	studentLiterationRoutes.Get("", student.GetLiterationByStudentID)
 
+	studentViolationRoutes := studentRoutes.Group("/violation")
+	studentViolationRoutes.Get("", student.GetMyViolation)
+	studentViolationRoutes.Get("/:id", student.GetViolationByID)
+
 }
