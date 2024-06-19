@@ -191,7 +191,7 @@ func (c *AdminHandler) CreateStudentAccountFromCsv(ctx *fiber.Ctx) error {
 }
 
 func (c *AdminHandler) RemoveStudentFromClass(ctx *fiber.Ctx) (err error) {
-	studentID := ctx.Params("studentID")
+	studentID := ctx.Params("id")
 
 	err = c.adminService.RemoveStudentFromClass(studentID)
 	if err != nil {
