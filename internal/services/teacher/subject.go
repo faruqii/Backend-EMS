@@ -23,12 +23,20 @@ func (s *teacherService) CountStudent(classID, subjectID string) ([]dto.StudentR
 	var studentResponses []dto.StudentResponse
 	for _, student := range students {
 		studentResponses = append(studentResponses, dto.StudentResponse{
-			ID:         student.ID,
-			Name:       student.Name,
-			NISN:       student.NISN,
-			Address:    student.Address,
-			Birthplace: student.Birthplace,
-			Birthdate:  student.Birthdate,
+			ID:          student.ID,
+			Name:        student.Name,
+			NISN:        student.NISN,
+			Address:     student.Address,
+			Birthplace:  student.Birthplace,
+			Birthdate:   student.Birthdate,
+			Gender:      student.Gender,
+			Province:    student.Province,
+			City:        student.City,
+			BloodType:   student.BloodType,
+			Religion:    student.Religion,
+			Phone:       student.Phone,
+			ParentPhone: student.ParentPhone,
+			Email:       student.Email,
 		})
 	}
 

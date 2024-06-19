@@ -22,15 +22,35 @@ type QuizResponse struct {
 }
 
 type QuestionRequest struct {
-	Text           string   `json:"text"`
-	TypeOfQuestion string   `json:"type_of_question"` // multiple-choice or essay
-	Options        []string `json:"options"`
-	CorrectAnswer  string   `json:"correct_answer"`
+	Text          string   `json:"text"`
+	Options       []string `json:"options"`
+	CorrectAnswer string   `json:"correct_answer"`
 }
 
 type QuestionBrief struct {
+	Text          string   `json:"text"`
+	Options       []string `json:"options"`
+	CorrectAnswer string   `json:"correct_answer"`
+}
+
+type StudentQuizResponse struct {
+	ID          string `json:"id"`
+	ClassID     string `json:"class_id"`
+	SubjectID   string `json:"subject_id"`
+	TeacherID   string `json:"teacher_id"`
+	Title       string `json:"title"`
+	TypeOfQuiz  string `json:"type_of_quiz"` // Quiz, UTS, UAS
+	Description string `json:"description"`
+	Deadline    string `json:"deadline"`
+}
+
+type StudentQuestionBrief struct {
 	Text           string   `json:"text"`
 	TypeOfQuestion string   `json:"type_of_question"` // multiple-choice or essay
 	Options        []string `json:"options"`
-	CorrectAnswer  string   `json:"correct_answer"`
+}
+
+type GradeStudentQuizRequest struct {
+	Status string  `json:"status"`
+	Grade  float64 `json:"grade"`
 }

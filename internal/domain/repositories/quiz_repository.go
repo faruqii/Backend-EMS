@@ -12,11 +12,13 @@ type QuizRepository interface {
 	CreateQuestion(question []entities.Question) error
 	GetQuiz(id string) (*entities.Quiz, error)
 	GetQuizByClassID(classID string) ([]entities.Quiz, error)
-	GetQuestion(quizID string) (*entities.Question, error)
+	GetQuestion(quizID string, page int, pageSize int) ([]entities.Question, error)
+	CountQuestions(quizID string) (int, error)
 	GetQuizBySubjectID(subjectID string) (*entities.Quiz, error)
 	GetQuizByTeacherID(teacherID string) ([]entities.Quiz, error)
 	CountQuestion(quizID string) (int64, error)
 	MatchAnswer(quizID string, answer []string) (int64, error)
+	GetQuizType(quizID string) (string, error)
 }
 
 type quizRepository struct {
@@ -86,12 +88,24 @@ func (r *quizRepository) GetQuizByClassID(classID string) ([]entities.Quiz, erro
 	return quiz, nil
 }
 
-func (r *quizRepository) GetQuestion(quizID string) (*entities.Question, error) {
-	var question entities.Question
-	if err := r.db.Where("quiz_id =?", quizID).First(&question).Error; err != nil {
+func (r *quizRepository) GetQuestion(quizID string, page int, pageSize int) ([]entities.Question, error) {
+	var questions []entities.Question
+	offset := (page - 1) * pageSize // Calculate the offset
+	if err := r.db.Where("quiz_id = ?", quizID).
+		Offset(offset).
+		Limit(pageSize).
+		Find(&questions).Error; err != nil {
 		return nil, err
 	}
-	return &question, nil
+	return questions, nil
+}
+
+func (r *quizRepository) CountQuestions(quizID string) (int, error) {
+	var count int64
+	if err := r.db.Model(&entities.Question{}).Where("quiz_id = ?", quizID).Count(&count).Error; err != nil {
+		return 0, err
+	}
+	return int(count), nil
 }
 
 func (r *quizRepository) GetQuizBySubjectID(subjectID string) (*entities.Quiz, error) {
@@ -152,4 +166,12 @@ func (r *quizRepository) MatchAnswer(quizID string, answers []string) (int64, er
 	}
 
 	return correctAnswers, nil
+}
+
+func (r *quizRepository) GetQuizType(quizID string) (string, error) {
+	var quiz entities.Quiz
+	if err := r.db.Where("id = ?", quizID).First(&quiz).Error; err != nil {
+		return "", err
+	}
+	return quiz.TypeOfQuiz, nil
 }

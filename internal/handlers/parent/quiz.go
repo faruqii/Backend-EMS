@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
 	"github.com/gofiber/fiber/v2"
@@ -25,7 +26,7 @@ func (h *ParentHandler) GetQuizAssignment(ctx *fiber.Ctx) error {
 			StudentName: q.Student.Name,
 			Grade:       q.Grade,
 			Status:      q.Status,
-			SubmitAt:    q.SubmitAt,
+			SubmitAt:    q.SubmitAt.Format(time.DateTime),
 		})
 	}
 

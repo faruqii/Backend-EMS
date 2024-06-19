@@ -20,8 +20,7 @@ func AuthRoutes(router fiber.Router, authService services.AuthService, globalSer
 	profileRoutes.Post(("change-password"), authHandler.ChangePassword)
 	profileRoutes.Post(("/logout"), authHandler.LogOut)
 
-	globalRoutes := authRoutes.Group("/global")
-	globalRoutes.Use(mw.Authenticate(), mw.Authorization("user", "admin", "teacher", "student", "parent"))
+	globalRoutes := router.Group("/global")
 	globalRoutes.Get("/announcements", authHandler.GetAnnouncements)
 	globalRoutes.Get("/announcements/:id", authHandler.GetAnnouncementByID)
 }

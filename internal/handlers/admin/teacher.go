@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"encoding/csv"
+	"io"
 	"net/http"
 
 	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
@@ -127,5 +129,62 @@ func (c *AdminHandler) GetTeacherSubjects(ctx *fiber.Ctx) (err error) {
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
 		"message": "Subjects fetched successfully",
 		"data":    subjects,
+	})
+}
+
+func (c *AdminHandler) CreateTeacherAccountFromCsv(ctx *fiber.Ctx) (err error) {
+	file, err := ctx.FormFile("file")
+	if err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Failed to get the file",
+		})
+	}
+
+	f, err := file.Open()
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to open the file",
+		})
+	}
+	defer f.Close()
+
+	reader := csv.NewReader(f)
+	_, err = reader.Read() // Skip the header row
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to read the header row",
+		})
+	}
+
+	for {
+		row, err := reader.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Failed to read a row from the CSV file",
+			})
+		}
+
+		teacher := entities.Teacher{
+			User: entities.User{
+				Username: row[0],
+				Password: row[1],
+			},
+			Name:  row[2],
+			Email: row[3],
+		}
+
+		err = c.adminService.CreateTeacher(&teacher)
+		if err != nil {
+			return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Failed to create teacher account",
+			})
+		}
+	}
+
+	return ctx.Status(http.StatusCreated).JSON(fiber.Map{
+		"message": "Teachers created successfully",
 	})
 }

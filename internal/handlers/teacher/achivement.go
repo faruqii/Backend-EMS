@@ -95,8 +95,8 @@ func (h *TeacherHandler) GetAllAchivementByStudentID(ctx *fiber.Ctx) (err error)
 	})
 }
 
-func (h *TeacherHandler) UpdateAchivement(ctx *fiber.Ctx) (err error) {
-	achivementID := ctx.Params("id")
+func (h *TeacherHandler) UpdateAchievement(ctx *fiber.Ctx) error {
+	achievementID := ctx.Params("id")
 
 	var req dto.UpdateAchivementRequest
 	if err := ctx.BodyParser(&req); err != nil {
@@ -105,16 +105,18 @@ func (h *TeacherHandler) UpdateAchivement(ctx *fiber.Ctx) (err error) {
 		})
 	}
 
-	achivement, err := h.teacherSvc.GetAchivementByID(achivementID)
+	// Fetch the achievement to be updated.
+	achievement, err := h.teacherSvc.GetAchivementByID(achievementID)
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
 		})
 	}
 
-	achivement.Status = req.Status
+	// Update only the status field of the achievement.
+	achievement.Status = req.Status
 
-	_, err = h.teacherSvc.UpdateAchivement(achivementID, achivement)
+	_, err = h.teacherSvc.UpdateAchievement(achievementID, achievement)
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
@@ -122,9 +124,8 @@ func (h *TeacherHandler) UpdateAchivement(ctx *fiber.Ctx) (err error) {
 	}
 
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
-		"message": "success update achivement",
+		"message": "Achievement status updated successfully",
 	})
-
 }
 
 func (h *TeacherHandler) DeleteAchivement(ctx *fiber.Ctx) (err error) {

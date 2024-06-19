@@ -18,7 +18,7 @@ type Task struct {
 	Title       string    `json:"title"`
 	TypeOfTask  string    `json:"type_of_task"`
 	Description string    `json:"description"`
-	Deadline    string    `json:"deadline"`
+	Deadline    time.Time `json:"deadline"`
 	Link        string    `json:"link"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`

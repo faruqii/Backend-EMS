@@ -13,6 +13,9 @@ func StudentRoutes(router fiber.Router, studentSvc services.StudentService, mw *
 	studentRoutes := router.Group("/student")
 	studentRoutes.Use(mw.Authenticate(), mw.Authorization("student"))
 
+	studentProfileRoutes := studentRoutes.Group("/profile")
+	studentProfileRoutes.Get("", student.MyProfile)
+
 	studentClassRoutes := studentRoutes.Group("/class")
 	studentClassRoutes.Get("", student.GetClass)
 	studentClassRoutes.Get("/subjects", student.GetSubjects)
@@ -34,6 +37,8 @@ func StudentRoutes(router fiber.Router, studentSvc services.StudentService, mw *
 	studentQuizRoutes := studentRoutes.Group("/quiz")
 	studentQuizRoutes.Get("", student.GetQuiz)
 	studentQuizRoutes.Post("/:quizID/submit", student.SubmitQuizAnswer)
+	studentQuizRoutes.Get("/:quizID/questions", student.GetQuizQuestions)
+	studentQuizRoutes.Get("/:quizID/grade", student.GetMyQuizGrade)
 
 	studentAttedanceRoutes := studentRoutes.Group("/attedance")
 	studentAttedanceRoutes.Get("", student.MyAttedance)

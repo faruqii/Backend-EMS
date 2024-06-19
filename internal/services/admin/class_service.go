@@ -16,6 +16,7 @@ type AdminClassService interface {
 	GetAllStudentsBelongToClass(studentID string) ([]entities.Student, error)
 	ClassExists(classID string) (bool, error)
 	AssignSubjectToClass(subjectID, teacherID, classID string) error
+	RemoveStudentsFromClass(classID string) error
 }
 
 func (s *adminService) CreateClass(class *entities.Class) error {
@@ -113,4 +114,9 @@ func (s *adminService) AssignSubjectToClass(subjectID, teacherID, classID string
 	_, err = s.subjectRepo.AssignSubjectToClass(subjectID, teacherID, classID)
 	return services.HandleError(err, "Failed to assign subject to class", 500)
 
+}
+
+func (s *adminService) RemoveStudentsFromClass(classID string) error {
+	err := s.classRepo.RemoveStudentsFromClass(classID)
+	return services.HandleError(err, "Failed to remove students from class", 500)
 }

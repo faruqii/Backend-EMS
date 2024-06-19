@@ -23,6 +23,7 @@ type StudentRepository interface {
 	GetAllStudentsByClassID(classID string) ([]entities.Student, error)
 	FindStudentClassIDByStudentID(studentID string) (string, error)
 	GetStudentByUserID(userID string) (*entities.Student, error)
+	RemoveStudentFromClass(studentID string) error
 }
 
 type studentRepository struct {
@@ -150,5 +151,23 @@ func (r *studentRepository) GetStudentByUserID(userID string) (*entities.Student
 	}
 	return &student, nil
 }
+
+func (r *studentRepository) RemoveStudentFromClass(studentID string) error {
+    var student entities.Student
+    if err := r.db.Where("id = ?", studentID).First(&student).Error; err != nil {
+        return err
+    }
+
+    // Ensuring ClassID is nil
+    student.ClassID = nil
+
+    // Updating the ClassID field specifically
+    if err := r.db.Model(&student).Update("class_id", gorm.Expr("NULL")).Error; err != nil {
+        return err
+    }
+
+    return nil
+}
+
 
 // Path: internal/domain/repositories/student_repository.go

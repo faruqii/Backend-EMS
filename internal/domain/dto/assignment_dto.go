@@ -26,11 +26,11 @@ type SubmitQuizRequest struct {
 }
 
 type StudentQuizAssignmentResponse struct {
-	ID          string    `json:"id"`
-	QuizName    string    `json:"quiz_name"`
-	StudentName string    `json:"student_name"`
-	NISN        string    `json:"nisn"`
-	Grade       float64   `json:"grade"`
-	Status      string    `json:"status"`
-	SubmitAt    time.Time `json:"submit_at"`
+	ID          string  `json:"id"`
+	QuizName    string  `json:"quiz_name"`
+	StudentName string  `json:"student_name"`
+	NISN        string  `json:"nisn"`
+	Grade       float64 `json:"grade"`
+	Status      string  `json:"status"`
+	SubmitAt    string  `json:"submit_at"`
 }

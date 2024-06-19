@@ -1,6 +1,10 @@
 package handlers
 
 import (
+	"encoding/csv"
+	"io"
+	"net/http"
+
 	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"github.com/gofiber/fiber/v2"
@@ -72,5 +76,65 @@ func (c *AdminHandler) AssignParentToStudent(ctx *fiber.Ctx) (err error) {
 	return ctx.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"message": "Parent assigned to student successfully",
 		"data":    response,
+	})
+}
+
+func (c *AdminHandler) CreateParentAccountFromCsv(ctx *fiber.Ctx) (err error) {
+	file, err := ctx.FormFile("file")
+	if err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Failed to get the file",
+		})
+	}
+
+	f, err := file.Open()
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to open the file",
+		})
+	}
+	defer f.Close()
+
+	reader := csv.NewReader(f)
+	_, err = reader.Read() // Skip the header row
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to read the header row",
+		})
+	}
+
+	for {
+		row, err := reader.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Failed to read a row from the CSV file",
+			})
+		}
+
+		parent := entities.Parent{
+			User: entities.User{
+				Username: row[0],
+				Password: row[1],
+			},
+			Name:        row[2],
+			Address:     row[3],
+			Occupation:  row[4],
+			PhoneNumber: row[5],
+			Email:       row[6],
+		}
+
+		err = c.adminService.CreateParent(&parent)
+		if err != nil {
+			return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Failed to create parent account",
+			})
+		}
+	}
+
+	return ctx.Status(http.StatusCreated).JSON(fiber.Map{
+		"message": "Parents created successfully",
 	})
 }

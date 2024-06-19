@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
 	"github.com/gofiber/fiber/v2"
@@ -27,7 +28,7 @@ func (h *ParentHandler) GetTask(ctx *fiber.Ctx) (err error) {
 			Title:       t.Title,
 			TypeOfTask:  t.TypeOfTask,
 			Description: t.Description,
-			Deadline:    t.Deadline,
+			Deadline:    t.Deadline.Format(time.DateTime),
 			Link:        t.Link,
 		})
 

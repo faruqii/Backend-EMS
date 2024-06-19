@@ -17,7 +17,7 @@ type ClassRepository interface {
 	ClassExists(classID string) (bool, error)
 	IsTeacherTeachTheClass(classID string) (bool, error)
 	IsTeacherHomeRoomTeacher(teacherID, classID string) (bool, error)
-	
+	RemoveStudentsFromClass(classID string) error
 }
 
 type classRepository struct {
@@ -113,4 +113,11 @@ func (r *classRepository) IsTeacherHomeRoomTeacher(teacherID, classID string) (b
 		return false, err
 	}
 	return count > 0, nil
+}
+
+func (r *classRepository) RemoveStudentsFromClass(classID string) error {
+	if err := r.db.Model(&entities.Student{}).Where("class_id = ?", classID).Update("class_id", nil).Error; err != nil {
+		return err
+	}
+	return nil
 }

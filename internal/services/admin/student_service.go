@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 	"log"
 
@@ -13,12 +14,13 @@ type AdminStudentService interface {
 	CreateStudent(student *entities.Student) error
 	GetAllStudents() ([]entities.Student, error)
 	InsertStudentToClass(studentID, classID string) (*entities.Student, error)
+	RemoveStudentFromClass(studentID string) error
 }
 
 func (s *adminService) CreateStudent(student *entities.Student) error {
 	_, err := s.studentRepo.FindByUsername(student.User.Username)
 	if err == nil {
-		return services.HandleError(err, "Student already exist", 400)
+		return services.HandleError(errors.New("username already exists"), "Username already exists", 400)
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(student.User.Password), bcrypt.MinCost)
@@ -64,4 +66,13 @@ func (s *adminService) InsertStudentToClass(studentID, classID string) (*entitie
 	}
 
 	return student, nil
+}
+
+func (s *adminService) RemoveStudentFromClass(studentID string) error {
+	err := s.studentRepo.RemoveStudentFromClass(studentID)
+	if err != nil {
+		return services.HandleError(err, "Failed to remove student from class", 500)
+	}
+
+	return nil
 }

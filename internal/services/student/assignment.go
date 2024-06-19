@@ -33,30 +33,43 @@ func (s *studentService) GetAssignment(taskID string) (*entities.StudentAssignme
 }
 
 func (s *studentService) SubmitQuiz(quizAssignment *entities.StudentQuizAssignment) error {
-	// get student id from token
+	// Get student id from token
 	studentID, err := s.tokenRepo.GetStudentIDByUserID(quizAssignment.StudentID)
 	if err != nil {
 		return services.HandleError(err, "Failed to get student id", 500)
 	}
 
-	totalQuestions, err := s.quizRepo.CountQuestion(quizAssignment.QuizID)
-	log.Println(totalQuestions)
+	// Get quiz type by QuizID
+	quizType, err := s.quizRepo.GetQuizType(quizAssignment.QuizID)
 	if err != nil {
-		return services.HandleError(err, "Failed to count questions", 500)
+		return services.HandleError(err, "Failed to get quiz type", 500)
 	}
 
-	correctAnswers, err := s.quizRepo.MatchAnswer(quizAssignment.QuizID, quizAssignment.Answers)
-	if err != nil {
-		return services.HandleError(err, "Failed to match answers", 500)
-	}
-
-	grade := float64(correctAnswers) / float64(totalQuestions) * 100
-
-	// Set submission details
+	// Initialize default values
 	quizAssignment.StudentID = studentID
 	quizAssignment.SubmitAt = time.Now()
 	quizAssignment.Status = "submitted"
-	quizAssignment.Grade = grade
+
+	// Check quiz type
+	if quizType == "multiple choice" {
+		totalQuestions, err := s.quizRepo.CountQuestion(quizAssignment.QuizID)
+		log.Println(totalQuestions)
+		if err != nil {
+			return services.HandleError(err, "Failed to count questions", 500)
+		}
+
+		correctAnswers, err := s.quizRepo.MatchAnswer(quizAssignment.QuizID, quizAssignment.Answers)
+		if err != nil {
+			return services.HandleError(err, "Failed to match answers", 500)
+		}
+
+		grade := float64(correctAnswers) / float64(totalQuestions) * 100
+		quizAssignment.Grade = grade
+
+	} else if quizType == "essay" {
+		quizAssignment.Status = "waiting for graded"
+		quizAssignment.Grade = 0
+	}
 
 	// Insert the assignment into the database
 	if err := s.assignmentRepo.InsertQuiz(quizAssignment); err != nil {

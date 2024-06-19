@@ -13,6 +13,7 @@ type StudentService interface {
 	StudentGradeService
 	StudentDispensationService
 	StudentLiterationService
+	StudentProfile
 }
 
 type studentService struct {

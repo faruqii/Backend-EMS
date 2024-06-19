@@ -23,6 +23,7 @@ func AdminRoutes(router fiber.Router, adminSvc services.AdminService, mw *middle
 	// Teacher routes
 	teacherRoutes := adminRoutes.Group("/teacher")
 	teacherRoutes.Post("/create", admin.CreateTeacher)
+	teacherRoutes.Post("/import", admin.CreateTeacherAccountFromCsv)
 	teacherRoutes.Get("/all", admin.GetAllTeacher)
 	teacherRoutes.Put("/:id/update-homeroom-status", admin.UpdateTeacherHomeroomStatus)
 	teacherRoutes.Get("/:id/subjects", admin.GetTeacherSubjects)
@@ -44,11 +45,14 @@ func AdminRoutes(router fiber.Router, adminSvc services.AdminService, mw *middle
 	// Student routes
 	studentRoutes := adminRoutes.Group("/student")
 	studentRoutes.Post("/create", admin.CreateStudent)
+	studentRoutes.Post("/import", admin.CreateStudentAccountFromCsv)
 	studentRoutes.Get("/all", admin.GetAllStudents)
+	studentRoutes.Post("/:id/remove-class", admin.RemoveStudentFromClass)
 
 	// Parent routes
 	parentRoutes := adminRoutes.Group("/parent")
 	parentRoutes.Post("/create", admin.CreateParentAccount)
+	parentRoutes.Post("/import", admin.CreateParentAccountFromCsv)
 	parentRoutes.Post("/assign-student", admin.AssignParentToStudent)
 
 	// Announcement routes
