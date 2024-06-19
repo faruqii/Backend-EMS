@@ -47,6 +47,7 @@ func AdminRoutes(router fiber.Router, adminSvc services.AdminService, mw *middle
 	studentRoutes.Post("/create", admin.CreateStudent)
 	studentRoutes.Post("/import", admin.CreateStudentAccountFromCsv)
 	studentRoutes.Get("/all", admin.GetAllStudents)
+	studentRoutes.Post("/:id/remove-class", admin.RemoveStudentFromClass)
 
 	// Parent routes
 	parentRoutes := adminRoutes.Group("/parent")

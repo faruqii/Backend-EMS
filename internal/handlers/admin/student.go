@@ -189,3 +189,18 @@ func (c *AdminHandler) CreateStudentAccountFromCsv(ctx *fiber.Ctx) error {
 		"message": "Students created successfully",
 	})
 }
+
+func (c *AdminHandler) RemoveStudentFromClass(ctx *fiber.Ctx) (err error) {
+	studentID := ctx.Params("studentID")
+
+	err = c.adminService.RemoveStudentFromClass(studentID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Student removed from class successfully",
+	})
+}

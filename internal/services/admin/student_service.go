@@ -14,6 +14,7 @@ type AdminStudentService interface {
 	CreateStudent(student *entities.Student) error
 	GetAllStudents() ([]entities.Student, error)
 	InsertStudentToClass(studentID, classID string) (*entities.Student, error)
+	RemoveStudentFromClass(studentID string) error
 }
 
 func (s *adminService) CreateStudent(student *entities.Student) error {
@@ -65,4 +66,13 @@ func (s *adminService) InsertStudentToClass(studentID, classID string) (*entitie
 	}
 
 	return student, nil
+}
+
+func (s *adminService) RemoveStudentFromClass(studentID string) error {
+	err := s.studentRepo.RemoveStudentFromClass(studentID)
+	if err != nil {
+		return services.HandleError(err, "Failed to remove student from class", 500)
+	}
+
+	return nil
 }
