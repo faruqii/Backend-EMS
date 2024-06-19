@@ -27,6 +27,14 @@ func (t *TeacherHandler) CreateTask(ctx *fiber.Ctx) (err error) {
 		})
 	}
 
+	// parsing Deadline to DateTime
+	deadline, err := time.Parse(time.DateTime, req.Deadline)
+	if err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
 	task := entities.Task{
 		ClassID:     req.ClassID,
 		SubjectID:   req.SubjectID,
@@ -34,7 +42,7 @@ func (t *TeacherHandler) CreateTask(ctx *fiber.Ctx) (err error) {
 		Title:       req.Title,
 		TypeOfTask:  req.TypeOfTask,
 		Description: req.Description,
-		Deadline:    req.Deadline,
+		Deadline:    deadline,
 		Link:        req.Link,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
@@ -62,7 +70,7 @@ func (t *TeacherHandler) CreateTask(ctx *fiber.Ctx) (err error) {
 		Title:       taskDetails.Title,
 		TypeOfTask:  taskDetails.TypeOfTask,
 		Description: taskDetails.Description,
-		Deadline:    taskDetails.Deadline,
+		Deadline:    taskDetails.Deadline.Format(time.DateTime),
 		Link:        taskDetails.Link,
 		CreatedAt:   taskDetails.CreatedAt,
 		UpdatedAt:   taskDetails.UpdatedAt,
@@ -94,7 +102,7 @@ func (t *TeacherHandler) GetAllTask(ctx *fiber.Ctx) (err error) {
 			Title:       task.Title,
 			TypeOfTask:  task.TypeOfTask,
 			Description: task.Description,
-			Deadline:    task.Deadline,
+			Deadline:    task.Deadline.Format(time.DateTime),
 			Link:        task.Link,
 			CreatedAt:   task.CreatedAt,
 			UpdatedAt:   task.UpdatedAt,

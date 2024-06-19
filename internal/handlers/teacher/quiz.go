@@ -46,9 +46,9 @@ func (t *TeacherHandler) CreateQuiz(ctx *fiber.Ctx) error {
 	var questions []entities.Question
 	for _, q := range req.Questions {
 		question := entities.Question{
-			Text:           q.Text,
-			Options:        q.Options,
-			CorrectAnswer:  q.CorrectAnswer,
+			Text:          q.Text,
+			Options:       q.Options,
+			CorrectAnswer: q.CorrectAnswer,
 		}
 		questions = append(questions, question)
 	}
@@ -91,9 +91,9 @@ func (t *TeacherHandler) GetQuiz(ctx *fiber.Ctx) error {
 		var questions []dto.QuestionBrief
 		for _, question := range q.Questions {
 			questionBrief := dto.QuestionBrief{
-				Text:           question.Text,
-				Options:        question.Options,
-				CorrectAnswer:  question.CorrectAnswer,
+				Text:          question.Text,
+				Options:       question.Options,
+				CorrectAnswer: question.CorrectAnswer,
 			}
 			questions = append(questions, questionBrief)
 		}
@@ -149,5 +149,32 @@ func (t *TeacherHandler) GetAllQuizAssignment(ctx *fiber.Ctx) error {
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
 		"message": "Success get all quiz assignment",
 		"data":    response,
+	})
+}
+
+func (t *TeacherHandler) GradeStudentQuiz(ctx *fiber.Ctx) error {
+	quizAssignmentID := ctx.Params("quizAssignmentID")
+	if quizAssignmentID == "" {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Quiz Assignment ID is required",
+		})
+	}
+
+	var req dto.GradeStudentQuizRequest
+	if err := ctx.BodyParser(&req); err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	err := t.teacherSvc.GradeStudentQuiz(quizAssignmentID, req.Status, req.Grade)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Success grade student quiz",
 	})
 }

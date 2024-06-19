@@ -11,6 +11,7 @@ type QuizService interface {
 	CreateQuiz(quiz *entities.Quiz, questions []entities.Question) error
 	GetQuizByTeacherID(userID string) ([]entities.Quiz, error)
 	GetAllQuizAssignment(quizID string) ([]entities.StudentQuizAssignment, error)
+	GradeStudentQuiz(quizAssignmentID string, status string, grade float64) error
 }
 
 func (s *teacherService) CreateQuiz(quiz *entities.Quiz, questions []entities.Question) error {
@@ -75,4 +76,13 @@ func (s *teacherService) GetAllQuizAssignment(quizID string) ([]entities.Student
 	}
 
 	return quizAssignment, nil
+}
+
+func (s *teacherService) GradeStudentQuiz(quizAssignmentID string, status string, grade float64) error {
+	err := s.studentAssignmentRepo.GradeStudentQuiz(quizAssignmentID, status, grade)
+	if err != nil {
+		return services.HandleError(err, "Failed to grade student quiz", 500)
+	}
+
+	return nil
 }

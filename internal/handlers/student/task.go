@@ -29,7 +29,7 @@ func (h *StudentHandler) GetTask(ctx *fiber.Ctx) (err error) {
 			Title:       t.Title,
 			TypeOfTask:  t.TypeOfTask,
 			Description: t.Description,
-			Deadline:    t.Deadline,
+			Deadline:    t.Deadline.Format(time.DateTime),
 			Link:        t.Link,
 		})
 

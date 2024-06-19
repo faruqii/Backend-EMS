@@ -22,15 +22,15 @@ type QuizResponse struct {
 }
 
 type QuestionRequest struct {
-	Text           string   `json:"text"`
-	Options        []string `json:"options"`
-	CorrectAnswer  string   `json:"correct_answer"`
+	Text          string   `json:"text"`
+	Options       []string `json:"options"`
+	CorrectAnswer string   `json:"correct_answer"`
 }
 
 type QuestionBrief struct {
-	Text           string   `json:"text"`
-	Options        []string `json:"options"`
-	CorrectAnswer  string   `json:"correct_answer"`
+	Text          string   `json:"text"`
+	Options       []string `json:"options"`
+	CorrectAnswer string   `json:"correct_answer"`
 }
 
 type StudentQuizResponse struct {
@@ -50,3 +50,7 @@ type StudentQuestionBrief struct {
 	Options        []string `json:"options"`
 }
 
+type GradeStudentQuizRequest struct {
+	Status string  `json:"status"`
+	Grade  float64 `json:"grade"`
+}

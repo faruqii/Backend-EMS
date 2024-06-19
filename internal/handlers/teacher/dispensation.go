@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
 	"github.com/gofiber/fiber/v2"
@@ -22,8 +23,8 @@ func (h *TeacherHandler) GetDispenpationByID(ctx *fiber.Ctx) (err error) {
 		StudentID: dispensation.StudentID,
 		Student:   dispensation.Student.Name,
 		Reason:    dispensation.Reason,
-		StartAt:   dispensation.StartAt,
-		EndAt:     dispensation.EndAt,
+		StartAt:   dispensation.StartAt.Format(time.DateTime),
+		EndAt:     dispensation.EndAt.Format(time.DateTime),
 		Document:  dispensation.Document,
 		Status:    dispensation.Status,
 	}
@@ -49,8 +50,8 @@ func (h *TeacherHandler) GetAllDispensations(ctx *fiber.Ctx) (err error) {
 			StudentID: dispensation.StudentID,
 			Student:   dispensation.Student.Name,
 			Reason:    dispensation.Reason,
-			StartAt:   dispensation.StartAt,
-			EndAt:     dispensation.EndAt,
+			StartAt:   dispensation.StartAt.Format(time.DateTime),
+			EndAt:     dispensation.EndAt.Format(time.DateTime),
 			Document:  dispensation.Document,
 			Status:    dispensation.Status,
 		})
@@ -79,8 +80,8 @@ func (h *TeacherHandler) GetDispensationsByStudentID(ctx *fiber.Ctx) (err error)
 			StudentID: dispensation.StudentID,
 			Student:   dispensation.Student.Name,
 			Reason:    dispensation.Reason,
-			StartAt:   dispensation.StartAt,
-			EndAt:     dispensation.EndAt,
+			StartAt:   dispensation.StartAt.Format(time.DateTime),
+			EndAt:     dispensation.EndAt.Format(time.DateTime),
 			Document:  dispensation.Document,
 			Status:    dispensation.Status,
 		})

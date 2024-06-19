@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
@@ -18,10 +19,25 @@ func (h *StudentHandler) CreateDispensation(ctx *fiber.Ctx) (err error) {
 		})
 	}
 
+	// parsing StartAt and EndAt to DateTime
+	startAt, err := time.Parse(time.DateTime, req.StartAt)
+	if err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	endAt, err := time.Parse(time.DateTime, req.EndAt)
+	if err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
 	dispensation := &entities.Dispensation{
 		Reason:   req.Reason,
-		StartAt:  req.StartAt,
-		EndAt:    req.EndAt,
+		StartAt:  startAt,
+		EndAt:    endAt,
 		Document: req.Document,
 		Status:   "pending",
 	}
@@ -55,8 +71,8 @@ func (h *StudentHandler) GetDispensationByID(ctx *fiber.Ctx) (err error) {
 		StudentID: dispensation.StudentID,
 		Student:   dispensation.Student.Name,
 		Reason:    dispensation.Reason,
-		StartAt:   dispensation.StartAt,
-		EndAt:     dispensation.EndAt,
+		StartAt:   dispensation.StartAt.Format(time.DateTime),
+		EndAt:     dispensation.EndAt.Format(time.DateTime),
 		Document:  dispensation.Document,
 		Status:    dispensation.Status,
 	}
@@ -85,8 +101,8 @@ func (h *StudentHandler) GetMyDispensations(ctx *fiber.Ctx) (err error) {
 			StudentID: dispensation.StudentID,
 			Student:   dispensation.Student.Name,
 			Reason:    dispensation.Reason,
-			StartAt:   dispensation.StartAt,
-			EndAt:     dispensation.EndAt,
+			StartAt:   dispensation.StartAt.Format(time.DateTime),
+			EndAt:     dispensation.EndAt.Format(time.DateTime),
 			Document:  dispensation.Document,
 			Status:    dispensation.Status,
 		})
