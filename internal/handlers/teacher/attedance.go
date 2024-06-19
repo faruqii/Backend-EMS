@@ -23,7 +23,7 @@ func (t *TeacherHandler) CreateAttendance(ctx *fiber.Ctx) error {
 		StudentID:       req.StudentID,
 		SubjectID:       subjectID,
 		AttendaceStatus: req.AttendaceStatus,
-		AttendaceAt:     time.Now(),
+		AttendaceAt:     time.Now().Local(),
 	}
 
 	attendance, err := t.teacherSvc.CreateAttedance(attendance)
