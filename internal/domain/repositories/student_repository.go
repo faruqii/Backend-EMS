@@ -153,21 +153,21 @@ func (r *studentRepository) GetStudentByUserID(userID string) (*entities.Student
 }
 
 func (r *studentRepository) RemoveStudentFromClass(studentID string) error {
-	// Fetch the student along with the associated class
-	var student entities.Student
-	if err := r.db.Preload("Class").Where("id = ?", studentID).First(&student).Error; err != nil {
-		return err
-	}
+    var student entities.Student
+    if err := r.db.Where("id = ?", studentID).First(&student).Error; err != nil {
+        return err
+    }
 
-	// Update the class ID
-	student.ClassID = nil
+    // Ensuring ClassID is nil
+    student.ClassID = nil
 
-	// don't use save it will update all fields
-	if err := r.db.Model(&student).Update("class_id", nil).Error; err != nil {
-		return err
-	}
+    // Updating the ClassID field specifically
+    if err := r.db.Model(&student).Update("class_id", gorm.Expr("NULL")).Error; err != nil {
+        return err
+    }
 
-	return nil
+    return nil
 }
+
 
 // Path: internal/domain/repositories/student_repository.go
