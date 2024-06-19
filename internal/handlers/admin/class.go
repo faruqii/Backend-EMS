@@ -205,3 +205,18 @@ func (h *AdminHandler) GetAllStudentsBelongToClass(ctx *fiber.Ctx) (err error) {
 		"data": response,
 	})
 }
+
+func (h *AdminHandler) RemoveStudentsFromClass(ctx *fiber.Ctx) (err error) {
+	classID := ctx.Params("id")
+
+	err = h.adminService.RemoveStudentsFromClass(classID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Students removed from class successfully",
+	})
+}
