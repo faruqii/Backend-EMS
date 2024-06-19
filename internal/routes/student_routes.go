@@ -13,6 +13,9 @@ func StudentRoutes(router fiber.Router, studentSvc services.StudentService, mw *
 	studentRoutes := router.Group("/student")
 	studentRoutes.Use(mw.Authenticate(), mw.Authorization("student"))
 
+	studentProfileRoutes := studentRoutes.Group("/profile")
+	studentProfileRoutes.Get("", student.MyProfile)
+
 	studentClassRoutes := studentRoutes.Group("/class")
 	studentClassRoutes.Get("", student.GetClass)
 	studentClassRoutes.Get("/subjects", student.GetSubjects)
