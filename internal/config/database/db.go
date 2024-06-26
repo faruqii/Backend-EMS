@@ -18,7 +18,6 @@ type Config struct {
 	Password string
 	DBName   string
 	Port     string
-	SSLMODE  string
 }
 
 var config = Config{}
@@ -27,8 +26,8 @@ func Connect() (*gorm.DB, error) {
 	config.Read()
 
 	dsn := fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=Asia/Bangkok",
-		config.Host, config.User, config.Password, config.DBName, config.Port, config.SSLMODE,
+		"host=%s user=%s password=%s dbname=%s port=%s TimeZone=Asia/Bangkok",
+		config.Host, config.User, config.Password, config.DBName, config.Port,
 	)
 
 	conn, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
@@ -83,5 +82,4 @@ func (c *Config) Read() {
 	c.Password = os.Getenv("DB_PASSWORD")
 	c.DBName = os.Getenv("DB_NAME")
 	c.Port = os.Getenv("DB_PORT")
-	c.SSLMODE = os.Getenv("DB_SSLMODE")
 }
