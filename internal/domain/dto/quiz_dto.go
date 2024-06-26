@@ -45,9 +45,8 @@ type StudentQuizResponse struct {
 }
 
 type StudentQuestionBrief struct {
-	Text           string   `json:"text"`
-	TypeOfQuestion string   `json:"type_of_question"` // multiple-choice or essay
-	Options        []string `json:"options"`
+	Text    string   `json:"text"`
+	Options []string `json:"options"`
 }
 
 type GradeStudentQuizRequest struct {

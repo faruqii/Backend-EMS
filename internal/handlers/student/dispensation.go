@@ -20,14 +20,14 @@ func (h *StudentHandler) CreateDispensation(ctx *fiber.Ctx) (err error) {
 	}
 
 	// parsing StartAt and EndAt to DateTime
-	startAt, err := time.Parse(time.DateTime, req.StartAt)
+	startAt, err := time.Parse(time.DateOnly, req.StartAt)
 	if err != nil {
 		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
 		})
 	}
 
-	endAt, err := time.Parse(time.DateTime, req.EndAt)
+	endAt, err := time.Parse(time.DateOnly, req.EndAt)
 	if err != nil {
 		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),

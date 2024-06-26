@@ -9,7 +9,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-//go:generate mockgen -source=auth_service.go -destination=mock_auth_service.go -package=mock
+//go:generate mockgen -source=auth_service.go -destination=mock_auth_service.go -package=mocks
 type AuthService interface {
 	LogIn(username, password string) (*entities.User, error)
 	CreateUserToken(user *entities.User, role string) (string, error)
