@@ -51,7 +51,7 @@ func (s *studentService) SubmitQuiz(quizAssignment *entities.StudentQuizAssignme
 	quizAssignment.Status = "submitted"
 
 	// Check quiz type
-	if quizType == "multiple choice" {
+	if quizType == "Multiple Choice" {
 		totalQuestions, err := s.quizRepo.CountQuestion(quizAssignment.QuizID)
 		log.Println(totalQuestions)
 		if err != nil {
@@ -66,7 +66,7 @@ func (s *studentService) SubmitQuiz(quizAssignment *entities.StudentQuizAssignme
 		grade := float64(correctAnswers) / float64(totalQuestions) * 100
 		quizAssignment.Grade = grade
 
-	} else if quizType == "essay" {
+	} else if quizType == "Essay" {
 		quizAssignment.Status = "waiting for graded"
 		quizAssignment.Grade = 0
 	}
