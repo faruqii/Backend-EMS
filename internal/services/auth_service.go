@@ -17,6 +17,7 @@ type AuthService interface {
 	ChangePassword(userID string, oldPassword, newPassword string) error
 	FindUserByToken(token string) (string, error)
 	LogOut(userID string) error
+	GetRoleNameFromID(id string) (string, error)
 }
 
 type authService struct {
@@ -59,6 +60,7 @@ func (s *authService) CreateUserToken(user *entities.User, role string) (string,
 	// Create JWT token
 	claims := dto.Claims{
 		UserID: user.ID,
+		Role:   role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -135,4 +137,13 @@ func (s *authService) LogOut(userID string) error {
 	}
 
 	return nil
+}
+
+func (s *authService) GetRoleNameFromID(id string) (string, error) {
+	roleName, err := s.roleRepository.GetRoleNameFromID(id)
+	if err != nil {
+		return "", err
+	}
+
+	return roleName, nil
 }

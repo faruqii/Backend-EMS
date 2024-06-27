@@ -23,7 +23,15 @@ func (a *AuthHandler) LogIn(ctx *fiber.Ctx) (err error) {
 		})
 	}
 
-	token, err := a.authService.CreateUserToken(user, "user")
+	// Get user role
+	role, err := a.authService.GetRoleNameFromID(user.ID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	token, err := a.authService.CreateUserToken(user, role)
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
