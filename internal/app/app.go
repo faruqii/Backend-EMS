@@ -125,12 +125,12 @@ func setupRoutes(app *fiber.App, services *Services, mw *middleware.Middleware) 
 func Start() {
 	app := fiber.New()
 
-	app.Use(cors.Config{
+	app.Use(cors.New(cors.Config{
 		AllowOrigins:     "*",
 		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
 		AllowMethods:     "GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD",
 		AllowCredentials: true,
-	})
+	}))
 
 	// Database connection
 	db, err := database.Connect()
