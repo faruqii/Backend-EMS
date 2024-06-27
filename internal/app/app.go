@@ -16,6 +16,7 @@ import (
 	studentSvc "github.com/Magetan-Boyz/Backend/internal/services/student"
 	teacherSvc "github.com/Magetan-Boyz/Backend/internal/services/teacher"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"gorm.io/gorm"
 )
 
@@ -123,6 +124,13 @@ func setupRoutes(app *fiber.App, services *Services, mw *middleware.Middleware) 
 
 func Start() {
 	app := fiber.New()
+
+	app.Use(cors.Config{
+		AllowOrigins:     "*",
+		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
+		AllowMethods:     "GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD",
+		AllowCredentials: true,
+	})
 
 	// Database connection
 	db, err := database.Connect()
