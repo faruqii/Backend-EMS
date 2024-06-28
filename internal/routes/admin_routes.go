@@ -63,8 +63,8 @@ func AdminRoutes(router fiber.Router, adminSvc services.AdminService, mw *middle
 	announcementRoutes := adminRoutes.Group("/announcement")
 	announcementRoutes.Post("/create", admin.CreateAnnouncement)
 	announcementRoutes.Get("", admin.GetAnnouncements)
-	adminRoutes.Get("/:id", admin.GetAnnouncementByID)
-	adminRoutes.Put("/:id/update", admin.UpdateAnnouncement)
-	adminRoutes.Delete("/:id/delete", admin.DeleteAnnouncement)
+	announcementRoutes.Get("/:id", admin.GetAnnouncementByID)
+	announcementRoutes.Put("/:id/update", admin.UpdateAnnouncement)
+	announcementRoutes.Delete("/:id/delete", admin.DeleteAnnouncement)
 
 }
