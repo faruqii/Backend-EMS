@@ -138,3 +138,28 @@ func (c *AdminHandler) CreateParentAccountFromCsv(ctx *fiber.Ctx) (err error) {
 		"message": "Parents created successfully",
 	})
 }
+
+func (c *AdminHandler) GetParents(ctx *fiber.Ctx) (err error) {
+	parents, err := c.adminService.GetAll()
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	var response []dto.ParentResponse
+	for _, parent := range parents {
+		response = append(response, dto.ParentResponse{
+			ID:          parent.ID,
+			Name:        parent.Name,
+			Address:     parent.Address,
+			Occupation:  parent.Occupation,
+			PhoneNumber: parent.PhoneNumber,
+			Email:       parent.Email,
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"data": response,
+	})
+}

@@ -112,3 +112,110 @@ func (c *AdminHandler) CreateSchedule(ctx *fiber.Ctx) (err error) {
 		"data":    response,
 	})
 }
+
+func (c *AdminHandler) GetSchedules(ctx *fiber.Ctx) (err error) {
+	schedules, err := c.adminService.GetAllSchedule()
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	var response []dto.ScheduleResponse
+	for _, schedule := range schedules {
+		dayOfWeekToInt := helper.WeekdayToInt(schedule.DayOfWeek)
+		dayOfWeek := helper.ScheduleToDay(dayOfWeekToInt)
+
+		response = append(response, dto.ScheduleResponse{
+			ID:        schedule.ID,
+			Class:     schedule.Class.Name,
+			Subject:   schedule.Subject.Name,
+			Teacher:   schedule.Teacher.Name,
+			DayOfWeek: dayOfWeek,
+			StartTime: schedule.StartTime.Format(time.TimeOnly),
+			EndTime:   schedule.EndTime.Format(time.TimeOnly),
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"data": response,
+	})
+}
+
+func (c *AdminHandler) UpdateSchedule(ctx *fiber.Ctx) (err error) {
+	id := ctx.Params("id")
+
+	var req dto.CreateScheduleRequest
+	if err = ctx.BodyParser(&req); err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	// update schedule
+	schedule, err := c.adminService.GetScheduleByID(id)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	// update schedule
+	schedule.ClassID = req.ClassID
+	schedule.SubjectID = req.SubjectID
+	schedule.TeacherID = req.TeacherID
+	schedule.DayOfWeek = req.DayOfWeek
+	// parsing time
+	// parse in location
+	loc, err := time.LoadLocation("Local")
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	// parse time
+	startTime, err := time.ParseInLocation(time.TimeOnly, req.StartTime, loc)
+	if err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid start time",
+		})
+	}
+
+	endTime, err := time.ParseInLocation(time.TimeOnly, req.EndTime, loc)
+	if err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid end time",
+		})
+	}
+
+	schedule.StartTime = startTime
+	schedule.EndTime = endTime
+
+	err = c.adminService.UpdateSchedule(schedule)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Schedule updated successfully",
+	})
+
+}
+
+func (c *AdminHandler) DeleteSchedule(ctx *fiber.Ctx) (err error) {
+	id := ctx.Params("id")
+
+	err = c.adminService.DeleteSchedule(id)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Schedule deleted successfully",
+	})
+}

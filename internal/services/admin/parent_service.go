@@ -9,6 +9,7 @@ import (
 type AdminParentService interface {
 	CreateParent(parent *entities.Parent) error
 	AssignParentToStudent(parentID, studentID string) error
+	GetAll() ([]entities.Parent, error)
 }
 
 func (s *adminService) CreateParent(parent *entities.Parent) error {
@@ -64,4 +65,13 @@ func (s *adminService) AssignParentToStudent(parentID, studentID string) error {
 	}
 
 	return nil
+}
+
+func (s *adminService) GetAll() ([]entities.Parent, error) {
+	parents, err := s.parentRepo.GetAll()
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to get parents", 500)
+	}
+
+	return parents, nil
 }

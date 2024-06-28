@@ -52,11 +52,12 @@ func (r *announcementRepository) GetAnnouncementByID(announcementID string) (*en
 }
 
 func (r *announcementRepository) UpdateAnnouncement(announcement *entities.Announcement) (*entities.Announcement, error) {
-	if err := r.db.Save(announcement).Error; err != nil {
+	if err := r.db.Where("id = ?", announcement.ID).Updates(announcement).Error; err != nil {
 		return nil, err
 	}
 
 	return announcement, nil
+
 }
 
 func (r *announcementRepository) DeleteAnnouncement(announcementID string) error {

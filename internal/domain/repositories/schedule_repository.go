@@ -38,14 +38,15 @@ func (r *scheduleRepository) Insert(schedule *entities.Schedule) error {
 }
 
 func (r *scheduleRepository) Update(schedule *entities.Schedule) error {
-	if err := r.db.Save(schedule).Error; err != nil {
+	// dont use save because it will update all fields and also it related entities
+	if err := r.db.Model(&entities.Schedule{}).Where("id = ?", schedule.ID).Updates(schedule).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
 func (r *scheduleRepository) Delete(id string) error {
-	if err := r.db.Delete(&entities.Schedule{}, id).Error; err != nil {
+	if err := r.db.Where("id = ?", id).Delete(&entities.Schedule{}).Error; err != nil {
 		return err
 	}
 	return nil

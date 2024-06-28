@@ -13,6 +13,7 @@ type ParentRepository interface {
 	InsertParentToStudent(parstud *entities.ParentStudent) error
 	FindByParentAndStudent(parentID, studentID string) (*entities.ParentStudent, error)
 	GetStudentIDByParentID(parentID string) (string, error)
+	GetAll() ([]entities.Parent, error)
 }
 
 type parentRepository struct {
@@ -73,4 +74,12 @@ func (r *parentRepository) GetStudentIDByParentID(parentID string) (string, erro
 		return "", err
 	}
 	return parstud.StudentID, nil
+}
+
+func (r *parentRepository) GetAll() ([]entities.Parent, error) {
+	var parents []entities.Parent
+	if err := r.db.Find(&parents).Error; err != nil {
+		return nil, err
+	}
+	return parents, nil
 }

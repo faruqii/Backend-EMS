@@ -41,6 +41,9 @@ func AdminRoutes(router fiber.Router, adminSvc services.AdminService, mw *middle
 	// Schedule routes
 	scheduleRoutes := adminRoutes.Group("/schedule")
 	scheduleRoutes.Post("/create", admin.CreateSchedule)
+	scheduleRoutes.Get("/all", admin.GetSchedules)
+	scheduleRoutes.Put("/:id", admin.UpdateSchedule)
+	scheduleRoutes.Delete("/:id/delete", admin.DeleteSchedule)
 
 	// Student routes
 	studentRoutes := adminRoutes.Group("/student")
@@ -54,6 +57,7 @@ func AdminRoutes(router fiber.Router, adminSvc services.AdminService, mw *middle
 	parentRoutes.Post("/create", admin.CreateParentAccount)
 	parentRoutes.Post("/import", admin.CreateParentAccountFromCsv)
 	parentRoutes.Post("/assign-student", admin.AssignParentToStudent)
+	parentRoutes.Get("/all", admin.GetParents)
 
 	// Announcement routes
 	announcementRoutes := adminRoutes.Group("/announcement")
