@@ -42,7 +42,7 @@ func AdminRoutes(router fiber.Router, adminSvc services.AdminService, mw *middle
 	scheduleRoutes := adminRoutes.Group("/schedule")
 	scheduleRoutes.Post("/create", admin.CreateSchedule)
 	scheduleRoutes.Get("/all", admin.GetSchedules)
-	scheduleRoutes.Put("/:id", admin.UpdateSchedule)
+	scheduleRoutes.Put("/:id/update", admin.UpdateSchedule)
 	scheduleRoutes.Delete("/:id/delete", admin.DeleteSchedule)
 
 	// Student routes
@@ -64,7 +64,7 @@ func AdminRoutes(router fiber.Router, adminSvc services.AdminService, mw *middle
 	announcementRoutes.Post("/create", admin.CreateAnnouncement)
 	announcementRoutes.Get("", admin.GetAnnouncements)
 	adminRoutes.Get("/:id", admin.GetAnnouncementByID)
-	adminRoutes.Put("/:id", admin.UpdateAnnouncement)
-	adminRoutes.Delete("/:id", admin.DeleteAnnouncement)
+	adminRoutes.Put("/:id/update", admin.UpdateAnnouncement)
+	adminRoutes.Delete("/:id/delete", admin.DeleteAnnouncement)
 
 }
