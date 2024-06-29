@@ -156,6 +156,7 @@ func (c *AdminHandler) GetParents(ctx *fiber.Ctx) (err error) {
 			Occupation:  parent.Occupation,
 			PhoneNumber: parent.PhoneNumber,
 			Email:       parent.Email,
+			StudentName: parent.StudentName,
 		})
 	}
 
