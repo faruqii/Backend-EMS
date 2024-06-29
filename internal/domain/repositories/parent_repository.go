@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"gorm.io/gorm"
 )
@@ -13,7 +14,7 @@ type ParentRepository interface {
 	InsertParentToStudent(parstud *entities.ParentStudent) error
 	FindByParentAndStudent(parentID, studentID string) (*entities.ParentStudent, error)
 	GetStudentIDByParentID(parentID string) (string, error)
-	GetAll() ([]entities.Parent, error)
+	GetAll() ([]dto.ParentResponse, error)
 }
 
 type parentRepository struct {
@@ -76,10 +77,17 @@ func (r *parentRepository) GetStudentIDByParentID(parentID string) (string, erro
 	return parstud.StudentID, nil
 }
 
-func (r *parentRepository) GetAll() ([]entities.Parent, error) {
-	var parents []entities.Parent
-	if err := r.db.Find(&parents).Error; err != nil {
+func (r *parentRepository) GetAll() ([]dto.ParentResponse, error) {
+	var parents []dto.ParentResponse
+	// join table with ParentStudent to show the child of parent
+	err := r.db.Table("parents").
+		Select("parents.id, parents.name, parents.address, parents.occupation, parents.phone_number, parents.email, students.name as student_name").
+		Joins("LEFT JOIN parent_students ON parents.id = parent_students.parent_id").
+		Joins("LEFT JOIN students ON parent_students.student_id = students.id").
+		Scan(&parents).Error
+	if err != nil {
 		return nil, err
 	}
+
 	return parents, nil
 }

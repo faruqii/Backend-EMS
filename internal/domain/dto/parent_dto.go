@@ -17,6 +17,7 @@ type ParentResponse struct {
 	Occupation  string `json:"occupation"`
 	PhoneNumber string `json:"phone_number"`
 	Email       string `json:"email"`
+	StudentName string `json:"student_name"`
 }
 
 type ParentStudentRequest struct {

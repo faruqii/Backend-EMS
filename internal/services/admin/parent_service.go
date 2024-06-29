@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"github.com/Magetan-Boyz/Backend/internal/services"
 	"golang.org/x/crypto/bcrypt"
@@ -9,7 +10,7 @@ import (
 type AdminParentService interface {
 	CreateParent(parent *entities.Parent) error
 	AssignParentToStudent(parentID, studentID string) error
-	GetAll() ([]entities.Parent, error)
+	GetAll() ([]dto.ParentResponse, error)
 }
 
 func (s *adminService) CreateParent(parent *entities.Parent) error {
@@ -67,7 +68,7 @@ func (s *adminService) AssignParentToStudent(parentID, studentID string) error {
 	return nil
 }
 
-func (s *adminService) GetAll() ([]entities.Parent, error) {
+func (s *adminService) GetAll() ([]dto.ParentResponse, error) {
 	parents, err := s.parentRepo.GetAll()
 	if err != nil {
 		return nil, services.HandleError(err, "Failed to get parents", 500)
