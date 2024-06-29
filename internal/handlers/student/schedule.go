@@ -21,8 +21,7 @@ func (h *StudentHandler) GetSchedule(ctx *fiber.Ctx) (err error) {
 
 	var studentSchedule []dto.ScheduleResponse
 	for _, schedule := range schedules {
-		dayOfWeekToInt := helper.WeekdayToInt(schedule.DayOfWeek)
-		dayOfWeek := helper.ScheduleToDay(dayOfWeekToInt)
+		dayOfWeek := helper.WeekdayToStr(schedule.DayOfWeek)
 
 		studentSchedule = append(studentSchedule, dto.ScheduleResponse{
 			ID:        schedule.ID,

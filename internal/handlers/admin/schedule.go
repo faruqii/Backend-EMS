@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 	"time"
 
@@ -94,8 +95,7 @@ func (c *AdminHandler) CreateSchedule(ctx *fiber.Ctx) (err error) {
 		})
 	}
 
-	dayOfWeekToInt := helper.WeekdayToInt(schedule.DayOfWeek)
-	dayOfWeek := helper.ScheduleToDay(dayOfWeekToInt)
+	dayOfWeek := helper.WeekdayToStr(schedule.DayOfWeek)
 
 	response := dto.ScheduleResponse{
 		ID:        schedule.ID,
@@ -123,8 +123,8 @@ func (c *AdminHandler) GetSchedules(ctx *fiber.Ctx) (err error) {
 
 	var response []dto.ScheduleResponse
 	for _, schedule := range schedules {
-		dayOfWeekToInt := helper.WeekdayToInt(schedule.DayOfWeek)
-		dayOfWeek := helper.ScheduleToDay(dayOfWeekToInt)
+		dayOfWeek := helper.WeekdayToStr(schedule.DayOfWeek)
+		log.Println(dayOfWeek)
 
 		response = append(response, dto.ScheduleResponse{
 			ID:        schedule.ID,

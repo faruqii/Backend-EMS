@@ -30,8 +30,7 @@ func (t *TeacherHandler) GetTodaySchedule(ctx *fiber.Ctx) error {
 
 	var teacherSchedules []dto.TeacherSchedule
 	for _, schedule := range schedules {
-		dayOfWeekToInt := helper.WeekdayToInt(schedule.DayOfWeek)
-		dayOfWeek := helper.ScheduleToDay(dayOfWeekToInt)
+		dayOfWeek := helper.WeekdayToStr(schedule.DayOfWeek)
 
 		teacherSchedules = append(teacherSchedules, dto.TeacherSchedule{
 			SubjectName: schedule.Subject.Name,
@@ -66,8 +65,7 @@ func (t *TeacherHandler) GetAllTeacherSchedule(ctx *fiber.Ctx) error {
 
 	var teacherSchedules []dto.TeacherSchedule
 	for _, schedule := range schedules {
-		dayOfWeekToInt := helper.WeekdayToInt(schedule.DayOfWeek)
-		dayOfWeek := helper.ScheduleToDay(dayOfWeekToInt)
+		dayOfWeek := helper.WeekdayToStr(schedule.DayOfWeek)
 
 		teacherSchedules = append(teacherSchedules, dto.TeacherSchedule{
 			SubjectName: schedule.Subject.Name,

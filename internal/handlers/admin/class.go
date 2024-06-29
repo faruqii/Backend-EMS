@@ -163,8 +163,7 @@ func (h *AdminHandler) GetClassSchedule(ctx *fiber.Ctx) (err error) {
 	var response []dto.ScheduleResponse
 
 	for _, schedule := range schedules {
-		dayOfWeekToInt := helper.WeekdayToInt(schedule.DayOfWeek)
-		dayOfWeek := helper.ScheduleToDay(dayOfWeekToInt)
+		dayOfWeek := helper.WeekdayToStr(schedule.DayOfWeek)
 		scheduleRes := dto.ScheduleResponse{
 			ID:        schedule.ID,
 			Class:     schedule.Class.Name,
