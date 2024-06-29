@@ -14,8 +14,7 @@ type SubjectResponse struct {
 }
 
 type TeacherSubjectRequest struct {
-	TeacherID string `json:"teacher_id"`
-	SubjectID string `json:"subject_id"`
+	TeacherID []string `json:"teacher_id"`
 }
 
 type TeacherSubjectResponse struct {

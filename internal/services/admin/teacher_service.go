@@ -12,7 +12,7 @@ import (
 type AdminTeacherService interface {
 	CreateTeacher(teacher *entities.Teacher) error
 	GetAllTeacher() ([]entities.Teacher, error)
-	AssignTeacherToSubject(teacherID, SubjectID string) error
+	AssignTeacherToSubject(teacherIDs []string, subjectID string) error
 	FindTeacherByID(id string) (*entities.Teacher, error)
 	GetTeachersBySubjectID(subjectID string) ([]dto.TeacherSubjectResponse, error)
 	GetTeacherSubjects(teacherID string) ([]dto.TeacherSubjectsResponse, error)
@@ -47,22 +47,25 @@ func (s *adminService) GetAllTeacher() ([]entities.Teacher, error) {
 	return teachers, services.HandleError(err, "Failed to fetch teachers", 500)
 }
 
-func (s *adminService) AssignTeacherToSubject(teacherID, SubjectID string) error {
-	teacherAlreadyAssigned, err := s.subjectRepo.IsTeacherAssignedToSubject(teacherID, SubjectID)
-	if err != nil {
-		return services.HandleError(err, "Failed to check if teacher is assigned to subject", 500)
-	}
-	if teacherAlreadyAssigned {
-		return services.HandleError(errors.New("teacher already assigned to subject"), "Teacher already assigned to subject", 400)
-	}
+func (s *adminService) AssignTeacherToSubject(teacherIDs []string, subjectID string) error {
+	for _, teacherID := range teacherIDs {
+		teacherAlreadyAssigned, err := s.subjectRepo.IsTeacherAssignedToSubject(teacherID, subjectID)
+		if err != nil {
+			return services.HandleError(err, "Failed to check if teacher is assigned to subject", 500)
+		}
+		if teacherAlreadyAssigned {
+			return services.HandleError(errors.New("teacher already assigned to subject"), "Teacher already assigned to subject", 400)
+		}
 
-	err = s.subjectRepo.AssignTeacherToSubject(teacherID, SubjectID)
-	if err != nil {
-		return services.HandleError(err, "Failed to assign teacher to subject", 500)
+		err = s.subjectRepo.AssignTeacherToSubject(teacherID, subjectID)
+		if err != nil {
+			return services.HandleError(err, "Failed to assign teacher to subject", 500)
+		}
 	}
 
 	return nil
 }
+
 
 func (s *adminService) FindTeacherByID(id string) (*entities.Teacher, error) {
 	teacher, err := s.teacherRepo.FindByID(id)
