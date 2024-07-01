@@ -27,8 +27,16 @@ func (t *TeacherHandler) CreateTask(ctx *fiber.Ctx) (err error) {
 		})
 	}
 
+	// parse in location
+	loc, err := time.LoadLocation("Local")
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
 	// parsing Deadline to DateTime
-	deadline, err := time.Parse(time.DateTime, req.Deadline)
+	deadline, err := time.ParseInLocation(time.DateTime, req.Deadline, loc)
 	if err != nil {
 		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
