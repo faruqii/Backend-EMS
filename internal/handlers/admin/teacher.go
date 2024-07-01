@@ -188,3 +188,26 @@ func (c *AdminHandler) CreateTeacherAccountFromCsv(ctx *fiber.Ctx) (err error) {
 		"message": "Teachers created successfully",
 	})
 }
+
+func (c *AdminHandler) GetTeachersByClassAndSubject(ctx *fiber.Ctx) (err error) {
+	classID := ctx.Query("classID")
+	subjectID := ctx.Query("subjectID")
+
+	if classID == "" || subjectID == "" {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "classID and subjectID query parameters are required",
+		})
+	}
+
+	teachers, err := c.adminService.GetTeachersByClassAndSubject(classID, subjectID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Teachers fetched successfully",
+		"data":    teachers,
+	})
+}

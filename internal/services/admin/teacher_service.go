@@ -18,6 +18,7 @@ type AdminTeacherService interface {
 	GetTeacherSubjects(teacherID string) ([]dto.TeacherSubjectsResponse, error)
 	UpdateTeacherHomeroomStatus(teacherID string, isHomeroom bool) error
 	UpdateTeacherIsCouncelorStatus(teacherID string, isCouncelor bool) error
+	GetTeachersByClassAndSubject(classID, subjectID string) ([]dto.TeacherSubjectResponse, error)
 }
 
 func (s *adminService) CreateTeacher(teacher *entities.Teacher) error {
@@ -157,4 +158,20 @@ func (s *adminService) UpdateTeacherIsCouncelorStatus(teacherID string, isCounce
 	teacher.IsCouncelor = isCouncelor
 	err = s.teacherRepo.Update(teacher)
 	return services.HandleError(err, "Failed to update teacher", 500)
+}
+
+func (s *adminService) GetTeachersByClassAndSubject(classID, subjectID string) ([]dto.TeacherSubjectResponse, error) {
+	teacherSubjects, err := s.subjectRepo.GetTeachersByClassAndSubject(classID, subjectID)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to fetch teachers", 500)
+	}
+
+	var teachers []dto.TeacherSubjectResponse
+	for _, ts := range teacherSubjects {
+		teachers = append(teachers, dto.TeacherSubjectResponse{
+			TeacherName: ts.Teacher.Name,
+			SubjectName: ts.Subject.Name,
+		})
+	}
+	return teachers, nil
 }

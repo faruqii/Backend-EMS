@@ -26,6 +26,7 @@ type SubjectRepository interface {
 	GetSubjectMatterBySubjectID(subjectID string) ([]entities.SubjectMattter, error)
 	GetDetailSubjectMatter(subjectMatterID string) (*entities.SubjectMattter, error)
 	GetAllSubjectInClass(classID string) ([]entities.ClassSubject, error)
+	GetTeachersByClassAndSubject(classID, subjectID string) ([]entities.TeacherSubject, error)
 }
 
 // subjectRepository is a concrete implementation of SubjectRepository.
@@ -212,4 +213,22 @@ func (r *subjectRepository) GetAllSubjectInClass(classID string) ([]entities.Cla
 		return nil, err
 	}
 	return classSubjects, nil
+}
+
+func (r *subjectRepository) GetTeachersByClassAndSubject(classID, subjectID string) ([]entities.TeacherSubject, error) {
+	var classSubjects []entities.ClassSubject
+	if err := r.db.Preload("Teacher").Preload("Subject").
+		Where("class_id = ? AND subject_id = ?", classID, subjectID).Find(&classSubjects).Error; err != nil {
+		return nil, err
+	}
+
+	var teacherSubjects []entities.TeacherSubject
+	for _, cs := range classSubjects {
+		teacherSubjects = append(teacherSubjects, entities.TeacherSubject{
+			Teacher: cs.Teacher,
+			Subject: cs.Subject,
+		})
+	}
+
+	return teacherSubjects, nil
 }

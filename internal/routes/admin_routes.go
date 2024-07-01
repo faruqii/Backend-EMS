@@ -19,6 +19,7 @@ func AdminRoutes(router fiber.Router, adminSvc services.AdminService, mw *middle
 	subRoutes.Get("/all", admin.GetAllSubject)
 	subRoutes.Post("/:id/assign-teacher", admin.AssignTeacherToSubject)
 	subRoutes.Get("/:id/teachers", admin.GetTeachersBySubjectID)
+	subRoutes.Get("", admin.GetTeachersByClassAndSubject)
 
 	// Teacher routes
 	teacherRoutes := adminRoutes.Group("/teacher")
