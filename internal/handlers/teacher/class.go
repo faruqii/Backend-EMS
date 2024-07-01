@@ -20,7 +20,9 @@ func (h *TeacherHandler) GetWhereIamTeachTheClass(ctx *fiber.Ctx) error {
 	var response []dto.ClassSubjectResponse
 	for _, c := range class {
 		response = append(response, dto.ClassSubjectResponse{
+			ClassID:     c.Class.ID,
 			ClassName:   c.Class.Name,
+			SubjectID:   c.Subject.ID,
 			SubjectName: c.Subject.Name,
 			TeacherName: c.Teacher.Name,
 		})

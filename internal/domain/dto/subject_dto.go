@@ -35,6 +35,7 @@ type AssignSubjectToClassRequest struct {
 }
 
 type ClassSubjectResponse struct {
+	ClassID     string `json:"class_id"`
 	ClassName   string `json:"class_name"`
 	SubjectID   string `json:"subject_id"`
 	SubjectName string `json:"subject_name"`
