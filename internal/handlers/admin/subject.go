@@ -94,3 +94,50 @@ func (c *AdminHandler) AssignSubjectToClass(ctx *fiber.Ctx) (err error) {
 		"message": "Subject assigned to class successfully",
 	})
 }
+
+func (c *AdminHandler) GetClassesSubjectsAndTeachers(ctx *fiber.Ctx) (err error) {
+	classPrefix := ctx.Query("classPrefix")
+	subjectID := ctx.Query("subjectID")
+
+	if classPrefix == "" {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "classPrefix query parameter is required",
+		})
+	}
+
+	// Fetch classes based on prefix
+	classes, err := c.adminService.GetClassesByPrefix(classPrefix)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	// Fetch subjects for these classes
+	subjects, err := c.adminService.GetSubjectsByClassPrefix(classPrefix)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	// Fetch teachers for the specified subject if provided
+	var teachers []dto.TeacherSubjectResponse
+	if subjectID != "" {
+		teachers, err = c.adminService.GetTeachersBySubjectID(subjectID)
+		if err != nil {
+			return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Data fetched successfully",
+		"data": fiber.Map{
+			"classes":  classes,
+			"subjects": subjects,
+			"teachers": teachers,
+		},
+	})
+}

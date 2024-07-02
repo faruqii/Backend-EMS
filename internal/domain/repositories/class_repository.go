@@ -18,6 +18,7 @@ type ClassRepository interface {
 	IsTeacherTeachTheClass(classID string) (bool, error)
 	IsTeacherHomeRoomTeacher(teacherID, classID string) (bool, error)
 	RemoveStudentsFromClass(classID string) error
+	GetClassesByPrefix(name string) ([]entities.Class, error)
 }
 
 type classRepository struct {
@@ -120,4 +121,12 @@ func (r *classRepository) RemoveStudentsFromClass(classID string) error {
 		return err
 	}
 	return nil
+}
+
+func (r *classRepository) GetClassesByPrefix(name string) ([]entities.Class, error) {
+	var classes []entities.Class
+	if err := r.db.Where("name LIKE ?", name+"%").Find(&classes).Error; err != nil {
+		return nil, err
+	}
+	return classes, nil
 }

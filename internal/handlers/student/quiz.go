@@ -54,6 +54,13 @@ func (h *StudentHandler) GetQuizQuestions(ctx *fiber.Ctx) error {
 		})
 	}
 
+	typeOfQuiz, err := h.studentService.GetQuizByID(quizID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
 	totalQuestions, err := h.studentService.CountQuizQuestions(quizID)
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
@@ -75,6 +82,7 @@ func (h *StudentHandler) GetQuizQuestions(ctx *fiber.Ctx) error {
 		"total_pages":     int(math.Ceil(float64(totalQuestions) / float64(pageSize))),
 		"current_page":    page,
 		"page_size":       pageSize,
+		"type_of_quiz":    typeOfQuiz.TypeOfQuiz,
 		"data":            response,
 	})
 }
