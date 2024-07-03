@@ -8,7 +8,7 @@ import (
 )
 
 func (h *ParentHandler) GetMyStudents(ctx *fiber.Ctx) (err error) {
-	userID := ctx.Locals("userID").(string)
+	userID := ctx.Locals("user").(string)
 
 	students, err := h.parentService.GetMyStudent(userID)
 	if err != nil {
