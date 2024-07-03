@@ -69,7 +69,7 @@ func (s *studentService) SubmitQuiz(quizAssignment *entities.StudentQuizAssignme
 	} else if quizType == "Essay" {
 		quizAssignment.Status = "waiting for graded"
 		quizAssignment.Grade = 0
-	}
+	} 
 
 	// Insert the assignment into the database
 	if err := s.assignmentRepo.InsertQuiz(quizAssignment); err != nil {

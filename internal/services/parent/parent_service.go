@@ -10,6 +10,7 @@ type ParentService interface {
 	ParentStudentGradeService
 	ParentTokenService
 	ParentStudentViolationService
+	ParentStudentService
 }
 
 type parentService struct {
