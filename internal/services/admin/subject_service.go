@@ -44,8 +44,9 @@ func (s *adminService) GetClassesByPrefix(classPrefix string) ([]dto.ClassRespon
 	var classResponses []dto.ClassResponse
 	for _, class := range classes {
 		classResponses = append(classResponses, dto.ClassResponse{
-			ID:   class.ID,
-			Name: class.Name,
+			ID:              class.ID,
+			Name:            class.Name,
+			HomeRoomTeacher: class.HomeRoomTeacher.Name,
 		})
 	}
 	return classResponses, nil
@@ -63,8 +64,8 @@ func (s *adminService) GetSubjectsByClassPrefix(classPrefix string) ([]dto.Subje
 			ID:          subject.ID,
 			Name:        subject.Name,
 			Description: subject.Description,
+			Semester:    subject.Semester,
 		})
 	}
 	return subjectResponses, nil
 }
-
