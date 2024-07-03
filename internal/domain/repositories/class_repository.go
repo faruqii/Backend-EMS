@@ -125,7 +125,7 @@ func (r *classRepository) RemoveStudentsFromClass(classID string) error {
 
 func (r *classRepository) GetClassesByPrefix(name string) ([]entities.Class, error) {
 	var classes []entities.Class
-	if err := r.db.Where("name LIKE ?", name+"%").Find(&classes).Error; err != nil {
+	if err := r.db.Preload("HomeRoomTeacher").Where("name LIKE ?", name+"%").Find(&classes).Error; err != nil {
 		return nil, err
 	}
 	return classes, nil
