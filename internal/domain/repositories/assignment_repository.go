@@ -1,8 +1,6 @@
 package repositories
 
 import (
-	"log"
-
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"gorm.io/gorm"
 )
@@ -147,19 +145,15 @@ func (r *assignmentRepository) GradeStudentQuiz(quizAssignmentID string, status 
 
 func (r *assignmentRepository) GetMyQuizAssignment(studentID string, subjectID *string) ([]entities.StudentQuizAssignment, error) {
 	var assignments []entities.StudentQuizAssignment
-	db := r.db.Where("student_id = ?", studentID)
+	db := r.db.Model(&entities.StudentQuizAssignment{}).
+		Where("student_quiz_assignments.student_id = ?", studentID)
 
 	if subjectID != nil {
 		db = db.Joins("JOIN quizzes ON quizzes.id = student_quiz_assignments.quiz_id").
 			Where("quizzes.subject_id = ?", *subjectID)
 	}
 
-	// Log the SQL query for debugging
-	query := db.ToSQL(func(tx *gorm.DB) *gorm.DB {
-		return tx.Preload("Quiz").Preload("Student").Preload("Quiz.Subject").Find(&assignments)
-	})
-	log.Printf("SQL Query: %s", query)
-
+	// Apply the preloads and execute the query
 	err := db.Preload("Quiz").Preload("Student").Preload("Quiz.Subject").Find(&assignments).Error
 	if err != nil {
 		return nil, err
