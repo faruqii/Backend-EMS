@@ -105,70 +105,27 @@ func (c *AdminHandler) GetClassesSubjectsAndTeachers(ctx *fiber.Ctx) (err error)
 		})
 	}
 
-	// Fetch classes based on prefix
-	classes, err := c.adminService.GetClassesByPrefix(classPrefix)
+	// Fetch class-subject-teacher mapping
+	classSubjects, err := c.adminService.GetClassSubjectsByPrefixAndSubject(classPrefix, subjectID)
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
 		})
-	}
-
-	// Fetch subjects for these classes
-	subjects, err := c.adminService.GetSubjectsByClassPrefix(classPrefix)
-	if err != nil {
-		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
-	}
-
-	// If subjectID is provided, filter subjects by the subjectID
-	if subjectID != "" {
-		var filteredSubjects []dto.SubjectResponse
-		for _, subject := range subjects {
-			if subject.ID == subjectID {
-				filteredSubjects = append(filteredSubjects, subject)
-			}
-		}
-		subjects = filteredSubjects
-	}
-
-	// Fetch teachers for the specified subject if provided
-	var teachers []dto.TeacherSubjectResponse
-	if subjectID != "" {
-		teachers, err = c.adminService.GetTeachersBySubjectID(subjectID)
-		if err != nil {
-			return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
-				"error": err.Error(),
-			})
-		}
 	}
 
 	// Transform the data to match the desired format
 	var data []fiber.Map
-	teacherMap := make(map[string]string)
-
-	// Create a map of subjectID to teacherName
-	for _, teacher := range teachers {
-		teacherMap[teacher.SubjectName] = teacher.TeacherName
-	}
-
-	for _, class := range classes {
-		for _, subject := range subjects {
-			teacherName := ""
-			if name, ok := teacherMap[subject.Name]; ok {
-				teacherName = name
-			}
-			entry := fiber.Map{
-				"class":      class.Name,
-				"class_id":   class.ID,
-				"subject":    subject.Name,
-				"subject_id": subject.ID,
-				"teacher":    teacherName,
-			}
-			// Avoid adding duplicate entries
-			if !contains(data, entry) {
-				data = append(data, entry)
-			}
+	for _, cs := range classSubjects {
+		entry := fiber.Map{
+			"class":      cs.Class.Name,
+			"class_id":   cs.ClassID,
+			"subject":    cs.Subject.Name,
+			"subject_id": cs.SubjectID,
+			"teacher":    cs.Teacher.Name,
+		}
+		// Avoid adding duplicate entries
+		if !contains(data, entry) {
+			data = append(data, entry)
 		}
 	}
 

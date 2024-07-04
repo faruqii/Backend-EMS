@@ -13,6 +13,7 @@ type AdminSubjectService interface {
 	IsTeacherAssignedToSubject(teacherID, subjectID string) (bool, error)
 	GetClassesByPrefix(classPrefix string) ([]dto.ClassResponse, error)
 	GetSubjectsByClassPrefix(classPrefix string) ([]dto.SubjectResponse, error)
+	GetClassSubjectsByPrefixAndSubject(classPrefix string, subjectID string) ([]entities.ClassSubject, error)
 }
 
 func (s *adminService) CreateSubject(subject *entities.Subject) error {
@@ -68,4 +69,9 @@ func (s *adminService) GetSubjectsByClassPrefix(classPrefix string) ([]dto.Subje
 		})
 	}
 	return subjectResponses, nil
+}
+
+// AdminService.go
+func (s *adminService) GetClassSubjectsByPrefixAndSubject(classPrefix string, subjectID string) ([]entities.ClassSubject, error) {
+	return s.subjectRepo.GetClassSubjectsByPrefixAndSubject(classPrefix, subjectID)
 }
