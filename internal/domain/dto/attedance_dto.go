@@ -22,3 +22,7 @@ type StudentAttedanceResponse struct {
 	AttedanceStatus string    `json:"attedance_status"`
 	AttedanceAt     time.Time `json:"attedance_at"`
 }
+
+type UpdateAttedanceRequest struct {
+	AttedanceStatus string `json:"attedance_status"`
+}

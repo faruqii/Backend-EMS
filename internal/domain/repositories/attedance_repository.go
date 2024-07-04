@@ -71,9 +71,11 @@ func (r *attendaceRepository) GetMyAttedance(studentID string) ([]entities.Atend
 }
 
 func (r *attendaceRepository) UpdateAttedance(attedance *entities.Atendance) (*entities.Atendance, error) {
-	if err := r.db.Save(attedance).Error; err != nil {
+	// only update status
+	if err := r.db.Model(&entities.Atendance{}).Where("id = ?", attedance.ID).Select("AttendanceStatus").Updates(attedance).Error; err != nil {
 		return nil, err
 	}
+
 	return attedance, nil
 }
 
