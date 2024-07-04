@@ -107,7 +107,7 @@ func initServices(repos *Repositories) *Services {
 			repos.classRepo, repos.subjectRepo,
 			repos.attedanceRepo, repos.achivementRepo,
 			repos.gradeRepo, repos.taskRepo,
-			repos.violationRepo),
+			repos.violationRepo, repos.dispensationRepo),
 		globalService: globalSvc.NewGlobalService(repos.announcementRepo),
 	}
 }

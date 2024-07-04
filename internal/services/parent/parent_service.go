@@ -11,22 +11,24 @@ type ParentService interface {
 	ParentTokenService
 	ParentStudentViolationService
 	ParentStudentService
+	ParentStudentDispensationService
 }
 
 type parentService struct {
-	parentRepo     repositories.ParentRepository
-	scheduleRepo   repositories.ScheduleRepository
-	studentRepo    repositories.StudentRepository
-	tokenRepo      repositories.TokenRepository
-	assignmentRepo repositories.AssignmentRepository
-	quizRepo       repositories.QuizRepository
-	classRepo      repositories.ClassRepository
-	subjectRepo    repositories.SubjectRepository
-	attedanceRepo  repositories.AttedanceRepository
-	achivementRepo repositories.AchivementRepository
-	gradeRepo      repositories.GradeRepository
-	taskRepo       repositories.TaskRepository
-	violationRepo  repositories.ViolationRepository
+	parentRepo       repositories.ParentRepository
+	scheduleRepo     repositories.ScheduleRepository
+	studentRepo      repositories.StudentRepository
+	tokenRepo        repositories.TokenRepository
+	assignmentRepo   repositories.AssignmentRepository
+	quizRepo         repositories.QuizRepository
+	classRepo        repositories.ClassRepository
+	subjectRepo      repositories.SubjectRepository
+	attedanceRepo    repositories.AttedanceRepository
+	achivementRepo   repositories.AchivementRepository
+	gradeRepo        repositories.GradeRepository
+	taskRepo         repositories.TaskRepository
+	violationRepo    repositories.ViolationRepository
+	dispensationRepo repositories.DispensationRepository
 }
 
 func NewParentService(
@@ -43,20 +45,22 @@ func NewParentService(
 	gradeRepo repositories.GradeRepository,
 	taskRepo repositories.TaskRepository,
 	violationRepo repositories.ViolationRepository,
+	dispensationRepo repositories.DispensationRepository,
 ) *parentService {
 	return &parentService{
-		parentRepo:     parentRepo,
-		scheduleRepo:   scheduleRepo,
-		studentRepo:    studentRepo,
-		tokenRepo:      tokenRepo,
-		assignmentRepo: assignmentRepo,
-		quizRepo:       quizRepo,
-		classRepo:      classRepo,
-		subjectRepo:    subjectRepo,
-		attedanceRepo:  attedanceRepo,
-		achivementRepo: achivementRepo,
-		gradeRepo:      gradeRepo,
-		taskRepo:       taskRepo,
-		violationRepo:  violationRepo,
+		parentRepo:       parentRepo,
+		scheduleRepo:     scheduleRepo,
+		studentRepo:      studentRepo,
+		tokenRepo:        tokenRepo,
+		assignmentRepo:   assignmentRepo,
+		quizRepo:         quizRepo,
+		classRepo:        classRepo,
+		subjectRepo:      subjectRepo,
+		attedanceRepo:    attedanceRepo,
+		achivementRepo:   achivementRepo,
+		gradeRepo:        gradeRepo,
+		taskRepo:         taskRepo,
+		violationRepo:    violationRepo,
+		dispensationRepo: dispensationRepo,
 	}
 }
