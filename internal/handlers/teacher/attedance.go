@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 	"time"
 
@@ -132,6 +133,8 @@ func (t *TeacherHandler) UpdateAttendance(ctx *fiber.Ctx) error {
 			"error": err.Error(),
 		})
 	}
+
+	log.Println(attendance)
 
 	attendance.AttendaceStatus = req.AttedanceStatus
 	attendance, err = t.teacherSvc.UpdateAttedance(attendance)
