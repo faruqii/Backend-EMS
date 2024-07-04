@@ -1,6 +1,8 @@
 package repositories
 
 import (
+	"log"
+
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"gorm.io/gorm"
 )
@@ -157,12 +159,17 @@ func (r *assignmentRepository) GetMyQuizAssignment(studentID string, subjectID s
 		query = query.Where("quizzes.subject_id = ?", subjectID)
 	}
 
-	// Execute the query with preloads for related entities
+	// Apply the preloads and execute the query
 	err := query.Preload("Quiz").Preload("Student").Preload("Quiz.Subject").Find(&assignments).Error
 	if err != nil {
 		return nil, err
 	}
 
+	// Log the results for debugging
+	log.Printf("Assignments found: %d", len(assignments))
+	for _, assignment := range assignments {
+		log.Printf("Assignment ID: %s, Quiz ID: %s, Subject ID: %s", assignment.ID, assignment.QuizID, assignment.Quiz.SubjectID)
+	}
+
 	return assignments, nil
 }
-
