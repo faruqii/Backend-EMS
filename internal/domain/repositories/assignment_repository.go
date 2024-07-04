@@ -21,7 +21,7 @@ type AssignmentRepository interface {
 	GetQuizByStudentID(studentID string) ([]entities.StudentQuizAssignment, error)
 	GetStudentQuizAssignment(quizID, studentID string) (*entities.StudentQuizAssignment, error)
 	GradeStudentQuiz(quizAssignmentID string, status string, grade float64) error
-	GetMyQuizAssignment(studentID string, subjectID *string) ([]entities.StudentQuizAssignment, error)
+	GetMyQuizAssignment(studentID string, subjectID string) ([]entities.StudentQuizAssignment, error)
 }
 
 type assignmentRepository struct {
@@ -143,14 +143,14 @@ func (r *assignmentRepository) GradeStudentQuiz(quizAssignmentID string, status 
 		Updates(map[string]interface{}{"Status": status, "Grade": grade}).Error
 }
 
-func (r *assignmentRepository) GetMyQuizAssignment(studentID string, subjectID *string) ([]entities.StudentQuizAssignment, error) {
+func (r *assignmentRepository) GetMyQuizAssignment(studentID string, subjectID string) ([]entities.StudentQuizAssignment, error) {
 	var assignments []entities.StudentQuizAssignment
 	db := r.db.Model(&entities.StudentQuizAssignment{}).
 		Where("student_quiz_assignments.student_id = ?", studentID)
 
-	if subjectID != nil {
+	if subjectID != "" {
 		db = db.Joins("JOIN quizzes ON quizzes.id = student_quiz_assignments.quiz_id").
-			Where("quizzes.subject_id = ?", *subjectID)
+			Where("quizzes.subject_id = ?", subjectID)
 	}
 
 	// Apply the preloads and execute the query

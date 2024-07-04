@@ -12,7 +12,7 @@ type StudentAssignmentService interface {
 	SubmitAssignment(assignment *entities.StudentAssignment) error
 	GetAssignment(taskID string) (*entities.StudentAssignment, error)
 	SubmitQuiz(quizAssignment *entities.StudentQuizAssignment) error
-	GetMyQuizAssignment(userID string, subjectID *string) ([]entities.StudentQuizAssignment, error)
+	GetMyQuizAssignment(userID string, subjectID string) ([]entities.StudentQuizAssignment, error)
 }
 
 func (s *studentService) SubmitAssignment(assignment *entities.StudentAssignment) error {
@@ -80,7 +80,7 @@ func (s *studentService) SubmitQuiz(quizAssignment *entities.StudentQuizAssignme
 	return nil
 }
 
-func (s *studentService) GetMyQuizAssignment(userID string, subjectID *string) ([]entities.StudentQuizAssignment, error) {
+func (s *studentService) GetMyQuizAssignment(userID string, subjectID string) ([]entities.StudentQuizAssignment, error) {
     // Log userID and subjectID for debugging
     log.Printf("GetMyQuizAssignment called with userID: %s, subjectID: %v", userID, subjectID)
 

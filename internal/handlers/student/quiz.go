@@ -155,9 +155,9 @@ func (h *StudentHandler) GetMyQuizGrades(ctx *fiber.Ctx) error {
 	var err error
 
 	if subjectID != "" {
-		assignments, err = h.studentService.GetMyQuizAssignment(userID, &subjectID)
+		assignments, err = h.studentService.GetMyQuizAssignment(userID, subjectID)
 	} else {
-		assignments, err = h.studentService.GetMyQuizAssignment(userID, nil)
+		assignments, err = h.studentService.GetMyQuizAssignment(userID, "")
 	}
 
 	if err != nil {
