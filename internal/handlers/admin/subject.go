@@ -113,6 +113,14 @@ func (c *AdminHandler) GetClassesSubjectsAndTeachers(ctx *fiber.Ctx) (err error)
 		})
 	}
 
+	// Check if no records are found
+	if len(classSubjects) == 0 {
+		return ctx.Status(http.StatusOK).JSON(fiber.Map{
+			"message": "No data found",
+			"data":    []fiber.Map{},
+		})
+	}
+
 	// Transform the data to match the desired format
 	var data []fiber.Map
 	for _, cs := range classSubjects {

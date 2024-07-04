@@ -253,7 +253,8 @@ func (r *subjectRepository) GetSubjectsByClassPrefix(classPrefix string) ([]enti
 // ClassSubjectRepository.go
 func (r *subjectRepository) GetClassSubjectsByPrefixAndSubject(classPrefix string, subjectID string) ([]entities.ClassSubject, error) {
 	var classSubjects []entities.ClassSubject
-	query := r.db.Joins("JOIN classes ON classes.id = class_subjects.class_id").Where("classes.name LIKE ?", classPrefix+"%")
+	query := r.db.Joins("JOIN classes ON class_subjects.class_id = classes.id").
+		Where("classes.name LIKE ?", classPrefix+"%")
 	if subjectID != "" {
 		query = query.Where("class_subjects.subject_id = ?", subjectID)
 	}
