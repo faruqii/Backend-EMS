@@ -121,6 +121,17 @@ func (c *AdminHandler) GetClassesSubjectsAndTeachers(ctx *fiber.Ctx) (err error)
 		})
 	}
 
+	// If subjectID is provided, filter subjects by the subjectID
+	if subjectID != "" {
+		var filteredSubjects []dto.SubjectResponse
+		for _, subject := range subjects {
+			if subject.ID == subjectID {
+				filteredSubjects = append(filteredSubjects, subject)
+			}
+		}
+		subjects = filteredSubjects
+	}
+
 	// Fetch teachers for the specified subject if provided
 	var teachers []dto.TeacherSubjectResponse
 	if subjectID != "" {
@@ -134,22 +145,30 @@ func (c *AdminHandler) GetClassesSubjectsAndTeachers(ctx *fiber.Ctx) (err error)
 
 	// Transform the data to match the desired format
 	var data []fiber.Map
+	teacherMap := make(map[string]string)
+
+	// Create a map of subjectID to teacherName
+	for _, teacher := range teachers {
+		teacherMap[teacher.SubjectName] = teacher.TeacherName
+	}
+
 	for _, class := range classes {
 		for _, subject := range subjects {
-			var teacherName string
-			for _, teacher := range teachers {
-				if teacher.SubjectName == subject.Name {
-					teacherName = teacher.TeacherName
-					break
-				}
+			teacherName := ""
+			if name, ok := teacherMap[subject.Name]; ok {
+				teacherName = name
 			}
-			data = append(data, fiber.Map{
+			entry := fiber.Map{
 				"class":      class.Name,
 				"class_id":   class.ID,
 				"subject":    subject.Name,
 				"subject_id": subject.ID,
 				"teacher":    teacherName,
-			})
+			}
+			// Avoid adding duplicate entries
+			if !contains(data, entry) {
+				data = append(data, entry)
+			}
 		}
 	}
 
@@ -157,4 +176,14 @@ func (c *AdminHandler) GetClassesSubjectsAndTeachers(ctx *fiber.Ctx) (err error)
 		"message": "Data fetched successfully",
 		"data":    data,
 	})
+}
+
+// Helper function to check if the entry already exists in the data slice
+func contains(data []fiber.Map, entry fiber.Map) bool {
+	for _, item := range data {
+		if item["class_id"] == entry["class_id"] && item["subject_id"] == entry["subject_id"] {
+			return true
+		}
+	}
+	return false
 }
