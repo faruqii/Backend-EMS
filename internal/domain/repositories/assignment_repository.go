@@ -145,19 +145,24 @@ func (r *assignmentRepository) GradeStudentQuiz(quizAssignmentID string, status 
 
 func (r *assignmentRepository) GetMyQuizAssignment(studentID string, subjectID string) ([]entities.StudentQuizAssignment, error) {
 	var assignments []entities.StudentQuizAssignment
-	db := r.db.Model(&entities.StudentQuizAssignment{}).
+
+	// Join with quiz table to find subject_id
+	query := r.db.Table("student_quiz_assignments").
+		Select("student_quiz_assignments.*").
+		Joins("JOIN quizzes ON student_quiz_assignments.quiz_id = quizzes.id").
 		Where("student_quiz_assignments.student_id = ?", studentID)
 
+	// Add the subjectID condition if provided
 	if subjectID != "" {
-		db = db.Joins("JOIN quizzes ON quizzes.id = student_quiz_assignments.quiz_id").
-			Where("quizzes.subject_id = ?", subjectID)
+		query = query.Where("quizzes.subject_id = ?", subjectID)
 	}
 
-	// Apply the preloads and execute the query
-	err := db.Preload("Quiz").Preload("Student").Preload("Quiz.Subject").Find(&assignments).Error
+	// Execute the query with preloads for related entities
+	err := query.Preload("Quiz").Preload("Student").Preload("Quiz.Subject").Find(&assignments).Error
 	if err != nil {
 		return nil, err
 	}
 
 	return assignments, nil
 }
+
