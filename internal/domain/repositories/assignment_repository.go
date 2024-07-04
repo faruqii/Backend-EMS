@@ -1,6 +1,8 @@
 package repositories
 
 import (
+	"log"
+
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"gorm.io/gorm"
 )
@@ -152,7 +154,13 @@ func (r *assignmentRepository) GetMyQuizAssignment(studentID string, subjectID *
 			Where("quizzes.subject_id = ?", *subjectID)
 	}
 
-	err := db.Preload("Quiz").Preload("Quiz.Subject").Find(&assignments).Error
+	// Log the SQL query for debugging
+	query := db.ToSQL(func(tx *gorm.DB) *gorm.DB {
+		return tx.Preload("Quiz").Preload("Student").Preload("Quiz.Subject").Find(&assignments)
+	})
+	log.Printf("SQL Query: %s", query)
+
+	err := db.Preload("Quiz").Preload("Student").Preload("Quiz.Subject").Find(&assignments).Error
 	if err != nil {
 		return nil, err
 	}
