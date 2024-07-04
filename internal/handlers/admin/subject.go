@@ -124,17 +124,15 @@ func (c *AdminHandler) GetClassesSubjectsAndTeachers(ctx *fiber.Ctx) (err error)
 	// Transform the data to match the desired format
 	var data []fiber.Map
 	for _, cs := range classSubjects {
-		entry := fiber.Map{
-			"class":      cs.Class.Name,
+		item := fiber.Map{
 			"class_id":   cs.ClassID,
-			"subject":    cs.Subject.Name,
+			"class_name": cs.Class.Name,
 			"subject_id": cs.SubjectID,
+			"subject":    cs.Subject.Name,
+			"teacher_id": cs.TeacherID,
 			"teacher":    cs.Teacher.Name,
 		}
-		// Avoid adding duplicate entries
-		if !contains(data, entry) {
-			data = append(data, entry)
-		}
+		data = append(data, item)
 	}
 
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
@@ -144,11 +142,11 @@ func (c *AdminHandler) GetClassesSubjectsAndTeachers(ctx *fiber.Ctx) (err error)
 }
 
 // Helper function to check if the entry already exists in the data slice
-func contains(data []fiber.Map, entry fiber.Map) bool {
-	for _, item := range data {
-		if item["class_id"] == entry["class_id"] && item["subject_id"] == entry["subject_id"] {
-			return true
-		}
-	}
-	return false
-}
+// func contains(data []fiber.Map, entry fiber.Map) bool {
+// 	for _, item := range data {
+// 		if item["class_id"] == entry["class_id"] && item["subject_id"] == entry["subject_id"] {
+// 			return true
+// 		}
+// 	}
+// 	return false
+// }
