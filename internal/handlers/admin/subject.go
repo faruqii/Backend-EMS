@@ -132,12 +132,29 @@ func (c *AdminHandler) GetClassesSubjectsAndTeachers(ctx *fiber.Ctx) (err error)
 		}
 	}
 
+	// Transform the data to match the desired format
+	var data []fiber.Map
+	for _, class := range classes {
+		for _, subject := range subjects {
+			var teacherName string
+			for _, teacher := range teachers {
+				if teacher.SubjectName == subject.Name {
+					teacherName = teacher.TeacherName
+					break
+				}
+			}
+			data = append(data, fiber.Map{
+				"class":      class.Name,
+				"class_id":   class.ID,
+				"subject":    subject.Name,
+				"subject_id": subject.ID,
+				"teacher":    teacherName,
+			})
+		}
+	}
+
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
 		"message": "Data fetched successfully",
-		"data": fiber.Map{
-			"classes":  classes,
-			"subjects": subjects,
-			"teachers": teachers,
-		},
+		"data":    data,
 	})
 }
