@@ -21,6 +21,7 @@ type AssignmentRepository interface {
 	GetQuizByStudentID(studentID string) ([]entities.StudentQuizAssignment, error)
 	GetStudentQuizAssignment(quizID, studentID string) (*entities.StudentQuizAssignment, error)
 	GradeStudentQuiz(quizAssignmentID string, status string, grade float64) error
+	GetMyQuizAssignment(studentID string, subjectID *string) ([]entities.StudentQuizAssignment, error)
 }
 
 type assignmentRepository struct {
@@ -140,4 +141,21 @@ func (r *assignmentRepository) GradeStudentQuiz(quizAssignmentID string, status 
 		Where("id = ?", quizAssignmentID).
 		Select("Status", "Grade"). // Only update these fields
 		Updates(map[string]interface{}{"Status": status, "Grade": grade}).Error
+}
+
+func (r *assignmentRepository) GetMyQuizAssignment(studentID string, subjectID *string) ([]entities.StudentQuizAssignment, error) {
+	var assignments []entities.StudentQuizAssignment
+	db := r.db.Where("student_id = ?", studentID)
+
+	if subjectID != nil {
+		db = db.Joins("JOIN quizzes ON quizzes.id = student_quiz_assignments.quiz_id").
+			Where("quizzes.subject_id = ?", *subjectID)
+	}
+
+	err := db.Preload("Quiz").Preload("Quiz.Subject").Find(&assignments).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return assignments, nil
 }

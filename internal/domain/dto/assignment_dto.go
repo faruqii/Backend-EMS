@@ -27,6 +27,7 @@ type SubmitQuizRequest struct {
 
 type StudentQuizAssignmentResponse struct {
 	ID          string  `json:"id"`
+	QuizID      string  `json:"quiz_id"`
 	QuizName    string  `json:"quiz_name"`
 	StudentName string  `json:"student_name"`
 	NISN        string  `json:"nisn"`
