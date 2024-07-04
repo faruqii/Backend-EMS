@@ -81,21 +81,17 @@ func (s *studentService) SubmitQuiz(quizAssignment *entities.StudentQuizAssignme
 }
 
 func (s *studentService) GetMyQuizAssignment(userID string, subjectID string) ([]entities.StudentQuizAssignment, error) {
-    // Log userID and subjectID for debugging
-    log.Printf("GetMyQuizAssignment called with userID: %s, subjectID: %v", userID, subjectID)
+	// Get student id from token
+	studentID, err := s.tokenRepo.GetStudentIDByUserID(userID)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to get student id", 500)
+	}
 
-    // Get student id from token
-    studentID, err := s.tokenRepo.GetStudentIDByUserID(userID)
-    if err != nil {
-        return nil, services.HandleError(err, "Failed to get student id", 500)
-    }
+	// Get quiz assignment by student id
+	quizAssignments, err := s.assignmentRepo.GetMyQuizAssignment(studentID, subjectID)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to get quiz assignment", 500)
+	}
 
-    // Get quiz assignment by student id
-    quizAssignments, err := s.assignmentRepo.GetMyQuizAssignment(studentID, subjectID)
-    if err != nil {
-        return nil, services.HandleError(err, "Failed to get quiz assignment", 500)
-    }
-
-    return quizAssignments, nil
+	return quizAssignments, nil
 }
-

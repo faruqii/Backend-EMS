@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"log"
 	"math"
 	"net/http"
 	"strconv"
@@ -147,9 +146,6 @@ func (h *StudentHandler) GetMyQuizGrade(ctx *fiber.Ctx) error {
 func (h *StudentHandler) GetMyQuizGrades(ctx *fiber.Ctx) error {
 	userID := ctx.Locals("user").(string)
 	subjectID := ctx.Query("subjectID")
-
-	// Log userID and subjectID for debugging
-	log.Printf("GetMyQuizGrades called with userID: %s, subjectID: %s", userID, subjectID)
 
 	var assignments []entities.StudentQuizAssignment
 	var err error
