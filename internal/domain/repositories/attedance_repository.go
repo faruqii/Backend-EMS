@@ -81,7 +81,8 @@ func (r *attendaceRepository) UpdateAttedance(attedance *entities.Atendance) (*e
 
 func (r *attendaceRepository) FindByID(id string) (*entities.Atendance, error) {
 	var attedance entities.Atendance
-	if err := r.db.Where("id = ?", id).Find(&attedance).Error; err != nil {
+	// preload student and subject
+	if err := r.db.Preload("Student").Preload("Subject").Where("id = ?", id).First(&attedance).Error; err != nil {
 		return nil, err
 	}
 
