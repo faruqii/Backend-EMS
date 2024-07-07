@@ -43,15 +43,29 @@ type ClassSubjectResponse struct {
 }
 
 type SubjectMattterRequest struct {
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Content     string `json:"content"`
+    Title       string                        `json:"title"`
+    Description string                        `json:"description"`
+    Content     []SubjectMatterContentRequest `json:"content"`
+}
+
+type SubjectMatterContentRequest struct {
+    Title       string `json:"title"`
+    Description string `json:"description"`
+    Link        string `json:"link"`
 }
 
 type SubjectMattterResponse struct {
-	ID          string `json:"id"`
-	Subject     string `json:"subject"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Content     string `json:"content"`
+    ID          string                  `json:"id"`
+    Subject     string                  `json:"subject"`
+    Title       string                  `json:"title"`
+    Description string                  `json:"description"`
+    Content     []SubjectMatterContent `json:"content"`
 }
+
+type SubjectMatterContent struct {
+    ID          string `json:"id"`
+    Title       string `json:"title"`
+    Description string `json:"description"`
+    Link        string `json:"link"`
+}
+

@@ -42,15 +42,27 @@ func (cs *ClassSubject) BeforeCreate(tx *gorm.DB) (err error) {
 }
 
 type SubjectMattter struct {
-	ID          string  `json:"id" gorm:"primaryKey, type:uuid, default:uuid_generate_v4()"`
-	SubjectID   string  `json:"subject_id"`
-	Subject     Subject `json:"subject" gorm:"foreignKey:SubjectID"`
-	Title       string  `json:"title"`
-	Description string  `json:"description"`
-	Content     string  `json:"content"` // content of the subject matter like pdf, video, etc in link
+	ID          string                 `json:"id" gorm:"primaryKey, type:uuid, default:uuid_generate_v4()"`
+	SubjectID   string                 `json:"subject_id"`
+	Subject     Subject                `json:"subject" gorm:"foreignKey:SubjectID"`
+	Title       string                 `json:"title"`
+	Description string                 `json:"description"`
+	Content     []SubjectMatterContent `json:"content"`
 }
 
 func (sm *SubjectMattter) BeforeCreate(tx *gorm.DB) (err error) {
 	sm.ID = uuid.NewString()
+	return nil
+}
+
+type SubjectMatterContent struct {
+	ID          string `json:"id" gorm:"primaryKey, type:uuid, default:uuid_generate_v4()"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Link        string `json:"link"`
+}
+
+func (smc *SubjectMatterContent) BeforeCreate(tx *gorm.DB) (err error) {
+	smc.ID = uuid.NewString()
 	return nil
 }

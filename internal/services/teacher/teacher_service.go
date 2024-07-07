@@ -17,6 +17,7 @@ type TeacherService interface {
 	TeacherDispensationService
 	TeacherStudentLiterationService
 	TeacherViolationService
+	TeacherStudentService
 }
 
 type teacherService struct {
@@ -34,6 +35,7 @@ type teacherService struct {
 	dispensationRepo      repositories.DispensationRepository
 	literationRepo        repositories.LiterationRepository
 	violationRepo         repositories.ViolationRepository
+	studentRepo           repositories.StudentRepository
 }
 
 func NewTeacherService(
@@ -51,6 +53,7 @@ func NewTeacherService(
 	dispensationRepo repositories.DispensationRepository,
 	literationRepo repositories.LiterationRepository,
 	violationRepo repositories.ViolationRepository,
+	studentRepo repositories.StudentRepository,
 ) *teacherService {
 	return &teacherService{
 		teacherRepo:           teacherRepo,
@@ -67,5 +70,6 @@ func NewTeacherService(
 		dispensationRepo:      dispensationRepo,
 		literationRepo:        literationRepo,
 		violationRepo:         violationRepo,
+		studentRepo:           studentRepo,
 	}
 }

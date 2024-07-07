@@ -76,4 +76,7 @@ func TeacherRoutes(router fiber.Router, teacherService services.TeacherService, 
 	teacherViolationRoutes.Get("/:id", teacherController.GetViolationByID)
 	teacherViolationRoutes.Get("/student/:student_id", teacherController.GetViolationByStudentID)
 
+	teacherStudentRoutes := teacherControllerRoutes.Group("/students")
+	teacherStudentRoutes.Get("/:classID", teacherController.GetAllStudentByClass)
+
 }

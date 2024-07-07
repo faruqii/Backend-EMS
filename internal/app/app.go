@@ -91,7 +91,8 @@ func initServices(repos *Repositories) *Services {
 			repos.quizRepo, repos.assignmentRepo,
 			repos.attedanceRepo, repos.achivementRepo,
 			repos.gradeRepo, repos.dispensationRepo,
-			repos.literationRepo, repos.violationRepo),
+			repos.literationRepo, repos.violationRepo,
+			repos.studentRepo),
 		studentService: studentSvc.NewStudentService(
 			repos.scheduleRepo, repos.taskRepo,
 			repos.studentRepo, repos.tokenRepo,
