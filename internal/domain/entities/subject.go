@@ -51,7 +51,7 @@ type SubjectMattter struct {
 }
 
 type SubjectMatterContent struct {
-	ID              string         `json:"id" gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
+	ID              string         `json:"id" gorm:"primaryKey, type:uuid, default:uuid_generate_v4()"`
 	SubjectMatterID string         `json:"subject_matter_id"`
 	SubjectMatter   SubjectMattter `json:"subject_matter" gorm:"foreignKey:SubjectMatterID"`
 	Title           string         `json:"title"`
