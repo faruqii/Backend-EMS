@@ -22,6 +22,7 @@ func (h *ParentHandler) GetStudentAttedance(ctx *fiber.Ctx) (err error) {
 	for _, attedance := range attedance {
 		studentAttedance = append(studentAttedance, dto.StudentAttedanceResponse{
 			ID:              attedance.ID,
+			StudentID:       attedance.Student.ID,
 			StudentName:     attedance.Student.Name,
 			SubjectName:     attedance.Subject.Name,
 			AttedanceStatus: attedance.AttendaceStatus,

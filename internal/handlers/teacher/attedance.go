@@ -61,7 +61,8 @@ func (t *TeacherHandler) GetAttendanceBySubjectID(ctx *fiber.Ctx) error {
 	for _, attedance := range attendance {
 		res = append(res, dto.AttendanceResponse{
 			ID:              attedance.ID,
-			StudentID:       attedance.Student.Name,
+			StudentID:       attedance.Student.ID,
+			StudentName:     attedance.Student.Name,
 			SubjectID:       attedance.Subject.Name,
 			AttendaceStatus: attedance.AttendaceStatus,
 			AttendaceAt:     attedance.AttendaceAt,
@@ -103,7 +104,8 @@ func (t *TeacherHandler) GetAttendanceByClassID(ctx *fiber.Ctx) error {
 	for _, attedance := range attendance {
 		res = append(res, dto.AttendanceResponse{
 			ID:              attedance.ID,
-			StudentID:       attedance.Student.Name,
+			StudentID:       attedance.Student.ID,
+			StudentName:     attedance.Student.Name,
 			SubjectID:       attedance.Subject.Name,
 			AttendaceStatus: attedance.AttendaceStatus,
 			AttendaceAt:     attedance.AttendaceAt,
@@ -143,7 +145,8 @@ func (t *TeacherHandler) UpdateAttendance(ctx *fiber.Ctx) error {
 
 	res := dto.AttendanceResponse{
 		ID:              attendance.ID,
-		StudentID:       attendance.Student.Name,
+		StudentID:       attendance.Student.ID,
+		StudentName:     attendance.Student.Name,
 		SubjectID:       attendance.Subject.Name,
 		AttendaceStatus: attendance.AttendaceStatus,
 		AttendaceAt:     attendance.AttendaceAt,
