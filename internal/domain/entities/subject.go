@@ -47,7 +47,7 @@ type SubjectMattter struct {
 	Subject     Subject                `json:"subject" gorm:"foreignKey:SubjectID"`
 	Title       string                 `json:"title"`
 	Description string                 `json:"description"`
-	Content     []SubjectMatterContent `json:"content"`
+	Content     []SubjectMatterContent `json:"content" gorm:"foreignKey:SubjectMatterID"`
 }
 
 func (sm *SubjectMattter) BeforeCreate(tx *gorm.DB) (err error) {
