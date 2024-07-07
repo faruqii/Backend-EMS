@@ -50,10 +50,7 @@ type SubjectMattter struct {
 	Content     []SubjectMatterContent `json:"content" gorm:"foreignKey:SubjectMatterID"`
 }
 
-func (sm *SubjectMattter) BeforeCreate(tx *gorm.DB) (err error) {
-	sm.ID = uuid.NewString()
-	return nil
-}
+
 
 type SubjectMatterContent struct {
 	ID              string         `json:"id" gorm:"primaryKey, type:uuid, default:uuid_generate_v4()"`
@@ -62,6 +59,11 @@ type SubjectMatterContent struct {
 	Title           string         `json:"title"`
 	Description     string         `json:"description"`
 	Link            string         `json:"link"`
+}
+
+func (sm *SubjectMattter) BeforeCreate(tx *gorm.DB) (err error) {
+	sm.ID = uuid.NewString()
+	return nil
 }
 
 func (smc *SubjectMatterContent) BeforeCreate(tx *gorm.DB) (err error) {
