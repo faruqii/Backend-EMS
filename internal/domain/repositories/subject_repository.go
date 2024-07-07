@@ -182,37 +182,39 @@ func (r *subjectRepository) GetWhereIamTeachTheClass(teacherID string) ([]entiti
 
 // CreateSubjectMatter creates a new subject matter.
 func (r *subjectRepository) CreateSubjectMatter(subjectMatter *entities.SubjectMattter) error {
-    if err := r.db.Create(subjectMatter).Error; err != nil {
-        return err
-    }
+	tx := r.db.Begin()
 
-    for i := range subjectMatter.Content {
-        subjectMatter.Content[i].SubjectMatterID = subjectMatter.ID
-        if err := r.db.Create(&subjectMatter.Content[i]).Error; err != nil {
-            return err
-        }
-    }
+	if err := tx.Create(subjectMatter).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
 
-    return nil
+	for i := range subjectMatter.Content {
+		subjectMatter.Content[i].SubjectMatterID = subjectMatter.ID
+		if err := tx.Create(&subjectMatter.Content[i]).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	return tx.Commit().Error
 }
-
-
 
 // GetSubjectMatterBySubjectID returns all subject matters for a subject.
 func (r *subjectRepository) GetSubjectMatterBySubjectID(subjectID string) ([]entities.SubjectMattter, error) {
-	// preload subject
-	var subjectMatters []entities.SubjectMattter
-	if err := r.db.Preload("Subject").Where("subject_id = ?", subjectID).Find(&subjectMatters).Error; err != nil {
-		return nil, err
-	}
+    var subjectMatters []entities.SubjectMattter
+    if err := r.db.Preload("Subject").Preload("Content").Where("subject_id = ?", subjectID).Find(&subjectMatters).Error; err != nil {
+        return nil, err
+    }
 
-	return subjectMatters, nil
+    return subjectMatters, nil
 }
+
 
 // GetDetailSubjectMatter returns the detail of a subject matter by ID.
 func (r *subjectRepository) GetDetailSubjectMatter(subjectMatterID string) (*entities.SubjectMattter, error) {
 	var subjectMatter entities.SubjectMattter
-	if err := r.db.Preload("Subject").Where("id = ?", subjectMatterID).First(&subjectMatter).Error; err != nil {
+	if err := r.db.Preload("Subject").Preload("Content").Where("id = ?", subjectMatterID).First(&subjectMatter).Error; err != nil {
 		return nil, err
 	}
 	return &subjectMatter, nil
