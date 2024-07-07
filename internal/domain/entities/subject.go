@@ -42,23 +42,22 @@ func (cs *ClassSubject) BeforeCreate(tx *gorm.DB) (err error) {
 }
 
 type SubjectMattter struct {
-    ID          string                 `json:"id" gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
-    SubjectID   string                 `json:"subject_id"`
-    Subject     Subject                `json:"subject" gorm:"foreignKey:SubjectID"`
-    Title       string                 `json:"title"`
-    Description string                 `json:"description"`
-    Content     []SubjectMatterContent `json:"content" gorm:"foreignKey:SubjectMatterID"`
+	ID          string                 `json:"id" gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
+	SubjectID   string                 `json:"subject_id"`
+	Subject     Subject                `json:"subject" gorm:"foreignKey:SubjectID"`
+	Title       string                 `json:"title"`
+	Description string                 `json:"description"`
+	Content     []SubjectMatterContent `json:"content" gorm:"foreignKey:SubjectMatterID"`
 }
 
 type SubjectMatterContent struct {
-    ID              string          `json:"id" gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
-    SubjectMatterID string          `json:"subject_matter_id" gorm:"type:uuid"`
-    SubjectMatter   *SubjectMattter `json:"subject_matter,omitempty" gorm:"foreignKey:SubjectMatterID;references:ID"`
-    Title           string          `json:"title"`
-    Description     string          `json:"description"`
-    Link            string          `json:"link"`
+	ID              string         `json:"id" gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
+	SubjectMatterID string         `json:"subject_matter_id"`
+	SubjectMatter   SubjectMattter `json:"subject_matter" gorm:"foreignKey:SubjectMatterID"`
+	Title           string         `json:"title"`
+	Description     string         `json:"description"`
+	Link            string         `json:"link"`
 }
-
 
 func (sm *SubjectMattter) BeforeCreate(tx *gorm.DB) (err error) {
 	sm.ID = uuid.NewString()
