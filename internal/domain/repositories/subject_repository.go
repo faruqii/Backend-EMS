@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"gorm.io/gorm"
@@ -182,23 +183,45 @@ func (r *subjectRepository) GetWhereIamTeachTheClass(teacherID string) ([]entiti
 
 // CreateSubjectMatter creates a new subject matter.
 func (r *subjectRepository) CreateSubjectMatter(subjectMatter *entities.SubjectMattter) error {
-	tx := r.db.Begin()
+    fmt.Println("Repository: Entering CreateSubjectMatter")
 
-	if err := tx.Create(subjectMatter).Error; err != nil {
-		tx.Rollback()
-		return err
-	}
+    tx := r.db.Begin()
+    fmt.Println("Repository: Starting transaction")
 
-	for i := range subjectMatter.Content {
-		subjectMatter.Content[i].SubjectMatterID = subjectMatter.ID
-		if err := tx.Create(&subjectMatter.Content[i]).Error; err != nil {
-			tx.Rollback()
-			return err
-		}
-	}
+    if err := tx.Create(subjectMatter).Error; err != nil {
+        fmt.Println("Repository: Error creating subject matter:", err)
+        tx.Rollback()
+        return err
+    }
 
-	return tx.Commit().Error
+    for i := range subjectMatter.Content {
+        subjectMatter.Content[i].SubjectMatterID = subjectMatter.ID
+        fmt.Printf("Repository: Creating content %d: %+v\n", i, subjectMatter.Content[i])
+        
+        // Check for duplicates before inserting
+        var existingContent entities.SubjectMatterContent
+        if err := tx.Where("subject_matter_id = ? AND title = ?", subjectMatter.Content[i].SubjectMatterID, subjectMatter.Content[i].Title).First(&existingContent).Error; err == nil {
+            fmt.Println("Repository: Duplicate content found, skipping insertion")
+            continue
+        }
+
+        if err := tx.Create(&subjectMatter.Content[i]).Error; err != nil {
+            fmt.Println("Repository: Error creating content:", err)
+            tx.Rollback()
+            return err
+        }
+    }
+
+    fmt.Println("Repository: Committing transaction")
+    if err := tx.Commit().Error; err != nil {
+        fmt.Println("Repository: Error committing transaction:", err)
+        return err
+    }
+
+    fmt.Println("Repository: Successfully created subject matter")
+    return nil
 }
+
 
 // GetSubjectMatterBySubjectID returns all subject matters for a subject.
 func (r *subjectRepository) GetSubjectMatterBySubjectID(subjectID string) ([]entities.SubjectMattter, error) {

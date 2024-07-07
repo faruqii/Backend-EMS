@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
@@ -42,60 +43,66 @@ func (h *TeacherHandler) GetMySubjects(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *TeacherHandler) CreateSubjectMatter(ctx *fiber.Ctx) (err error) {
-	subjectID := ctx.Params("subjectID")
+    fmt.Println("Handler: Entering CreateSubjectMatter")
+    subjectID := ctx.Params("subjectID")
 
-	var req dto.SubjectMattterRequest
-	if err := ctx.BodyParser(&req); err != nil {
-		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
-		})
-	}
+    var req dto.SubjectMattterRequest
+    if err := ctx.BodyParser(&req); err != nil {
+        fmt.Println("Handler: Error parsing body:", err)
+        return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+            "error": err.Error(),
+        })
+    }
 
-	var content []entities.SubjectMatterContent
-	for _, c := range req.Content {
-		content = append(content, entities.SubjectMatterContent{
-			Title:       c.Title,
-			Description: c.Description,
-			Link:        c.Link,
-		})
-	}
+    var content []entities.SubjectMatterContent
+    for _, c := range req.Content {
+        content = append(content, entities.SubjectMatterContent{
+            Title:       c.Title,
+            Description: c.Description,
+            Link:        c.Link,
+        })
+    }
 
-	subjectMatter := &entities.SubjectMattter{
-		SubjectID:   subjectID,
-		Title:       req.Title,
-		Description: req.Description,
-		Content:     content,
-	}
+    subjectMatter := &entities.SubjectMattter{
+        SubjectID:   subjectID,
+        Title:       req.Title,
+        Description: req.Description,
+        Content:     content,
+    }
 
-	if err := h.teacherSvc.CreateSubjectMatter(subjectMatter); err != nil {
-		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
-	}
+    fmt.Println("Handler: Creating subject matter:", subjectMatter)
+    if err := h.teacherSvc.CreateSubjectMatter(subjectMatter); err != nil {
+        fmt.Println("Handler: Error creating subject matter:", err)
+        return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+            "error": err.Error(),
+        })
+    }
 
-	responseContent := []dto.SubjectMatterContent{}
-	for _, c := range subjectMatter.Content {
-		responseContent = append(responseContent, dto.SubjectMatterContent{
-			ID:          c.ID,
-			Title:       c.Title,
-			Description: c.Description,
-			Link:        c.Link,
-		})
-	}
+    responseContent := []dto.SubjectMatterContent{}
+    for _, c := range subjectMatter.Content {
+        responseContent = append(responseContent, dto.SubjectMatterContent{
+            ID:          c.ID,
+            Title:       c.Title,
+            Description: c.Description,
+            Link:        c.Link,
+        })
+    }
 
-	response := dto.SubjectMattterResponse{
-		ID:          subjectMatter.ID,
-		Subject:     subjectMatter.SubjectID,
-		Title:       subjectMatter.Title,
-		Description: subjectMatter.Description,
-		Content:     responseContent,
-	}
+    response := dto.SubjectMattterResponse{
+        ID:          subjectMatter.ID,
+        Subject:     subjectMatter.SubjectID,
+        Title:       subjectMatter.Title,
+        Description: subjectMatter.Description,
+        Content:     responseContent,
+    }
 
-	return ctx.Status(http.StatusCreated).JSON(fiber.Map{
-		"message": "success create subject matter",
-		"data":    response,
-	})
+    fmt.Println("Handler: Successfully created subject matter:", response)
+    return ctx.Status(http.StatusCreated).JSON(fiber.Map{
+        "message": "success create subject matter",
+        "data":    response,
+    })
 }
+
 
 func (h *TeacherHandler) GetSubjectMatterBySubjectID(ctx *fiber.Ctx) (err error) {
 	subjectID := ctx.Params("subjectID")

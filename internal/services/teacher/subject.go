@@ -1,6 +1,8 @@
 package services
 
 import (
+	"fmt"
+
 	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"github.com/Magetan-Boyz/Backend/internal/services"
@@ -86,11 +88,15 @@ func (s *teacherService) GetMySubjects(userID string) ([]dto.TeacherSubjectsResp
 }
 
 func (s *teacherService) CreateSubjectMatter(subjectMatter *entities.SubjectMattter) error {
-	if err := s.subjectRepo.CreateSubjectMatter(subjectMatter); err != nil {
-		return services.HandleError(err, "Failed to create subject matter", 500)
-	}
-	return nil
+    fmt.Println("Service: Entering CreateSubjectMatter")
+    if err := s.subjectRepo.CreateSubjectMatter(subjectMatter); err != nil {
+        fmt.Println("Service: Error creating subject matter:", err)
+        return services.HandleError(err, "Failed to create subject matter", 500)
+    }
+    fmt.Println("Service: Successfully created subject matter")
+    return nil
 }
+
 
 func (s *teacherService) GetSubjectMatterBySubjectID(subjectID string) ([]entities.SubjectMattter, error) {
 	subjectMatters, err := s.subjectRepo.GetSubjectMatterBySubjectID(subjectID)
