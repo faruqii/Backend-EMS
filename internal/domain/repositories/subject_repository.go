@@ -182,10 +182,22 @@ func (r *subjectRepository) GetWhereIamTeachTheClass(teacherID string) ([]entiti
 
 // CreateSubjectMatter creates a new subject matter.
 func (r *subjectRepository) CreateSubjectMatter(subjectMatter *entities.SubjectMattter) error {
-	if err := r.db.Create(subjectMatter).Error; err != nil {
+	tx := r.db.Begin()
+
+	if err := tx.Create(subjectMatter).Error; err != nil {
+		tx.Rollback()
 		return err
 	}
-	return nil
+
+	for i := range subjectMatter.Content {
+		subjectMatter.Content[i].SubjectMatterID = subjectMatter.ID
+		if err := tx.Create(&subjectMatter.Content[i]).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	return tx.Commit().Error
 }
 
 // GetSubjectMatterBySubjectID returns all subject matters for a subject.
