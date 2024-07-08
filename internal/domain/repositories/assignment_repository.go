@@ -22,6 +22,7 @@ type AssignmentRepository interface {
 	GetStudentQuizAssignment(quizID, studentID string) (*entities.StudentQuizAssignment, error)
 	GradeStudentQuiz(quizAssignmentID string, status string, grade float64) error
 	GetMyQuizAssignment(studentID string, subjectID string) ([]entities.StudentQuizAssignment, error)
+	GetStudentQuizAssignmentAnswer(quizAssignmentID string) ([]entities.StudentQuizAssignment, error)
 }
 
 type assignmentRepository struct {
@@ -163,6 +164,14 @@ func (r *assignmentRepository) GetMyQuizAssignment(studentID string, subjectID s
 		return nil, err
 	}
 
+	return assignments, nil
+}
+
+func (r *assignmentRepository) GetStudentQuizAssignmentAnswer(quizAssignmentID string) ([]entities.StudentQuizAssignment, error) {
+	var assignments []entities.StudentQuizAssignment
+	if err := r.db.Preload("Quiz").Preload("Quiz.Questions").Preload("Student").First(&assignments, "id = ?", quizAssignmentID).Error; err != nil {
+		return nil, err
+	}
 	return assignments, nil
 }
 

@@ -176,3 +176,29 @@ func (t *TeacherHandler) UpdateStudentTaskAssignment(ctx *fiber.Ctx) (err error)
 		"message": "Student assignment updated successfully",
 	})
 }
+
+func (t *TeacherHandler) GetStudentTaskAssignmentDetail(ctx *fiber.Ctx) (err error) {
+	assignmentID := ctx.Params("assignmentID")
+
+	studentAssignment, err := t.teacherSvc.GetStudentTaskAssignmentDetail(assignmentID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	studentAssignmentRes := dto.StudentAssignmentResponse{
+		ID:         studentAssignment.ID,
+		Task:       studentAssignment.Task.Title,
+		Student:    studentAssignment.Student.Name,
+		Submission: studentAssignment.Submission,
+		Grade:      studentAssignment.Grade,
+		Feedback:   studentAssignment.Feedback,
+		SubmitAt:   studentAssignment.SubmitAt,
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Student assignment fetched successfully",
+		"data":    studentAssignmentRes,
+	})
+}

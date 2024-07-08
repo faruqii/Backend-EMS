@@ -178,3 +178,48 @@ func (t *TeacherHandler) GradeStudentQuiz(ctx *fiber.Ctx) error {
 		"message": "Success grade student quiz",
 	})
 }
+
+func (t *TeacherHandler) GetStudentQuizAssignmentAnswer(ctx *fiber.Ctx) error {
+	quizAssignmentID := ctx.Params("quizAssignmentID")
+	if quizAssignmentID == "" {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Quiz Assignment ID is required",
+		})
+	}
+
+	answers, err := t.teacherSvc.GetStudentQuizAssignmentAnswer(quizAssignmentID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	response := []dto.StudentQuizAssignmentAnswerResponse{}
+	for _, a := range answers {
+		questionsWithAnswers := []dto.QuestionWithAnswer{}
+		for i, q := range a.Quiz.Questions {
+			studentAnswer := ""
+			if i < len(a.Answers) {
+				studentAnswer = a.Answers[i]
+			}
+			questionsWithAnswers = append(questionsWithAnswers, dto.QuestionWithAnswer{
+				Question:      q.Text,
+				Answer:        studentAnswer,
+				CorrectAnswer: q.CorrectAnswer,
+			})
+		}
+
+		response = append(response, dto.StudentQuizAssignmentAnswerResponse{
+			StudentID:   a.StudentID,
+			StudentName: a.Student.Name,
+			QuizID:      a.Quiz.ID,
+			QuizTitle:   a.Quiz.Title,
+			Questions:   questionsWithAnswers,
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Success get student quiz assignment answer",
+		"data":    response,
+	})
+}
