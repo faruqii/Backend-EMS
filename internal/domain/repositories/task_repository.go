@@ -10,6 +10,8 @@ type TaskRepository interface {
 	GetTask(id string) (*entities.Task, error)
 	GetTaskByClassID(classID string) ([]entities.Task, error)
 	GetTaskByTeacherID(teacherID string) ([]entities.Task, error)
+	Update(taskID string, task *entities.Task) error
+	Delete(taskID string) error
 }
 
 type taskRepository struct {
@@ -70,4 +72,22 @@ func (r *taskRepository) GetTaskByTeacherID(teacherID string) ([]entities.Task, 
 	}
 
 	return tasks, nil
+}
+
+func (r *taskRepository) Update(taskID string, task *entities.Task) error {
+	if err := r.db.Model(&entities.Task{}).
+		Where("id = ?", taskID).
+		Updates(task).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *taskRepository) Delete(taskID string) error {
+	if err := r.db.Where("id = ?", taskID).Delete(&entities.Task{}).Error; err != nil {
+		return err
+	}
+
+	return nil
 }

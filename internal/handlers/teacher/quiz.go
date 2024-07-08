@@ -223,3 +223,90 @@ func (t *TeacherHandler) GetStudentQuizAssignmentAnswer(ctx *fiber.Ctx) error {
 		"data":    response,
 	})
 }
+
+func (t *TeacherHandler) UpdateQuiz(ctx *fiber.Ctx) error {
+	quizID := ctx.Params("quizID")
+	if quizID == "" {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Quiz ID is required",
+		})
+	}
+
+	var req dto.CreateQuizRequest
+	if err := ctx.BodyParser(&req); err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	quiz := entities.Quiz{
+		Title:       req.Title,
+		TypeOfQuiz:  req.TypeOfQuiz,
+		Description: req.Description,
+		Deadline:    req.Deadline,
+	}
+
+	err := t.teacherSvc.UpdateQuiz(quizID, &quiz)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Success update quiz",
+	})
+}
+
+func (t *TeacherHandler) DeleteQuiz(ctx *fiber.Ctx) error {
+	quizID := ctx.Params("quizID")
+	if quizID == "" {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Quiz ID is required",
+		})
+	}
+
+	err := t.teacherSvc.DeleteQuiz(quizID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Success delete quiz",
+	})
+}
+
+func (t *TeacherHandler) UpdateQuizQuestion(ctx *fiber.Ctx) error {
+	questionID := ctx.Params("questionID")
+	if questionID == "" {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Question ID is required",
+		})
+	}
+
+	var req dto.QuestionRequest
+	if err := ctx.BodyParser(&req); err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	question := entities.Question{
+		Text:          req.Text,
+		Options:       req.Options,
+		CorrectAnswer: req.CorrectAnswer,
+	}
+
+	err := t.teacherSvc.UpdateQuestion(questionID, &question)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Success update quiz question",
+	})
+}

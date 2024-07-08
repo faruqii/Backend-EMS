@@ -23,6 +23,9 @@ func TeacherRoutes(router fiber.Router, teacherService services.TeacherService, 
 	teacherTaskControllerRoutes.Get("/:taskID/assignment", teacherController.GetAllStudentAssignment)
 	teacherTaskControllerRoutes.Put("/:assignmentID/grade", teacherController.UpdateStudentTaskAssignment)
 	teacherTaskControllerRoutes.Get("/assignment/:assignmentID", teacherController.GetStudentTaskAssignmentDetail)
+	teacherTaskControllerRoutes.Get("/:taskID", teacherController.GetTask)
+	teacherTaskControllerRoutes.Put("/:taskID/update", teacherController.UpdateTask)
+	teacherTaskControllerRoutes.Delete("/:taskID/delete", teacherController.DeleteTask)
 
 	teacherQuizControllerRoutes := teacherControllerRoutes.Group("/quiz")
 	teacherQuizControllerRoutes.Post("/:classID/:subjectID/create", teacherController.CreateQuiz)
@@ -30,6 +33,9 @@ func TeacherRoutes(router fiber.Router, teacherService services.TeacherService, 
 	teacherQuizControllerRoutes.Get("/:quizID/assignment", teacherController.GetAllQuizAssignment)
 	teacherQuizControllerRoutes.Put("/:quizAssignmentID/grade", teacherController.GradeStudentQuiz)
 	teacherQuizControllerRoutes.Get("/assignment/:quizAssignmentID", teacherController.GetStudentQuizAssignmentAnswer)
+	teacherQuizControllerRoutes.Put("/:quizID/update", teacherController.UpdateQuiz)
+	teacherQuizControllerRoutes.Delete("/:quizID/delete", teacherController.DeleteQuiz)
+	teacherQuizControllerRoutes.Put("/:questionID/update", teacherController.UpdateQuizQuestion)
 
 	teacherSubjectControllerRoutes := teacherControllerRoutes.Group("/subject")
 	teacherSubjectControllerRoutes.Get("/:classID/:subjectID/student", teacherController.CountStudent)

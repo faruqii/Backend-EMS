@@ -83,6 +83,21 @@ func (mr *MockAuthServiceMockRecorder) FindUserByToken(token any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindUserByToken", reflect.TypeOf((*MockAuthService)(nil).FindUserByToken), token)
 }
 
+// GetRoleNameFromID mocks base method.
+func (m *MockAuthService) GetRoleNameFromID(id string) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetRoleNameFromID", id)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetRoleNameFromID indicates an expected call of GetRoleNameFromID.
+func (mr *MockAuthServiceMockRecorder) GetRoleNameFromID(id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRoleNameFromID", reflect.TypeOf((*MockAuthService)(nil).GetRoleNameFromID), id)
+}
+
 // GetUserByToken mocks base method.
 func (m *MockAuthService) GetUserByToken(token string) (*entities.User, error) {
 	m.ctrl.T.Helper()

@@ -13,6 +13,10 @@ type QuizService interface {
 	GetAllQuizAssignment(quizID string) ([]entities.StudentQuizAssignment, error)
 	GradeStudentQuiz(quizAssignmentID string, status string, grade float64) error
 	GetStudentQuizAssignmentAnswer(quizAssignmentID string) ([]entities.StudentQuizAssignment, error)
+	UpdateQuiz(quizID string, quiz *entities.Quiz) error
+	DeleteQuiz(quizID string) error
+	UpdateQuestion(questionID string, question *entities.Question) error
+	DeleteQuestion(questionID string) error
 }
 
 func (s *teacherService) CreateQuiz(quiz *entities.Quiz, questions []entities.Question) error {
@@ -95,4 +99,40 @@ func (s *teacherService) GetStudentQuizAssignmentAnswer(quizAssignmentID string)
 	}
 
 	return quizAssignment, nil
+}
+
+func (s *teacherService) UpdateQuiz(quizID string, quiz *entities.Quiz) error {
+	err := s.quizRepo.Update(quizID, quiz)
+	if err != nil {
+		return services.HandleError(err, "Failed to update quiz", 500)
+	}
+
+	return nil
+}
+
+func (s *teacherService) DeleteQuiz(quizID string) error {
+	err := s.quizRepo.Delete(quizID)
+	if err != nil {
+		return services.HandleError(err, "Failed to delete quiz", 500)
+	}
+
+	return nil
+}
+
+func (s *teacherService) UpdateQuestion(questionID string, question *entities.Question) error {
+	err := s.quizRepo.UpdateQuestion(questionID, question)
+	if err != nil {
+		return services.HandleError(err, "Failed to update question", 500)
+	}
+
+	return nil
+}
+
+func (s *teacherService) DeleteQuestion(questionID string) error {
+	err := s.quizRepo.DeleteQuestion(questionID)
+	if err != nil {
+		return services.HandleError(err, "Failed to delete question", 500)
+	}
+
+	return nil
 }
