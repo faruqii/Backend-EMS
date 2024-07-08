@@ -16,6 +16,7 @@ type AdminService interface {
 	AdminStudentService
 	AdminParentService
 	AdminAnnouncementService
+	AgendaService
 }
 
 // adminService is a struct for AdminService call repository layer so it can communicate with database
@@ -29,6 +30,7 @@ type adminService struct {
 	studentRepo      repositories.StudentRepository
 	parentRepo       repositories.ParentRepository
 	announcementRepo repositories.AnnouncementRepository
+	agendaRepo       repositories.AgendaRepository
 	cache            *cache.Cache
 }
 
@@ -44,6 +46,7 @@ func NewAdminService(
 	studentRepo repositories.StudentRepository,
 	parentRepo repositories.ParentRepository,
 	announcementRepo repositories.AnnouncementRepository,
+	agendaRepo repositories.AgendaRepository,
 ) *adminService {
 	c := cache.New(5*time.Minute, 10*time.Minute)
 	return &adminService{
@@ -56,6 +59,7 @@ func NewAdminService(
 		studentRepo:      studentRepo,
 		parentRepo:       parentRepo,
 		announcementRepo: announcementRepo,
+		agendaRepo:       agendaRepo,
 		cache:            c,
 	}
 }

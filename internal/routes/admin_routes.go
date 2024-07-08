@@ -69,4 +69,11 @@ func AdminRoutes(router fiber.Router, adminSvc services.AdminService, mw *middle
 	announcementRoutes.Put("/:id/update", admin.UpdateAnnouncement)
 	announcementRoutes.Delete("/:id/delete", admin.DeleteAnnouncement)
 
+	// Agenda
+	agendaRoutes := adminRoutes.Group("/agenda")
+	agendaRoutes.Post("/create", admin.CreateAgenda)
+	agendaRoutes.Get("", admin.GetAllAgenda)
+	agendaRoutes.Get("/:id", admin.GetAgendaByID)
+	agendaRoutes.Put("/:id/update", admin.UpdateAgenda)
+	agendaRoutes.Delete("/:id/delete", admin.DeleteAgenda)
 }
