@@ -34,7 +34,7 @@ func (r *literationRepository) InsertLiteration(literation *entities.Literation)
 func (r *literationRepository) GetLiterationByID(literationID string) (*entities.Literation, error) {
 	var literation entities.Literation
 	// preloading the student data
-	if err := r.db.Preload("Student").Where("id = ?", literationID).First(&literation).Error; err != nil {
+	if err := r.db.Preload("Student").Preload("Student.Class").Where("id = ?", literationID).First(&literation).Error; err != nil {
 		return nil, err
 	}
 	return &literation, nil
@@ -43,7 +43,7 @@ func (r *literationRepository) GetLiterationByID(literationID string) (*entities
 func (r *literationRepository) GetLiterationByStudentID(studentID string) ([]entities.Literation, error) {
 	var literations []entities.Literation
 	// preloading the student data
-	if err := r.db.Preload("Student").Where("student_id = ?", studentID).Find(&literations).Error; err != nil {
+	if err := r.db.Preload("Student").Preload("Student.Class").Where("student_id = ?", studentID).Find(&literations).Error; err != nil {
 		return nil, err
 	}
 	return literations, nil
@@ -52,7 +52,7 @@ func (r *literationRepository) GetLiterationByStudentID(studentID string) ([]ent
 func (r *literationRepository) GetAllLiterations() ([]entities.Literation, error) {
 	var literations []entities.Literation
 	// preloading the student data
-	if err := r.db.Preload("Student").Find(&literations).Error; err != nil {
+	if err := r.db.Preload("Student").Preload("Student.Class").Find(&literations).Error; err != nil {
 		return nil, err
 	}
 	return literations, nil

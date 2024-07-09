@@ -191,6 +191,19 @@ func (h *TeacherHandler) UpdateSubjectMatter(ctx *fiber.Ctx) (err error) {
 		})
 	}
 
+	// Get subject matter
+	subjectMatter, err := h.teacherSvc.GetDetailSubjectMatter(subjectMatterID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	// Update subject matter
+	subjectMatter.Title = req.Title
+	subjectMatter.Description = req.Description
+	subjectMatter.UpdatedAt = time.Now()
+
 	var content []entities.SubjectMatterContent
 	for _, c := range req.Content {
 		content = append(content, entities.SubjectMatterContent{
@@ -199,14 +212,9 @@ func (h *TeacherHandler) UpdateSubjectMatter(ctx *fiber.Ctx) (err error) {
 			Link:        c.Link,
 		})
 	}
+	subjectMatter.Content = content
 
-	subjectMatter := &entities.SubjectMattter{
-		Title:       req.Title,
-		Description: req.Description,
-		Content:     content,
-	}
-
-	if err := h.teacherSvc.UpdateSubjectMatter(subjectMatterID, subjectMatter); err != nil {
+	if err := h.teacherSvc.UpdateSubjectMatter(subjectMatter.ID, subjectMatter); err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
 		})
