@@ -46,6 +46,8 @@ func TeacherRoutes(router fiber.Router, teacherService services.TeacherService, 
 	teacherSubjectControllerRoutes.Post("/:subjectID/matter", teacherController.CreateSubjectMatter)
 	teacherSubjectControllerRoutes.Get("/:subjectID/matter", teacherController.GetSubjectMatterBySubjectID)
 	teacherSubjectControllerRoutes.Get("/matter/:subjectMatterID", teacherController.GetDetailSubjectMatter)
+	teacherSubjectControllerRoutes.Put("/matter/:subjectMatterID/update", teacherController.UpdateSubjectMatter)
+	teacherSubjectControllerRoutes.Delete("/matter/:subjectMatterID/delete", teacherController.DeleteSubjectMatter)
 
 	teacherClassRoutes := teacherControllerRoutes.Group("/class")
 	teacherClassRoutes.Get("", teacherController.GetWhereIamTeachTheClass)

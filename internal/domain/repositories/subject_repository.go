@@ -185,13 +185,9 @@ func (r *subjectRepository) GetWhereIamTeachTheClass(teacherID string) ([]entiti
 
 // CreateSubjectMatter creates a new subject matter.
 func (r *subjectRepository) CreateSubjectMatter(subjectMatter *entities.SubjectMattter) error {
-	fmt.Println("Repository: Entering CreateSubjectMatter")
-
 	tx := r.db.Begin()
-	fmt.Println("Repository: Starting transaction")
 
 	if err := tx.Create(subjectMatter).Error; err != nil {
-		fmt.Println("Repository: Error creating subject matter:", err)
 		tx.Rollback()
 		return err
 	}
@@ -214,13 +210,11 @@ func (r *subjectRepository) CreateSubjectMatter(subjectMatter *entities.SubjectM
 		}
 	}
 
-	fmt.Println("Repository: Committing transaction")
 	if err := tx.Commit().Error; err != nil {
 		fmt.Println("Repository: Error committing transaction:", err)
 		return err
 	}
 
-	fmt.Println("Repository: Successfully created subject matter")
 	return nil
 }
 
@@ -301,14 +295,11 @@ func (r *subjectRepository) GetClassSubjectsByPrefixAndSubject(classPrefix strin
 
 // UpdateSubjectMatter updates an existing subject matter.
 func (r *subjectRepository) UpdateSubjectMatter(subjectMatterID string, subjectMatter *entities.SubjectMattter) error {
-	fmt.Println("Repository: Entering UpdateSubjectMatter")
 
 	tx := r.db.Begin()
-	fmt.Println("Repository: Starting transaction")
 
 	// Update subject matter
 	if err := tx.Save(subjectMatter).Error; err != nil {
-		fmt.Println("Repository: Error updating subject matter:", err)
 		tx.Rollback()
 		return err
 	}
@@ -328,54 +319,45 @@ func (r *subjectRepository) UpdateSubjectMatter(subjectMatterID string, subjectM
 		// Check for duplicates before inserting
 		var existingContent entities.SubjectMatterContent
 		if err := tx.Where("subject_matter_id = ? AND title = ?", subjectMatter.Content[i].SubjectMatterID, subjectMatter.Content[i].Title).First(&existingContent).Error; err == nil {
-			fmt.Println("Repository: Duplicate content found, skipping insertion")
 			continue
 		}
 
 		if err := tx.Create(&subjectMatter.Content[i]).Error; err != nil {
-			fmt.Println("Repository: Error creating content:", err)
 			tx.Rollback()
 			return err
 		}
 	}
 
-	fmt.Println("Repository: Committing transaction")
 	if err := tx.Commit().Error; err != nil {
 		fmt.Println("Repository: Error committing transaction:", err)
 		return err
 	}
 
-	fmt.Println("Repository: Successfully updated subject matter")
 	return nil
 }
 
 // DeleteSubjectMatter deletes a subject matter by ID.
 func (r *subjectRepository) DeleteSubjectMatter(subjectMatterID string) error {
-	fmt.Println("Repository: Entering DeleteSubjectMatter")
 
 	tx := r.db.Begin()
-	fmt.Println("Repository: Starting transaction")
 
 	// Delete content
 	if err := tx.Where("subject_matter_id = ?", subjectMatterID).Delete(&entities.SubjectMatterContent{}).Error; err != nil {
-		fmt.Println("Repository: Error deleting content:", err)
 		tx.Rollback()
 		return err
 	}
 
 	// Delete subject matter
 	if err := tx.Delete(&entities.SubjectMattter{}, subjectMatterID).Error; err != nil {
-		fmt.Println("Repository: Error deleting subject matter:", err)
 		tx.Rollback()
 		return err
 	}
 
 	fmt.Println("Repository: Committing transaction")
 	if err := tx.Commit().Error; err != nil {
-		fmt.Println("Repository: Error committing transaction:", err)
 		return err
 	}
 
-	fmt.Println("Repository: Successfully deleted subject matter")
+
 	return nil
 }
