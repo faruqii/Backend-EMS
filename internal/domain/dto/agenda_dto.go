@@ -29,6 +29,4 @@ type AgendaResponse struct {
 	TypeOfAgenda string `json:"type_of_agenda"`
 	Location     string `json:"location"`
 	Description  string `json:"description"`
-	CreatedAt    string `json:"created_at"`
-	UpdatedAt    string `json:"updated_at"`
 }
