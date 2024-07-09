@@ -76,7 +76,7 @@ func TeacherRoutes(router fiber.Router, teacherService services.TeacherService, 
 
 	teacherLiterationRoutes := teacherControllerRoutes.Group("/literation")
 	teacherLiterationRoutes.Get("", teacherController.GetAllLiterations)
-	teacherLiterationRoutes.Put("/:id/feedback", teacherController.UpdateLiterationFeedback)
+	teacherLiterationRoutes.Put("/:id/update", teacherController.Update)
 	teacherLiterationRoutes.Get("/:id", teacherController.GetLiterationByID)
 	teacherLiterationRoutes.Get("/student/:id", teacherController.GetLiterationByStudentID)
 

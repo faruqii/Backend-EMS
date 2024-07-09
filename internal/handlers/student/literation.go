@@ -30,8 +30,9 @@ func (h *StudentHandler) InsertLiteration(ctx *fiber.Ctx) (err error) {
 		Title:       req.Title,
 		Description: req.Description,
 		Documents:   req.Documents,
-		Feedback:    "Menunggu feedback",
+		Feedback:    "Menunggu Feedback",
 		Points:      0,
+		Status:      "Belum Dinilai",
 	}
 
 	_, err = h.studentService.InsertLiteration(literation)
@@ -66,6 +67,7 @@ func (h *StudentHandler) GetLiterationByID(ctx *fiber.Ctx) (err error) {
 		Documents:   literation.Documents,
 		Feedback:    literation.Feedback,
 		Point:       literation.Points,
+		Status:      literation.Status,
 	}
 
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
@@ -102,6 +104,7 @@ func (h *StudentHandler) GetLiterationByStudentID(ctx *fiber.Ctx) (err error) {
 			Documents:   literation.Documents,
 			Feedback:    literation.Feedback,
 			Point:       literation.Points,
+			Status:      literation.Status,
 		})
 	}
 

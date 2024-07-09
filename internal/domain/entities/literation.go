@@ -14,6 +14,7 @@ type Literation struct {
 	Documents   string  `json:"documents"`
 	Feedback    string  `json:"feedback"`
 	Points      int     `json:"points"`
+	Status      string  `json:"status"`
 }
 
 func (l *Literation) BeforeCreate(tx *gorm.DB) (err error) {

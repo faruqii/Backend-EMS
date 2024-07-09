@@ -17,9 +17,11 @@ type LiterationResponse struct {
 	Documents      string `json:"documents"`
 	Feedback       string `json:"feedback"`
 	Point          int    `json:"point"`
+	Status         string `json:"status"`
 }
 
 type UpdateLiterationRequest struct {
 	Feedback string `json:"feedback"`
 	Point    int    `json:"point"`
+	Status   string `json:"status"`
 }
