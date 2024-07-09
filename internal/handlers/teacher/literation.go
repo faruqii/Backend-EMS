@@ -40,6 +40,7 @@ func (h *TeacherHandler) GetAllLiterations(ctx *fiber.Ctx) (err error) {
 			Description:    literation.Description,
 			Documents:      literation.Documents,
 			Feedback:       literation.Feedback,
+			Point:          literation.Points,
 		})
 	}
 
@@ -58,7 +59,7 @@ func (h *TeacherHandler) UpdateLiterationFeedback(ctx *fiber.Ctx) (err error) {
 		})
 	}
 
-	_, err = h.teacherSvc.UpdateLiterationFeedback(literationID, req.Feedback)
+	_, err = h.teacherSvc.UpdateLiterationFeedbackAndPoint(literationID, req.Feedback, req.Point)
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Failed to update literation feedback",
@@ -90,6 +91,7 @@ func (h *TeacherHandler) GetLiterationByID(ctx *fiber.Ctx) (err error) {
 		Description:    literation.Description,
 		Documents:      literation.Documents,
 		Feedback:       literation.Feedback,
+		Point:          literation.Points,
 	}
 
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
@@ -120,6 +122,7 @@ func (h *TeacherHandler) GetLiterationByStudentID(ctx *fiber.Ctx) (err error) {
 			Description:    literation.Description,
 			Documents:      literation.Documents,
 			Feedback:       literation.Feedback,
+			Point:          literation.Points,
 		})
 	}
 

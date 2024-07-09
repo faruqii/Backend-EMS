@@ -10,7 +10,7 @@ type LiterationRepository interface {
 	GetLiterationByID(literationID string) (*entities.Literation, error)
 	GetLiterationByStudentID(studentID string) ([]entities.Literation, error)
 	GetAllLiterations() ([]entities.Literation, error)
-	UpdateLiterationFeedback(literationID string, Feedback string) (*entities.Literation, error)
+	UpdateLiterationFeedbackAndPoint(literationID string, feedback string, point int) (*entities.Literation, error)
 	FilterByStudentClass(classID string) ([]entities.Literation, error)
 }
 
@@ -58,12 +58,13 @@ func (r *literationRepository) GetAllLiterations() ([]entities.Literation, error
 	return literations, nil
 }
 
-func (r *literationRepository) UpdateLiterationFeedback(literationID string, feedback string) (*entities.Literation, error) {
+func (r *literationRepository) UpdateLiterationFeedbackAndPoint(literationID string, feedback string, point int) (*entities.Literation, error) {
 	var literation entities.Literation
 	if err := r.db.Where("id = ?", literationID).First(&literation).Error; err != nil {
 		return nil, err
 	}
 	literation.Feedback = feedback
+	literation.Points = point
 	if err := r.db.Save(&literation).Error; err != nil {
 		return nil, err
 	}

@@ -8,7 +8,7 @@ import (
 type TeacherStudentLiterationService interface {
 	GetAllLiterations() ([]entities.Literation, error)
 	FilterByClassID(classID string) ([]entities.Literation, error)
-	UpdateLiterationFeedback(literationID string, feedback string) (*entities.Literation, error)
+	UpdateLiterationFeedbackAndPoint(literationID string, feedback string, point int) (*entities.Literation, error)
 	GetLiterationByID(literationID string) (*entities.Literation, error)
 	GetLiterationByStudentID(studentID string) ([]entities.Literation, error)
 }
@@ -31,8 +31,8 @@ func (s *teacherService) FilterByClassID(classID string) ([]entities.Literation,
 	return literations, nil
 }
 
-func (s *teacherService) UpdateLiterationFeedback(literationID string, feedback string) (*entities.Literation, error) {
-	literation, err := s.literationRepo.UpdateLiterationFeedback(literationID, feedback)
+func (s *teacherService) UpdateLiterationFeedbackAndPoint(literationID string, feedback string, point int) (*entities.Literation, error) {
+	literation, err := s.literationRepo.UpdateLiterationFeedbackAndPoint(literationID, feedback, point)
 	if err != nil {
 		return nil, services.HandleError(err, "Failed to update literation feedback", 500)
 	}
