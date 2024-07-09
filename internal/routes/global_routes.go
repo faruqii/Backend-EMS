@@ -15,5 +15,5 @@ func GlobalRoutes(router fiber.Router, globalService service.GlobalService) {
 	globalRoutes.Get("/announcements/:id", globalHandler.GetAnnouncementByID)
 
 	globalRoutes.Get("/agendas", globalHandler.GetAllAgendas)
-	globalRoutes.Get("/agendas/:id", globalHandler.GetAgendaByID)
+	globalRoutes.Get("/agendas/:agendaID", globalHandler.GetAgendaByID)
 }
