@@ -12,12 +12,14 @@ import (
 //go:generate mockgen -source=auth_service.go -destination=mock_auth_service.go -package=mocks
 type AuthService interface {
 	LogIn(username, password string) (*entities.User, error)
-	CreateUserToken(user *entities.User, role string) (string, error)
+	CreateUserToken(user *entities.User, role string, isHomeroomTeacher bool) (string, error)
 	GetUserByToken(token string) (*entities.User, error)
 	ChangePassword(userID string, oldPassword, newPassword string) error
 	FindUserByToken(token string) (string, error)
 	LogOut(userID string) error
 	GetRoleNameFromID(id string) (string, error)
+	GetTeacherIDByUserID(userID string) (string, error)
+	GetTeacherByUserID(userID string) (*entities.Teacher, error)
 }
 
 type authService struct {
@@ -56,7 +58,7 @@ func (s *authService) LogIn(username, password string) (*entities.User, error) {
 
 }
 
-func (s *authService) CreateUserToken(user *entities.User, role string) (string, error) {
+func (s *authService) CreateUserToken(user *entities.User, role string, isHomeroomTeacher bool) (string, error) {
 	// Create JWT token
 	claims := dto.Claims{
 		UserID: user.ID,
@@ -66,6 +68,11 @@ func (s *authService) CreateUserToken(user *entities.User, role string) (string,
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}
+
+	if role == "teacher" {
+		claims.IsHomeroomTeacher = isHomeroomTeacher
+	}
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signedToken, err := token.SignedString([]byte("secret"))
 	if err != nil {
@@ -146,4 +153,22 @@ func (s *authService) GetRoleNameFromID(id string) (string, error) {
 	}
 
 	return roleName, nil
+}
+
+func (s *authService) GetTeacherIDByUserID(userID string) (string, error) {
+	teacherID, err := s.tokenRepository.GetTeacherIDByUserID(userID)
+	if err != nil {
+		return "", err
+	}
+
+	return teacherID, nil
+}
+
+func (s *authService) GetTeacherByUserID(userID string) (*entities.Teacher, error) {
+	teacher, err := s.tokenRepository.GetTeacherByUserID(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return teacher, nil
 }

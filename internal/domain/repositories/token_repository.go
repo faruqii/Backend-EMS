@@ -16,6 +16,7 @@ type TokenRepository interface {
 	GetStudentIDByUserID(userID string) (string, error)
 	DeleteToken(userID string) error
 	GetParentIDByUserID(userID string) (string, error)
+	GetTeacherByUserID(userID string) (*entities.Teacher, error)
 }
 
 type tokenRepository struct {
@@ -109,4 +110,13 @@ func (r *tokenRepository) GetParentIDByUserID(userID string) (string, error) {
 		return "", err
 	}
 	return parent.ID, nil
+}
+
+func (r *tokenRepository) GetTeacherByUserID(userID string) (*entities.Teacher, error) {
+	var teacher entities.Teacher
+	err := r.db.Where("user_id = ?", userID).First(&teacher).Error
+	if err != nil {
+		return nil, err
+	}
+	return &teacher, nil
 }
