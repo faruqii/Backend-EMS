@@ -35,7 +35,7 @@ func TeacherRoutes(router fiber.Router, teacherService services.TeacherService, 
 	teacherQuizControllerRoutes.Get("/assignment/:quizAssignmentID", teacherController.GetStudentQuizAssignmentAnswer)
 	teacherQuizControllerRoutes.Put("/:quizID/update", teacherController.UpdateQuiz)
 	teacherQuizControllerRoutes.Delete("/:quizID/delete", teacherController.DeleteQuiz)
-	teacherQuizControllerRoutes.Put("/:questionID/update", teacherController.UpdateQuizQuestion)
+	teacherQuizControllerRoutes.Put("/question/:questionID/update", teacherController.UpdateQuizQuestion)
 
 	teacherSubjectControllerRoutes := teacherControllerRoutes.Group("/subject")
 	teacherSubjectControllerRoutes.Get("/:classID/:subjectID/student", teacherController.CountStudent)
