@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
@@ -67,6 +68,8 @@ func (h *TeacherHandler) CreateSubjectMatter(ctx *fiber.Ctx) (err error) {
         SubjectID:   subjectID,
         Title:       req.Title,
         Description: req.Description,
+				CreatedAt: time.Now(),
+				UpdatedAt: time.Now(),
         Content:     content,
     }
 
@@ -131,6 +134,8 @@ func (h *TeacherHandler) GetSubjectMatterBySubjectID(ctx *fiber.Ctx) (err error)
 			Subject:     subjectMatter.Subject.Name,
 			Title:       subjectMatter.Title,
 			Description: subjectMatter.Description,
+			CreatedAt:  subjectMatter.CreatedAt,
+			UpdatedAt:  subjectMatter.UpdatedAt,
 			Content:     responseContent,
 		})
 	}
@@ -166,6 +171,8 @@ func (h *TeacherHandler) GetDetailSubjectMatter(ctx *fiber.Ctx) (err error) {
 		Subject:     subjectMatter.Subject.Name,
 		Title:       subjectMatter.Title,
 		Description: subjectMatter.Description,
+		CreatedAt:  subjectMatter.CreatedAt,
+		UpdatedAt:  subjectMatter.UpdatedAt,
 		Content:     responseContent,
 	}
 

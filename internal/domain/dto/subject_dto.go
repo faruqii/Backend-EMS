@@ -1,5 +1,7 @@
 package dto
 
+import "time"
+
 type SubjectRequest struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
@@ -43,29 +45,30 @@ type ClassSubjectResponse struct {
 }
 
 type SubjectMattterRequest struct {
-    Title       string                        `json:"title"`
-    Description string                        `json:"description"`
-    Content     []SubjectMatterContentRequest `json:"content"`
+	Title       string                        `json:"title"`
+	Description string                        `json:"description"`
+	Content     []SubjectMatterContentRequest `json:"content"`
 }
 
 type SubjectMatterContentRequest struct {
-    Title       string `json:"title"`
-    Description string `json:"description"`
-    Link        string `json:"link"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Link        string `json:"link"`
 }
 
 type SubjectMattterResponse struct {
-    ID          string                  `json:"id"`
-    Subject     string                  `json:"subject"`
-    Title       string                  `json:"title"`
-    Description string                  `json:"description"`
-    Content     []SubjectMatterContent `json:"content"`
+	ID          string                 `json:"id"`
+	Subject     string                 `json:"subject"`
+	Title       string                 `json:"title"`
+	Description string                 `json:"description"`
+	CreatedAt   time.Time              `json:"created_at"`
+	UpdatedAt   time.Time              `json:"updated_at"`
+	Content     []SubjectMatterContent `json:"content"`
 }
 
 type SubjectMatterContent struct {
-    ID          string `json:"id"`
-    Title       string `json:"title"`
-    Description string `json:"description"`
-    Link        string `json:"link"`
+	ID          string `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Link        string `json:"link"`
 }
-

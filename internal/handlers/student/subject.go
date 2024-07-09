@@ -85,6 +85,8 @@ func (h *StudentHandler) GetSubjectMatterBySubjectID(ctx *fiber.Ctx) (err error)
 			Subject:     subjectMatter.Subject.Name,
 			Title:       subjectMatter.Title,
 			Description: subjectMatter.Description,
+			CreatedAt:  subjectMatter.CreatedAt,
+			UpdatedAt:  subjectMatter.UpdatedAt,
 			Content:     responseContent,
 		})
 	}
@@ -120,6 +122,8 @@ func (h *StudentHandler) GetDetailSubjectMatter(ctx *fiber.Ctx) (err error) {
 		Subject:     subjectMatter.Subject.Name,
 		Title:       subjectMatter.Title,
 		Description: subjectMatter.Description,
+		CreatedAt:  subjectMatter.CreatedAt,
+		UpdatedAt:  subjectMatter.UpdatedAt,
 		Content:     responseContent,
 	}
 

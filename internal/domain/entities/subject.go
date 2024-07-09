@@ -1,6 +1,8 @@
 package entities
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -47,6 +49,8 @@ type SubjectMattter struct {
 	Subject     Subject                `json:"subject" gorm:"foreignKey:SubjectID"`
 	Title       string                 `json:"title"`
 	Description string                 `json:"description"`
+	CreatedAt  time.Time							 `json:"created_at"`
+	UpdatedAt  time.Time							 `json:"updated_at"`
 	Content     []SubjectMatterContent `json:"content" gorm:"foreignKey:SubjectMatterID"`
 }
 
