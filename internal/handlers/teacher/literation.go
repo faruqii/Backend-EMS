@@ -31,13 +31,15 @@ func (h *TeacherHandler) GetAllLiterations(ctx *fiber.Ctx) (err error) {
 	var res []dto.LiterationResponse
 	for _, literation := range literations {
 		res = append(res, dto.LiterationResponse{
-			ID:          literation.ID,
-			StudentID:   literation.StudentID,
-			Student:     literation.Student.Name,
-			Title:       literation.Title,
-			Description: literation.Description,
-			Documents:   literation.Documents,
-			Feedback:    literation.Feedback,
+			ID:             literation.ID,
+			StudentID:      literation.StudentID,
+			Student:        literation.Student.Name,
+			StudentClassID: literation.Student.Class.ID,
+			StudentClass:   literation.Student.Class.Name,
+			Title:          literation.Title,
+			Description:    literation.Description,
+			Documents:      literation.Documents,
+			Feedback:       literation.Feedback,
 		})
 	}
 
@@ -79,13 +81,15 @@ func (h *TeacherHandler) GetLiterationByID(ctx *fiber.Ctx) (err error) {
 	}
 
 	res := dto.LiterationResponse{
-		ID:          literation.ID,
-		StudentID:   literation.StudentID,
-		Student:     literation.Student.Name,
-		Title:       literation.Title,
-		Description: literation.Description,
-		Documents:   literation.Documents,
-		Feedback:    literation.Feedback,
+		ID:             literation.ID,
+		StudentID:      literation.StudentID,
+		Student:        literation.Student.Name,
+		StudentClassID: literation.Student.Class.ID,
+		StudentClass:   literation.Student.Class.Name,
+		Title:          literation.Title,
+		Description:    literation.Description,
+		Documents:      literation.Documents,
+		Feedback:       literation.Feedback,
 	}
 
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
@@ -107,13 +111,15 @@ func (h *TeacherHandler) GetLiterationByStudentID(ctx *fiber.Ctx) (err error) {
 	var res []dto.LiterationResponse
 	for _, literation := range literations {
 		res = append(res, dto.LiterationResponse{
-			ID:          literation.ID,
-			StudentID:   literation.StudentID,
-			Student:     literation.Student.Name,
-			Title:       literation.Title,
-			Description: literation.Description,
-			Documents:   literation.Documents,
-			Feedback:    literation.Feedback,
+			ID:             literation.ID,
+			StudentID:      literation.StudentID,
+			Student:        literation.Student.Name,
+			StudentClassID: literation.Student.Class.ID,
+			StudentClass:   literation.Student.Class.Name,
+			Title:          literation.Title,
+			Description:    literation.Description,
+			Documents:      literation.Documents,
+			Feedback:       literation.Feedback,
 		})
 	}
 
