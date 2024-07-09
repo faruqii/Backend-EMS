@@ -9,15 +9,19 @@ import (
 type GlobalService interface {
 	GetAnnouncements() ([]entities.Announcement, error)
 	GetAnnouncementByID(id string) (*entities.Announcement, error)
+	GetAllAgendas() ([]entities.Agenda, error)
+	GetAgendaByID(id string) (*entities.Agenda, error)
 }
 
 type globalService struct {
 	announcementRepo repositories.AnnouncementRepository
+	agendaRepo       repositories.AgendaRepository
 }
 
-func NewGlobalService(announcementRepo repositories.AnnouncementRepository) *globalService {
+func NewGlobalService(announcementRepo repositories.AnnouncementRepository, agendaRepo repositories.AgendaRepository) *globalService {
 	return &globalService{
 		announcementRepo: announcementRepo,
+		agendaRepo:       agendaRepo,
 	}
 }
 
@@ -37,4 +41,21 @@ func (s *globalService) GetAnnouncementByID(id string) (*entities.Announcement, 
 
 	return announcement, nil
 
+}
+
+func (s *globalService) GetAllAgendas() ([]entities.Agenda, error) {
+	agendas, err := s.agendaRepo.GetAllAgendas()
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to get agendas", 500)
+	}
+	return agendas, nil
+}
+
+func (s *globalService) GetAgendaByID(id string) (*entities.Agenda, error) {
+	agenda, err := s.agendaRepo.GetAgendaByID(id)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to get agenda", 500)
+	}
+
+	return agenda, nil
 }
