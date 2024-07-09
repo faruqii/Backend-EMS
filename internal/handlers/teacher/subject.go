@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -44,12 +43,10 @@ func (h *TeacherHandler) GetMySubjects(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *TeacherHandler) CreateSubjectMatter(ctx *fiber.Ctx) (err error) {
-	fmt.Println("Handler: Entering CreateSubjectMatter")
 	subjectID := ctx.Params("subjectID")
 
 	var req dto.SubjectMattterRequest
 	if err := ctx.BodyParser(&req); err != nil {
-		fmt.Println("Handler: Error parsing body:", err)
 		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
 		})
@@ -73,9 +70,7 @@ func (h *TeacherHandler) CreateSubjectMatter(ctx *fiber.Ctx) (err error) {
 		Content:     content,
 	}
 
-	fmt.Println("Handler: Creating subject matter:", subjectMatter)
 	if err := h.teacherSvc.CreateSubjectMatter(subjectMatter); err != nil {
-		fmt.Println("Handler: Error creating subject matter:", err)
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
 		})
@@ -99,7 +94,6 @@ func (h *TeacherHandler) CreateSubjectMatter(ctx *fiber.Ctx) (err error) {
 		Content:     responseContent,
 	}
 
-	fmt.Println("Handler: Successfully created subject matter:", response)
 	return ctx.Status(http.StatusCreated).JSON(fiber.Map{
 		"message": "success create subject matter",
 		"data":    response,
@@ -207,6 +201,7 @@ func (h *TeacherHandler) UpdateSubjectMatter(ctx *fiber.Ctx) (err error) {
 	var content []entities.SubjectMatterContent
 	for _, c := range req.Content {
 		content = append(content, entities.SubjectMatterContent{
+			SubjectMatterID: subjectMatter.ID,
 			Title:       c.Title,
 			Description: c.Description,
 			Link:        c.Link,

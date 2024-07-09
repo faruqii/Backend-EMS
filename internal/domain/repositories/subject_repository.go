@@ -295,69 +295,71 @@ func (r *subjectRepository) GetClassSubjectsByPrefixAndSubject(classPrefix strin
 
 // UpdateSubjectMatter updates an existing subject matter.
 func (r *subjectRepository) UpdateSubjectMatter(subjectMatterID string, subjectMatter *entities.SubjectMattter) error {
+    tx := r.db.Begin()
 
-	tx := r.db.Begin()
+    // Update subject matter
+    if err := tx.Model(&entities.SubjectMattter{}).Where("id = ?", subjectMatterID).Updates(subjectMatter).Error; err != nil {
+        tx.Rollback()
+        return err
+    }
 
-	// Update subject matter
-	if err := tx.Save(subjectMatter).Error; err != nil {
-		tx.Rollback()
-		return err
-	}
+    // Delete existing content
+    if err := tx.Where("subject_matter_id = ?", subjectMatterID).Delete(&entities.SubjectMatterContent{}).Error; err != nil {
+        fmt.Println("Repository: Error deleting existing content:", err)
+        tx.Rollback()
+        return err
+    }
 
-	// Delete existing content
-	if err := tx.Where("subject_matter_id = ?", subjectMatterID).Delete(&entities.SubjectMatterContent{}).Error; err != nil {
-		fmt.Println("Repository: Error deleting existing content:", err)
-		tx.Rollback()
-		return err
-	}
+    // Insert new content
+    for i := range subjectMatter.Content {
+        subjectMatter.Content[i].SubjectMatterID = subjectMatterID
+        fmt.Printf("Repository: Creating content %d: %+v\n", i, subjectMatter.Content[i])
 
-	// Insert new content
-	for i := range subjectMatter.Content {
-		subjectMatter.Content[i].SubjectMatterID = subjectMatter.ID
-		fmt.Printf("Repository: Creating content %d: %+v\n", i, subjectMatter.Content[i])
+        // Check for duplicates before inserting
+        var existingContent entities.SubjectMatterContent
+        if err := tx.Where("subject_matter_id = ? AND title = ?", subjectMatter.Content[i].SubjectMatterID, subjectMatter.Content[i].Title).First(&existingContent).Error; err == nil {
+            continue
+        }
 
-		// Check for duplicates before inserting
-		var existingContent entities.SubjectMatterContent
-		if err := tx.Where("subject_matter_id = ? AND title = ?", subjectMatter.Content[i].SubjectMatterID, subjectMatter.Content[i].Title).First(&existingContent).Error; err == nil {
-			continue
-		}
+        if err := tx.Create(&subjectMatter.Content[i]).Error; err != nil {
+            tx.Rollback()
+            return err
+        }
+    }
 
-		if err := tx.Create(&subjectMatter.Content[i]).Error; err != nil {
-			tx.Rollback()
-			return err
-		}
-	}
+    // Commit transaction
+    if err := tx.Commit().Error; err != nil {
+        fmt.Println("Repository: Error committing transaction:", err)
+        return err
+    }
 
-	if err := tx.Commit().Error; err != nil {
-		fmt.Println("Repository: Error committing transaction:", err)
-		return err
-	}
-
-	return nil
+    return nil
 }
+
 
 // DeleteSubjectMatter deletes a subject matter by ID.
 func (r *subjectRepository) DeleteSubjectMatter(subjectMatterID string) error {
+    tx := r.db.Begin()
 
-	tx := r.db.Begin()
+    // Delete content
+    if err := tx.Where("subject_matter_id = ?", subjectMatterID).Delete(&entities.SubjectMatterContent{}).Error; err != nil {
+        tx.Rollback()
+        return err
+    }
 
-	// Delete content
-	if err := tx.Where("subject_matter_id = ?", subjectMatterID).Delete(&entities.SubjectMatterContent{}).Error; err != nil {
-		tx.Rollback()
-		return err
-	}
+    // Delete subject matter
+    if err := tx.Where("id = ?", subjectMatterID).Delete(&entities.SubjectMattter{}).Error; err != nil {
+        tx.Rollback()
+        return err
+    }
 
-	// Delete subject matter
-	if err := tx.Delete(&entities.SubjectMattter{}, subjectMatterID).Error; err != nil {
-		tx.Rollback()
-		return err
-	}
+    fmt.Println("Repository: Committing transaction")
+    if err := tx.Commit().Error; err != nil {
+        return err
+    }
 
-	fmt.Println("Repository: Committing transaction")
-	if err := tx.Commit().Error; err != nil {
-		return err
-	}
-
-
-	return nil
+    return nil
 }
+
+
+
