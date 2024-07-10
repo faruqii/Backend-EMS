@@ -36,6 +36,7 @@ func (t *TeacherHandler) CreateAttendance(ctx *fiber.Ctx) error {
 	res := dto.AttendanceResponse{
 		ID:              attendance.ID,
 		StudentID:       attendance.StudentID,
+		StudentName: 	 attendance.Student.Name,
 		SubjectID:       attendance.SubjectID,
 		AttendaceStatus: attendance.AttendaceStatus,
 		AttendaceAt:     attendance.AttendaceAt,
