@@ -315,6 +315,11 @@ func (t *TeacherHandler) UpdateQuizQuestion(ctx *fiber.Ctx) error {
 
 func (t *TeacherHandler) AddQuestion(ctx *fiber.Ctx) error {
 	quizID := ctx.Params("quizID")
+	if quizID == "" {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "quizID is required",
+		})
+	}
 	fmt.Print(quizID)
 
 	var req dto.QuestionRequest

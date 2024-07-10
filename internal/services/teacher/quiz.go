@@ -140,6 +140,7 @@ func (s *teacherService) DeleteQuestion(questionID string) error {
 }
 
 func (s *teacherService) AddQuestion(quizID string, question *entities.Question) error {
+	question.QuizID = quizID // Set quizID here
 	err := s.quizRepo.AddQuestion(quizID, question)
 	if err != nil {
 		return services.HandleError(err, "Failed to add question", 500)
