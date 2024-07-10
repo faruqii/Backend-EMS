@@ -253,7 +253,7 @@ func (r *quizRepository) AddQuestion(quizID string, question *entities.Question)
 func (r *quizRepository) GetQuizWithQuestions(quizID string) (*entities.Quiz, error) {
 	var quiz entities.Quiz
 	// preload quiz
-	if err := r.db.Preload("Questions").Where("id = ?", quizID).First(&quiz).Error; err != nil {
+	if err := r.db.Preload("Class").Preload("Subject").Preload("Teacher").Preload("Questions").Where("id = ?", quizID).First(&quiz).Error; err != nil {
 		return nil, err
 	}
 
