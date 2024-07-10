@@ -9,6 +9,20 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+var location *time.Location
+
+func init() {
+	var err error
+	location, err = time.LoadLocation("Asia/Jakarta") // Set to your desired timezone
+	if err != nil {
+		panic(err)
+	}
+}
+
+func formatTimeWithLocation(t time.Time) string {
+	return t.In(location).Format("2006-01-02 15:04:05")
+}
+
 func (h *AdminHandler) CreateAnnouncement(ctx *fiber.Ctx) (err error) {
 	var req dto.CreateAnnouncementRequest
 	if err := ctx.BodyParser(&req); err != nil {
@@ -17,11 +31,12 @@ func (h *AdminHandler) CreateAnnouncement(ctx *fiber.Ctx) (err error) {
 		})
 	}
 
+	now := time.Now().In(location)
 	announcement := &entities.Announcement{
 		Title:       req.Title,
 		Information: req.Information,
-		CreatedAt:   time.Now().Local(),
-		UpdatedAt:   time.Now().Local(),
+		CreatedAt:   now,
+		UpdatedAt:   now,
 	}
 
 	announcement, err = h.adminService.CreateAnnouncement(announcement)
@@ -35,15 +50,14 @@ func (h *AdminHandler) CreateAnnouncement(ctx *fiber.Ctx) (err error) {
 		ID:          announcement.ID,
 		Title:       announcement.Title,
 		Information: announcement.Information,
-		CreatedAt:   announcement.CreatedAt.Format(time.DateTime),
-		UpdatedAt:   announcement.UpdatedAt.Format(time.DateTime),
+		CreatedAt:   formatTimeWithLocation(announcement.CreatedAt),
+		UpdatedAt:   formatTimeWithLocation(announcement.UpdatedAt),
 	}
 
 	return ctx.Status(http.StatusCreated).JSON(fiber.Map{
 		"message": "Announcement created successfully",
 		"data":    res,
 	})
-
 }
 
 func (h *AdminHandler) GetAnnouncements(ctx *fiber.Ctx) (err error) {
@@ -60,8 +74,8 @@ func (h *AdminHandler) GetAnnouncements(ctx *fiber.Ctx) (err error) {
 			ID:          announcement.ID,
 			Title:       announcement.Title,
 			Information: announcement.Information,
-			CreatedAt:   announcement.CreatedAt.Format(time.DateTime),
-			UpdatedAt:   announcement.UpdatedAt.Format(time.DateTime),
+			CreatedAt:   formatTimeWithLocation(announcement.CreatedAt),
+			UpdatedAt:   formatTimeWithLocation(announcement.UpdatedAt),
 		})
 	}
 
@@ -83,8 +97,8 @@ func (h *AdminHandler) GetAnnouncementByID(ctx *fiber.Ctx) (err error) {
 		ID:          announcement.ID,
 		Title:       announcement.Title,
 		Information: announcement.Information,
-		CreatedAt:   announcement.CreatedAt.Format(time.DateTime),
-		UpdatedAt:   announcement.UpdatedAt.Format(time.DateTime),
+		CreatedAt:   formatTimeWithLocation(announcement.CreatedAt),
+		UpdatedAt:   formatTimeWithLocation(announcement.UpdatedAt),
 	}
 
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
@@ -110,7 +124,7 @@ func (h *AdminHandler) UpdateAnnouncement(ctx *fiber.Ctx) (err error) {
 
 	announcement.Title = req.Title
 	announcement.Information = req.Information
-	announcement.UpdatedAt = time.Now()
+	announcement.UpdatedAt = time.Now().In(location)
 
 	announcement, err = h.adminService.UpdateAnnouncement(announcement)
 	if err != nil {
@@ -123,8 +137,8 @@ func (h *AdminHandler) UpdateAnnouncement(ctx *fiber.Ctx) (err error) {
 		ID:          announcement.ID,
 		Title:       announcement.Title,
 		Information: announcement.Information,
-		CreatedAt:   announcement.CreatedAt.Format(time.DateTime),
-		UpdatedAt:   announcement.UpdatedAt.Format(time.DateTime),
+		CreatedAt:   formatTimeWithLocation(announcement.CreatedAt),
+		UpdatedAt:   formatTimeWithLocation(announcement.UpdatedAt),
 	}
 
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
