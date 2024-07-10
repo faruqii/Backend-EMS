@@ -354,3 +354,47 @@ func (t *TeacherHandler) AddQuestion(ctx *fiber.Ctx) error {
 		"message": "Success add question",
 	})
 }
+
+func (t *TeacherHandler) GetQuizWithQuestions(ctx *fiber.Ctx) error {
+	quizID := ctx.Params("quizID")
+	if quizID == "" {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Quiz ID is required",
+		})
+	}
+
+	quiz, err := t.teacherSvc.GetQuizWithQuestions(quizID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	questions := []dto.QuestionBrief{}
+	for _, q := range quiz.Questions {
+		question := dto.QuestionBrief{
+			ID:            q.ID,
+			Text:          q.Text,
+			Options:       q.Options,
+			CorrectAnswer: q.CorrectAnswer,
+		}
+		questions = append(questions, question)
+	}
+
+	response := dto.QuizResponse{
+		ID:          quiz.ID,
+		ClassID:     quiz.Class.Name,
+		SubjectID:   quiz.Subject.Name,
+		TeacherID:   quiz.Teacher.Name,
+		Title:       quiz.Title,
+		TypeOfQuiz:  quiz.TypeOfQuiz,
+		Description: quiz.Description,
+		Deadline:    quiz.Deadline,
+		Questions:   questions,
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Success get quiz with questions",
+		"data":    response,
+	})
+}

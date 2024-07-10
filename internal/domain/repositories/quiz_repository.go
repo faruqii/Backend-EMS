@@ -24,6 +24,7 @@ type QuizRepository interface {
 	UpdateQuestion(questionID string, question *entities.Question) error
 	DeleteQuestion(questionID string) error
 	AddQuestion(quizID string, question *entities.Question) error
+	GetQuizWithQuestions(quizID string) (*entities.Quiz, error)
 }
 
 type quizRepository struct {
@@ -247,4 +248,14 @@ func (r *quizRepository) AddQuestion(quizID string, question *entities.Question)
 	// You can implement this logic based on your requirements.
 
 	return nil
+}
+
+func (r *quizRepository) GetQuizWithQuestions(quizID string) (*entities.Quiz, error) {
+	var quiz entities.Quiz
+	// preload quiz
+	if err := r.db.Preload("Questions").Where("id = ?", quizID).First(&quiz).Error; err != nil {
+		return nil, err
+	}
+
+	return &quiz, nil
 }
