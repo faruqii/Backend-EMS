@@ -84,7 +84,7 @@ func (r *scheduleRepository) GetAll() ([]entities.Schedule, error) {
 
 func (r *scheduleRepository) GetScheduleByID(id string) (*entities.Schedule, error) {
 	var schedule entities.Schedule
-	if err := r.db.Preload("Class").Preload("Subject").Preload("Teacher").First(&schedule, id).Error; err != nil {
+	if err := r.db.Preload("Class").Preload("Subject").Preload("Teacher").Where("id = ?", id).First(&schedule).Error; err != nil {
 		return nil, err
 	}
 	return &schedule, nil
