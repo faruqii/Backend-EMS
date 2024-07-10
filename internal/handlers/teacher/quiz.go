@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -314,6 +315,7 @@ func (t *TeacherHandler) UpdateQuizQuestion(ctx *fiber.Ctx) error {
 
 func (t *TeacherHandler) AddQuestion(ctx *fiber.Ctx) error {
 	quizID := ctx.Params("quizID")
+	fmt.Print(quizID)
 
 	var req dto.QuestionRequest
 	if err := ctx.BodyParser(&req); err != nil {
