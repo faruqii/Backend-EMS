@@ -18,6 +18,7 @@ type QuizService interface {
 	UpdateQuestion(questionID string, question *entities.Question) error
 	DeleteQuestion(questionID string) error
 	AddQuestion(quizID string, question *entities.Question) error
+	GetQuiz(quizID string) (*entities.Quiz, error)
 }
 
 func (s *teacherService) CreateQuiz(quiz *entities.Quiz, questions []entities.Question) error {
@@ -145,4 +146,13 @@ func (s *teacherService) AddQuestion(quizID string, question *entities.Question)
 	}
 
 	return nil
+}
+
+func (s *teacherService) GetQuiz(quizID string) (*entities.Quiz, error) {
+	quiz, err := s.quizRepo.GetQuiz(quizID)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to fetch quiz", 500)
+	}
+
+	return quiz, nil
 }

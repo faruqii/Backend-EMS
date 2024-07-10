@@ -322,13 +322,21 @@ func (t *TeacherHandler) AddQuestion(ctx *fiber.Ctx) error {
 		})
 	}
 
+	// get QuizByID
+	quiz, err := t.teacherSvc.GetQuiz(quizID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
 	question := entities.Question{
 		Text:          req.Text,
 		Options:       req.Options,
 		CorrectAnswer: req.CorrectAnswer,
 	}
 
-	err := t.teacherSvc.AddQuestion(quizID, &question)
+	err = t.teacherSvc.AddQuestion(quiz.ID, &question)
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
