@@ -91,7 +91,7 @@ func (t *TeacherHandler) GetQuiz(ctx *fiber.Ctx) error {
 		var questions []dto.QuestionBrief
 		for _, question := range q.Questions {
 			questionBrief := dto.QuestionBrief{
-				ID: 					 question.ID,
+				ID:            question.ID,
 				Text:          question.Text,
 				Options:       question.Options,
 				CorrectAnswer: question.CorrectAnswer,
@@ -309,5 +309,33 @@ func (t *TeacherHandler) UpdateQuizQuestion(ctx *fiber.Ctx) error {
 
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
 		"message": "Success update quiz question",
+	})
+}
+
+func (t *TeacherHandler) AddQuestion(ctx *fiber.Ctx) error {
+	quizID := ctx.Params("quizID")
+
+	var req dto.QuestionRequest
+	if err := ctx.BodyParser(&req); err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	question := entities.Question{
+		Text:          req.Text,
+		Options:       req.Options,
+		CorrectAnswer: req.CorrectAnswer,
+	}
+
+	err := t.teacherSvc.AddQuestion(quizID, &question)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.Status(http.StatusCreated).JSON(fiber.Map{
+		"message": "Success add question",
 	})
 }

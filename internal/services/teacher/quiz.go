@@ -17,6 +17,7 @@ type QuizService interface {
 	DeleteQuiz(quizID string) error
 	UpdateQuestion(questionID string, question *entities.Question) error
 	DeleteQuestion(questionID string) error
+	AddQuestion(quizID string, question *entities.Question) error
 }
 
 func (s *teacherService) CreateQuiz(quiz *entities.Quiz, questions []entities.Question) error {
@@ -132,6 +133,15 @@ func (s *teacherService) DeleteQuestion(questionID string) error {
 	err := s.quizRepo.DeleteQuestion(questionID)
 	if err != nil {
 		return services.HandleError(err, "Failed to delete question", 500)
+	}
+
+	return nil
+}
+
+func (s *teacherService) AddQuestion(quizID string, question *entities.Question) error {
+	err := s.quizRepo.AddQuestion(quizID, question)
+	if err != nil {
+		return services.HandleError(err, "Failed to add question", 500)
 	}
 
 	return nil

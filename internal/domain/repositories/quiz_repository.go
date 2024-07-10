@@ -23,6 +23,7 @@ type QuizRepository interface {
 	Delete(quizID string) error
 	UpdateQuestion(questionID string, question *entities.Question) error
 	DeleteQuestion(questionID string) error
+	AddQuestion(quizID string, question *entities.Question) error
 }
 
 type quizRepository struct {
@@ -215,5 +216,35 @@ func (r *quizRepository) DeleteQuestion(questionID string) error {
 	if err := r.db.Where("id = ?", questionID).Delete(&entities.Question{}).Error; err != nil {
 		return err
 	}
+	return nil
+}
+
+func (r *quizRepository) AddQuestion(quizID string, question *entities.Question) error {
+	// Check if the question already exists
+	var count int64
+	if err := r.db.Model(&entities.Question{}).
+		Where("quiz_id = ? AND text = ?", quizID, question.Text).
+		Count(&count).Error; err != nil {
+		return err
+	}
+
+	if count == 0 {
+		// Convert []string to pq.StringArray
+		optionsArray := pq.StringArray(question.Options)
+
+		// Insert question into the database
+		if err := r.db.Create(&entities.Question{
+			ID:            question.ID,
+			QuizID:        question.QuizID,
+			Text:          question.Text,
+			Options:       optionsArray, // Store options as Postgres array directly
+			CorrectAnswer: question.CorrectAnswer,
+		}).Error; err != nil {
+			return err
+		}
+	}
+	// If the question already exists, you may choose to skip insertion or update it.
+	// You can implement this logic based on your requirements.
+
 	return nil
 }
