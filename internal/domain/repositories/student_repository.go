@@ -137,12 +137,11 @@ func (r *studentRepository) GetAllStudentsByClassID(classID string) ([]entities.
 }
 
 func (r *studentRepository) FindStudentClassIDByStudentID(studentID string) (string, error) {
-	var student entities.Student
-	if err := r.db.Where("id = ?", studentID).First(&student).Error; err != nil {
+	var classID string
+	if err := r.db.Raw("SELECT class_id FROM students WHERE id =?", studentID).Scan(&classID).Error; err != nil {
 		return "", err
 	}
-	return *student.ClassID, nil
-
+	return classID, nil
 }
 
 func (r *studentRepository) GetStudentByUserID(userID string) (*entities.Student, error) {
@@ -154,20 +153,21 @@ func (r *studentRepository) GetStudentByUserID(userID string) (*entities.Student
 }
 
 func (r *studentRepository) RemoveStudentFromClass(studentID string) error {
-	var student entities.Student
-	if err := r.db.Where("id = ?", studentID).First(&student).Error; err != nil {
-		return err
-	}
+    var student entities.Student
+    if err := r.db.Where("id = ?", studentID).First(&student).Error; err != nil {
+        return err
+    }
 
-	// Ensuring ClassID is nil
-	student.ClassID = nil
+    // Ensuring ClassID is nil
+    student.ClassID = nil
 
-	// Updating the ClassID field specifically
-	if err := r.db.Model(&student).Update("class_id", gorm.Expr("NULL")).Error; err != nil {
-		return err
-	}
+    // Updating the ClassID field specifically
+    if err := r.db.Model(&student).Update("class_id", gorm.Expr("NULL")).Error; err != nil {
+        return err
+    }
 
-	return nil
+    return nil
 }
+
 
 // Path: internal/domain/repositories/student_repository.go
