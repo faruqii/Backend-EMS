@@ -20,8 +20,8 @@ func (h *AdminHandler) CreateAnnouncement(ctx *fiber.Ctx) (err error) {
 	announcement := &entities.Announcement{
 		Title:       req.Title,
 		Information: req.Information,
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		CreatedAt:   time.Now().Local(),
+		UpdatedAt:   time.Now().Local(),
 	}
 
 	announcement, err = h.adminService.CreateAnnouncement(announcement)
