@@ -8,6 +8,20 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+var location *time.Location
+
+func init() {
+	var err error
+	location, err = time.LoadLocation("Asia/Jakarta") // Set to your desired timezone
+	if err != nil {
+		panic(err)
+	}
+}
+
+func formatTimeWithLocation(t time.Time) string {
+	return t.In(location).Format("2006-01-02 15:04:05")
+}
+
 func (h *GlobalHandler) GetAnnouncements(ctx *fiber.Ctx) (err error) {
 	announcements, err := h.globalService.GetAnnouncements()
 	if err != nil {
@@ -22,8 +36,8 @@ func (h *GlobalHandler) GetAnnouncements(ctx *fiber.Ctx) (err error) {
 			ID:          announcement.ID,
 			Title:       announcement.Title,
 			Information: announcement.Information,
-			CreatedAt:   announcement.CreatedAt.Format(time.DateTime),
-			UpdatedAt:   announcement.UpdatedAt.Format(time.DateTime),
+			CreatedAt:   formatTimeWithLocation(announcement.CreatedAt),
+			UpdatedAt:   formatTimeWithLocation(announcement.UpdatedAt),
 		})
 	}
 
@@ -46,8 +60,8 @@ func (h *GlobalHandler) GetAnnouncementByID(ctx *fiber.Ctx) (err error) {
 		ID:          announcement.ID,
 		Title:       announcement.Title,
 		Information: announcement.Information,
-		CreatedAt:   announcement.CreatedAt.Format(time.DateTime),
-		UpdatedAt:   announcement.UpdatedAt.Format(time.DateTime),
+		CreatedAt:   formatTimeWithLocation(announcement.CreatedAt),
+		UpdatedAt:   formatTimeWithLocation(announcement.UpdatedAt),
 	}
 
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
