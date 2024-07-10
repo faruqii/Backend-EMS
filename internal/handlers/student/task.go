@@ -31,6 +31,8 @@ func (h *StudentHandler) GetTask(ctx *fiber.Ctx) (err error) {
 			Description: t.Description,
 			Deadline:    t.Deadline.Format(time.DateTime),
 			Link:        t.Link,
+			CreatedAt:   t.CreatedAt,
+			UpdatedAt:   t.UpdatedAt,
 		})
 
 	}

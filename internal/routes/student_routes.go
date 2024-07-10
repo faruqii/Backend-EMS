@@ -39,6 +39,7 @@ func StudentRoutes(router fiber.Router, studentSvc services.StudentService, mw *
 	studentQuizRoutes.Post("/:quizID/submit", student.SubmitQuizAnswer)
 	studentQuizRoutes.Get("/:quizID/questions", student.GetQuizQuestions)
 	studentQuizRoutes.Get("/:quizID/grade", student.GetMyQuizGrade)
+	studentQuizRoutes.Get("/grades", student.GetMyQuizGrades)
 
 	studentAttedanceRoutes := studentRoutes.Group("/attedance")
 	studentAttedanceRoutes.Get("", student.MyAttedance)

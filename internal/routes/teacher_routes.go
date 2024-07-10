@@ -22,20 +22,32 @@ func TeacherRoutes(router fiber.Router, teacherService services.TeacherService, 
 	teacherTaskControllerRoutes.Get("/all", teacherController.GetAllTask)
 	teacherTaskControllerRoutes.Get("/:taskID/assignment", teacherController.GetAllStudentAssignment)
 	teacherTaskControllerRoutes.Put("/:assignmentID/grade", teacherController.UpdateStudentTaskAssignment)
+	teacherTaskControllerRoutes.Get("/assignment/:assignmentID", teacherController.GetStudentTaskAssignmentDetail)
+	teacherTaskControllerRoutes.Get("/:taskID", teacherController.GetTask)
+	teacherTaskControllerRoutes.Put("/:taskID/update", teacherController.UpdateTask)
+	teacherTaskControllerRoutes.Delete("/:taskID/delete", teacherController.DeleteTask)
 
 	teacherQuizControllerRoutes := teacherControllerRoutes.Group("/quiz")
 	teacherQuizControllerRoutes.Post("/:classID/:subjectID/create", teacherController.CreateQuiz)
 	teacherQuizControllerRoutes.Get("", teacherController.GetQuiz)
 	teacherQuizControllerRoutes.Get("/:quizID/assignment", teacherController.GetAllQuizAssignment)
 	teacherQuizControllerRoutes.Put("/:quizAssignmentID/grade", teacherController.GradeStudentQuiz)
+	teacherQuizControllerRoutes.Get("/assignment/:quizAssignmentID", teacherController.GetStudentQuizAssignmentAnswer)
+	teacherQuizControllerRoutes.Put("/:quizID/update", teacherController.UpdateQuiz)
+	teacherQuizControllerRoutes.Delete("/:quizID/delete", teacherController.DeleteQuiz)
+	teacherQuizControllerRoutes.Put("/question/:questionID/update", teacherController.UpdateQuizQuestion)
 
 	teacherSubjectControllerRoutes := teacherControllerRoutes.Group("/subject")
 	teacherSubjectControllerRoutes.Get("/:classID/:subjectID/student", teacherController.CountStudent)
 	teacherSubjectControllerRoutes.Post("/:subjectID/attendance", teacherController.CreateAttendance)
+	teacherSubjectControllerRoutes.Get("/:subjectID/attendance", teacherController.GetAttendanceBySubjectID)
+	teacherSubjectControllerRoutes.Put("/attendance/:attendanceID/update", teacherController.UpdateAttendance)
 	teacherSubjectControllerRoutes.Get("/all", teacherController.GetMySubjects)
 	teacherSubjectControllerRoutes.Post("/:subjectID/matter", teacherController.CreateSubjectMatter)
 	teacherSubjectControllerRoutes.Get("/:subjectID/matter", teacherController.GetSubjectMatterBySubjectID)
 	teacherSubjectControllerRoutes.Get("/matter/:subjectMatterID", teacherController.GetDetailSubjectMatter)
+	teacherSubjectControllerRoutes.Put("/matter/:subjectMatterID/update", teacherController.UpdateSubjectMatter)
+	teacherSubjectControllerRoutes.Delete("/matter/:subjectMatterID/delete", teacherController.DeleteSubjectMatter)
 
 	teacherClassRoutes := teacherControllerRoutes.Group("/class")
 	teacherClassRoutes.Get("", teacherController.GetWhereIamTeachTheClass)
@@ -64,7 +76,7 @@ func TeacherRoutes(router fiber.Router, teacherService services.TeacherService, 
 
 	teacherLiterationRoutes := teacherControllerRoutes.Group("/literation")
 	teacherLiterationRoutes.Get("", teacherController.GetAllLiterations)
-	teacherLiterationRoutes.Put("/:id/feedback", teacherController.UpdateLiterationFeedback)
+	teacherLiterationRoutes.Put("/:id/update", teacherController.Update)
 	teacherLiterationRoutes.Get("/:id", teacherController.GetLiterationByID)
 	teacherLiterationRoutes.Get("/student/:id", teacherController.GetLiterationByStudentID)
 
@@ -73,5 +85,8 @@ func TeacherRoutes(router fiber.Router, teacherService services.TeacherService, 
 	teacherViolationRoutes.Get("/all", teacherController.GetAllViolation)
 	teacherViolationRoutes.Get("/:id", teacherController.GetViolationByID)
 	teacherViolationRoutes.Get("/student/:student_id", teacherController.GetViolationByStudentID)
+
+	teacherStudentRoutes := teacherControllerRoutes.Group("/students")
+	teacherStudentRoutes.Get("/:classID", teacherController.GetAllStudentByClass)
 
 }

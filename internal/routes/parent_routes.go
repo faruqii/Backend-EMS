@@ -32,4 +32,20 @@ func ParentRoutes(router fiber.Router, teacherSvc service.ParentService, mw *mid
 	parentViolationRoutes := parentControllerRoutes.Group("/violation")
 	parentViolationRoutes.Get("", parentController.GetStudentViolation)
 	parentViolationRoutes.Get("/:id", parentController.GetViolationByID)
+
+	parentStudentRoutes := parentControllerRoutes.Group("/student")
+	parentStudentRoutes.Get("", parentController.GetMyStudents)
+	parentStudentRoutes.Get("/:studentID", parentController.GetStudentDetail)
+
+	parentDispensationRoutes := parentControllerRoutes.Group("/dispensation")
+	parentDispensationRoutes.Get("", parentController.GetStudentDispensations)
+	parentDispensationRoutes.Get("/:dispensationID", parentController.GetStudentDispensationByID)
+
+	parentAttendanceRoutes := parentControllerRoutes.Group("/attendance")
+	parentAttendanceRoutes.Get("", parentController.GetStudentAttedance)
+
+	parentLiterationRoutes := parentControllerRoutes.Group("/literation")
+	parentLiterationRoutes.Get("", parentController.GetStudentLiterations)
+	parentLiterationRoutes.Get("/:literationID", parentController.GetStudentLiterationDetail)
+
 }

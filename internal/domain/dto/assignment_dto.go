@@ -27,10 +27,25 @@ type SubmitQuizRequest struct {
 
 type StudentQuizAssignmentResponse struct {
 	ID          string  `json:"id"`
+	QuizID      string  `json:"quiz_id"`
 	QuizName    string  `json:"quiz_name"`
 	StudentName string  `json:"student_name"`
 	NISN        string  `json:"nisn"`
 	Grade       float64 `json:"grade"`
 	Status      string  `json:"status"`
 	SubmitAt    string  `json:"submit_at"`
+}
+
+type StudentQuizAssignmentAnswerResponse struct {
+	StudentID   string               `json:"student_id"`
+	StudentName string               `json:"student_name"`
+	QuizID      string               `json:"quiz_id"`
+	QuizTitle   string               `json:"quiz_title"`
+	Questions   []QuestionWithAnswer `json:"questions"`
+}
+
+type QuestionWithAnswer struct {
+	Question      string `json:"question"`
+	Answer        string `json:"answer"`
+	CorrectAnswer string `json:"correct_answer"`
 }

@@ -94,3 +94,59 @@ func (c *AdminHandler) AssignSubjectToClass(ctx *fiber.Ctx) (err error) {
 		"message": "Subject assigned to class successfully",
 	})
 }
+
+func (c *AdminHandler) GetClassesSubjectsAndTeachers(ctx *fiber.Ctx) (err error) {
+	classPrefix := ctx.Query("classPrefix")
+	subjectID := ctx.Query("subjectID")
+
+	if classPrefix == "" {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "classPrefix query parameter is required",
+		})
+	}
+
+	// Fetch class-subject-teacher mapping
+	classSubjects, err := c.adminService.GetClassSubjectsByPrefixAndSubject(classPrefix, subjectID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	// Check if no records are found
+	if len(classSubjects) == 0 {
+		return ctx.Status(http.StatusOK).JSON(fiber.Map{
+			"message": "No data found",
+			"data":    []fiber.Map{},
+		})
+	}
+
+	// Transform the data to match the desired format
+	var data []fiber.Map
+	for _, cs := range classSubjects {
+		item := fiber.Map{
+			"class_id":   cs.ClassID,
+			"class_name": cs.Class.Name,
+			"subject_id": cs.SubjectID,
+			"subject":    cs.Subject.Name,
+			"teacher_id": cs.TeacherID,
+			"teacher":    cs.Teacher.Name,
+		}
+		data = append(data, item)
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Data fetched successfully",
+		"data":    data,
+	})
+}
+
+// Helper function to check if the entry already exists in the data slice
+// func contains(data []fiber.Map, entry fiber.Map) bool {
+// 	for _, item := range data {
+// 		if item["class_id"] == entry["class_id"] && item["subject_id"] == entry["subject_id"] {
+// 			return true
+// 		}
+// 	}
+// 	return false
+// }

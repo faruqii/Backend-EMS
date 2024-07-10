@@ -33,7 +33,9 @@ package handlers
 // 				}
 // 				mockAuthService := mocks.NewMockAuthService(ctrl)
 // 				mockAuthService.EXPECT().LogIn("testusername", "testpassword").Return(expectedUserResponse, nil).Times(1)
-// 				mockAuthService.EXPECT().CreateUserToken(expectedUserResponse, "user").Return("mocked-token", nil).Times(1)
+// 				mockAuthService.EXPECT().GetRoleNameFromID("123").Return("user", nil).Times(1)
+// 				// apply role name from id to in create user token
+// 				mockAuthService.EXPECT().CreateUserToken(expectedUserResponse, "user").Return("token", nil).Times(1)
 // 				return mockAuthService
 // 			},
 // 			args: func() *fiber.Ctx {
@@ -93,4 +95,3 @@ package handlers
 // 		})
 // 	}
 // }
-

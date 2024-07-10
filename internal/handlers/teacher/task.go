@@ -27,8 +27,16 @@ func (t *TeacherHandler) CreateTask(ctx *fiber.Ctx) (err error) {
 		})
 	}
 
+	// parse in location
+	loc, err := time.LoadLocation("Local")
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
 	// parsing Deadline to DateTime
-	deadline, err := time.Parse(time.DateTime, req.Deadline)
+	deadline, err := time.ParseInLocation(time.DateTime, req.Deadline, loc)
 	if err != nil {
 		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
@@ -166,5 +174,145 @@ func (t *TeacherHandler) UpdateStudentTaskAssignment(ctx *fiber.Ctx) (err error)
 
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
 		"message": "Student assignment updated successfully",
+	})
+}
+
+func (t *TeacherHandler) GetStudentTaskAssignmentDetail(ctx *fiber.Ctx) (err error) {
+	assignmentID := ctx.Params("assignmentID")
+
+	studentAssignment, err := t.teacherSvc.GetStudentTaskAssignmentDetail(assignmentID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	studentAssignmentRes := dto.StudentAssignmentResponse{
+		ID:         studentAssignment.ID,
+		Task:       studentAssignment.Task.Title,
+		Student:    studentAssignment.Student.Name,
+		Submission: studentAssignment.Submission,
+		Grade:      studentAssignment.Grade,
+		Feedback:   studentAssignment.Feedback,
+		SubmitAt:   studentAssignment.SubmitAt,
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Student assignment fetched successfully",
+		"data":    studentAssignmentRes,
+	})
+}
+
+func (t *TeacherHandler) GetTask(ctx *fiber.Ctx) (err error) {
+	taskID := ctx.Params("taskID")
+
+	task, err := t.teacherSvc.GetTask(taskID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	taskRes := dto.TaskResponse{
+		ID:          task.ID,
+		ClassName:   task.Class.Name,
+		SubjectName: task.Subject.Name,
+		TeacherName: task.Teacher.Name,
+		Title:       task.Title,
+		TypeOfTask:  task.TypeOfTask,
+		Description: task.Description,
+		Deadline:    task.Deadline.Format(time.DateTime),
+		Link:        task.Link,
+		CreatedAt:   task.CreatedAt,
+		UpdatedAt:   task.UpdatedAt,
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Task fetched successfully",
+		"data":    taskRes,
+	})
+}
+
+func (t *TeacherHandler) UpdateTask(ctx *fiber.Ctx) (err error) {
+	taskID := ctx.Params("taskID")
+
+	var req dto.TaskRequest
+	if err = ctx.BodyParser(&req); err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	loc, err := time.LoadLocation("Local")
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	deadline, err := time.ParseInLocation(time.DateTime, req.Deadline, loc)
+	if err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	task := entities.Task{
+		ClassID:     req.ClassID,
+		SubjectID:   req.SubjectID,
+		Title:       req.Title,
+		TypeOfTask:  req.TypeOfTask,
+		Description: req.Description,
+		Deadline:    deadline,
+		Link:        req.Link,
+		UpdatedAt:   time.Now(),
+	}
+
+	err = t.teacherSvc.UpdateTask(taskID, &task)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	taskDetails, err := t.teacherSvc.GetTask(taskID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	response := dto.TaskResponse{
+		ID:          taskDetails.ID,
+		ClassName:   taskDetails.Class.Name,
+		SubjectName: taskDetails.Subject.Name,
+		TeacherName: taskDetails.Teacher.Name,
+		Title:       taskDetails.Title,
+		TypeOfTask:  taskDetails.TypeOfTask,
+		Description: taskDetails.Description,
+		Deadline:    taskDetails.Deadline.Format(time.DateTime),
+		Link:        taskDetails.Link,
+		CreatedAt:   taskDetails.CreatedAt,
+		UpdatedAt:   taskDetails.UpdatedAt,
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Task updated successfully",
+		"data":    response,
+	})
+}
+
+func (t *TeacherHandler) DeleteTask(ctx *fiber.Ctx) (err error) {
+	taskID := ctx.Params("taskID")
+
+	err = t.teacherSvc.DeleteTask(taskID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Task deleted successfully",
 	})
 }

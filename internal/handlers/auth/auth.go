@@ -31,7 +31,20 @@ func (a *AuthHandler) LogIn(ctx *fiber.Ctx) (err error) {
 		})
 	}
 
-	token, err := a.authService.CreateUserToken(user, role)
+	// Check if the user is a teacher and if they are a homeroom teacher
+	var isHomeroomTeacher bool
+	if role == "teacher" {
+		teacher, err := a.authService.GetTeacherByUserID(user.ID)
+		if err != nil {
+			return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+				"error": err.Error(),
+			})
+		}
+		isHomeroomTeacher = teacher.IsHomeroom
+	}
+
+	// Create token with additional claims
+	token, err := a.authService.CreateUserToken(user, role, isHomeroomTeacher)
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
@@ -48,7 +61,6 @@ func (a *AuthHandler) LogIn(ctx *fiber.Ctx) (err error) {
 		"message": "Logged in successfully",
 		"data":    response,
 	})
-
 }
 
 // ChangePassword handler

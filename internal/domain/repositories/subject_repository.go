@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"gorm.io/gorm"
@@ -27,6 +28,10 @@ type SubjectRepository interface {
 	GetDetailSubjectMatter(subjectMatterID string) (*entities.SubjectMattter, error)
 	GetAllSubjectInClass(classID string) ([]entities.ClassSubject, error)
 	GetTeachersByClassAndSubject(classID, subjectID string) ([]entities.TeacherSubject, error)
+	GetSubjectsByClassPrefix(classPrefix string) ([]entities.Subject, error)
+	GetClassSubjectsByPrefixAndSubject(classPrefix string, subjectID string) ([]entities.ClassSubject, error)
+	UpdateSubjectMatter(subjectMatterID string, subjectMatter *entities.SubjectMattter) error
+	DeleteSubjectMatter(subjectMatterID string) error
 }
 
 // subjectRepository is a concrete implementation of SubjectRepository.
@@ -180,17 +185,43 @@ func (r *subjectRepository) GetWhereIamTeachTheClass(teacherID string) ([]entiti
 
 // CreateSubjectMatter creates a new subject matter.
 func (r *subjectRepository) CreateSubjectMatter(subjectMatter *entities.SubjectMattter) error {
-	if err := r.db.Create(subjectMatter).Error; err != nil {
+	tx := r.db.Begin()
+
+	if err := tx.Create(subjectMatter).Error; err != nil {
+		tx.Rollback()
 		return err
 	}
+
+	for i := range subjectMatter.Content {
+		subjectMatter.Content[i].SubjectMatterID = subjectMatter.ID
+		fmt.Printf("Repository: Creating content %d: %+v\n", i, subjectMatter.Content[i])
+
+		// Check for duplicates before inserting
+		var existingContent entities.SubjectMatterContent
+		if err := tx.Where("subject_matter_id = ? AND title = ?", subjectMatter.Content[i].SubjectMatterID, subjectMatter.Content[i].Title).First(&existingContent).Error; err == nil {
+			fmt.Println("Repository: Duplicate content found, skipping insertion")
+			continue
+		}
+
+		if err := tx.Create(&subjectMatter.Content[i]).Error; err != nil {
+			fmt.Println("Repository: Error creating content:", err)
+			tx.Rollback()
+			return err
+		}
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		fmt.Println("Repository: Error committing transaction:", err)
+		return err
+	}
+
 	return nil
 }
 
 // GetSubjectMatterBySubjectID returns all subject matters for a subject.
 func (r *subjectRepository) GetSubjectMatterBySubjectID(subjectID string) ([]entities.SubjectMattter, error) {
-	// preload subject
 	var subjectMatters []entities.SubjectMattter
-	if err := r.db.Preload("Subject").Where("subject_id = ?", subjectID).Find(&subjectMatters).Error; err != nil {
+	if err := r.db.Preload("Subject").Preload("Content").Where("subject_id = ?", subjectID).Find(&subjectMatters).Error; err != nil {
 		return nil, err
 	}
 
@@ -200,7 +231,7 @@ func (r *subjectRepository) GetSubjectMatterBySubjectID(subjectID string) ([]ent
 // GetDetailSubjectMatter returns the detail of a subject matter by ID.
 func (r *subjectRepository) GetDetailSubjectMatter(subjectMatterID string) (*entities.SubjectMattter, error) {
 	var subjectMatter entities.SubjectMattter
-	if err := r.db.Preload("Subject").Where("id = ?", subjectMatterID).First(&subjectMatter).Error; err != nil {
+	if err := r.db.Preload("Subject").Preload("Content").Where("id = ?", subjectMatterID).First(&subjectMatter).Error; err != nil {
 		return nil, err
 	}
 	return &subjectMatter, nil
@@ -232,3 +263,103 @@ func (r *subjectRepository) GetTeachersByClassAndSubject(classID, subjectID stri
 
 	return teacherSubjects, nil
 }
+
+func (r *subjectRepository) GetSubjectsByClassPrefix(classPrefix string) ([]entities.Subject, error) {
+	var classSubjects []entities.ClassSubject
+	if err := r.db.Preload("Subject").
+		Joins("JOIN classes ON class_subjects.class_id = classes.id").
+		Where("classes.name LIKE ?", classPrefix+"%").Find(&classSubjects).Error; err != nil {
+		return nil, err
+	}
+
+	var subjects []entities.Subject
+	for _, cs := range classSubjects {
+		subjects = append(subjects, cs.Subject)
+	}
+	return subjects, nil
+}
+
+// ClassSubjectRepository.go
+func (r *subjectRepository) GetClassSubjectsByPrefixAndSubject(classPrefix string, subjectID string) ([]entities.ClassSubject, error) {
+	var classSubjects []entities.ClassSubject
+	query := r.db.Joins("JOIN classes ON class_subjects.class_id = classes.id").
+		Where("classes.name LIKE ?", classPrefix+"%")
+	if subjectID != "" {
+		query = query.Where("class_subjects.subject_id = ?", subjectID)
+	}
+	if err := query.Preload("Class").Preload("Subject").Preload("Teacher").Find(&classSubjects).Error; err != nil {
+		return nil, err
+	}
+	return classSubjects, nil
+}
+
+// UpdateSubjectMatter updates an existing subject matter.
+func (r *subjectRepository) UpdateSubjectMatter(subjectMatterID string, subjectMatter *entities.SubjectMattter) error {
+    tx := r.db.Begin()
+
+    // Update subject matter
+    if err := tx.Model(&entities.SubjectMattter{}).Where("id = ?", subjectMatterID).Updates(subjectMatter).Error; err != nil {
+        tx.Rollback()
+        return err
+    }
+
+    // Delete existing content
+    if err := tx.Where("subject_matter_id = ?", subjectMatterID).Delete(&entities.SubjectMatterContent{}).Error; err != nil {
+        fmt.Println("Repository: Error deleting existing content:", err)
+        tx.Rollback()
+        return err
+    }
+
+    // Insert new content
+    for i := range subjectMatter.Content {
+        subjectMatter.Content[i].SubjectMatterID = subjectMatterID
+        fmt.Printf("Repository: Creating content %d: %+v\n", i, subjectMatter.Content[i])
+
+        // Check for duplicates before inserting
+        var existingContent entities.SubjectMatterContent
+        if err := tx.Where("subject_matter_id = ? AND title = ?", subjectMatter.Content[i].SubjectMatterID, subjectMatter.Content[i].Title).First(&existingContent).Error; err == nil {
+            continue
+        }
+
+        if err := tx.Create(&subjectMatter.Content[i]).Error; err != nil {
+            tx.Rollback()
+            return err
+        }
+    }
+
+    // Commit transaction
+    if err := tx.Commit().Error; err != nil {
+        fmt.Println("Repository: Error committing transaction:", err)
+        return err
+    }
+
+    return nil
+}
+
+
+// DeleteSubjectMatter deletes a subject matter by ID.
+func (r *subjectRepository) DeleteSubjectMatter(subjectMatterID string) error {
+    tx := r.db.Begin()
+
+    // Delete content
+    if err := tx.Where("subject_matter_id = ?", subjectMatterID).Delete(&entities.SubjectMatterContent{}).Error; err != nil {
+        tx.Rollback()
+        return err
+    }
+
+    // Delete subject matter
+    if err := tx.Where("id = ?", subjectMatterID).Delete(&entities.SubjectMattter{}).Error; err != nil {
+        tx.Rollback()
+        return err
+    }
+
+    fmt.Println("Repository: Committing transaction")
+    if err := tx.Commit().Error; err != nil {
+        return err
+    }
+
+    return nil
+}
+
+
+

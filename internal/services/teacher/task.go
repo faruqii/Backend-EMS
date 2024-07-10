@@ -13,6 +13,9 @@ type TeacherTaskService interface {
 	GetAllTasks(userID string) ([]entities.Task, error)
 	GetStudentTaskAssignment(taskID string) ([]entities.StudentAssignment, error)
 	UpdateStudentTaskAssignment(assignmentID string, grade float64, feedback string) error
+	GetStudentTaskAssignmentDetail(assignmentID string) (*entities.StudentAssignment, error)
+	UpdateTask(taskID string, task *entities.Task) error
+	DeleteTask(taskID string) error
 }
 
 func (s *teacherService) CreateTask(task *entities.Task) error {
@@ -86,4 +89,23 @@ func (s *teacherService) UpdateStudentTaskAssignment(assignmentID string, grade 
 	}
 
 	return nil
+}
+
+func (s *teacherService) GetStudentTaskAssignmentDetail(assignmentID string) (*entities.StudentAssignment, error) {
+	assignment, err := s.studentAssignmentRepo.FindByID(assignmentID)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to fetch student assignment", 500)
+	}
+
+	return assignment, nil
+}
+
+func (s *teacherService) UpdateTask(taskID string, task *entities.Task) error {
+	err := s.taskRepo.Update(taskID, task)
+	return services.HandleError(err, "Failed to update task", 500)
+}
+
+func (s *teacherService) DeleteTask(taskID string) error {
+	err := s.taskRepo.Delete(taskID)
+	return services.HandleError(err, "Failed to delete task", 500)
 }

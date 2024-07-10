@@ -55,3 +55,59 @@ func (h *GlobalHandler) GetAnnouncementByID(ctx *fiber.Ctx) (err error) {
 		"data":    res,
 	})
 }
+
+func (h *GlobalHandler) GetAllAgendas(ctx *fiber.Ctx) (err error) {
+	agendas, err := h.globalService.GetAllAgendas()
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to get agendas",
+		})
+	}
+
+	var response []dto.AgendaResponse
+
+	for _, agenda := range agendas {
+		response = append(response, dto.AgendaResponse{
+			ID:           agenda.ID,
+			Title:        agenda.Title,
+			Date:         agenda.Date.Format(time.DateOnly),
+			StartTime:    agenda.StartTime.Format(time.TimeOnly),
+			EndTime:      agenda.EndTime.Format(time.TimeOnly),
+			TypeOfAgenda: agenda.TypeOfAgenda,
+			Location:     agenda.Location,
+			Description:  agenda.Description,
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Agendas fetched successfully",
+		"data":    response,
+	})
+}
+
+func (h *GlobalHandler) GetAgendaByID(ctx *fiber.Ctx) (err error) {
+	agendaID := ctx.Params("agendaID")
+
+	agenda, err := h.globalService.GetAgendaByID(agendaID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to get agenda",
+		})
+	}
+
+	response := dto.AgendaResponse{
+		ID:           agenda.ID,
+		Title:        agenda.Title,
+		Date:         agenda.Date.Format(time.DateOnly),
+		StartTime:    agenda.StartTime.Format(time.TimeOnly),
+		EndTime:      agenda.EndTime.Format(time.TimeOnly),
+		TypeOfAgenda: agenda.TypeOfAgenda,
+		Location:     agenda.Location,
+		Description:  agenda.Description,
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Agenda fetched successfully",
+		"data":    response,
+	})
+}

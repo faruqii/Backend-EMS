@@ -61,7 +61,8 @@ func (t *TeacherHandler) GetAttendanceBySubjectID(ctx *fiber.Ctx) error {
 	for _, attedance := range attendance {
 		res = append(res, dto.AttendanceResponse{
 			ID:              attedance.ID,
-			StudentID:       attedance.Student.Name,
+			StudentID:       attedance.Student.ID,
+			StudentName:     attedance.Student.Name,
 			SubjectID:       attedance.Subject.Name,
 			AttendaceStatus: attedance.AttendaceStatus,
 			AttendaceAt:     attedance.AttendaceAt,
@@ -103,7 +104,8 @@ func (t *TeacherHandler) GetAttendanceByClassID(ctx *fiber.Ctx) error {
 	for _, attedance := range attendance {
 		res = append(res, dto.AttendanceResponse{
 			ID:              attedance.ID,
-			StudentID:       attedance.Student.Name,
+			StudentID:       attedance.Student.ID,
+			StudentName:     attedance.Student.Name,
 			SubjectID:       attedance.Subject.Name,
 			AttendaceStatus: attedance.AttendaceStatus,
 			AttendaceAt:     attedance.AttendaceAt,
@@ -112,6 +114,46 @@ func (t *TeacherHandler) GetAttendanceByClassID(ctx *fiber.Ctx) error {
 
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
 		"message": "success get attendance",
+		"data":    res,
+	})
+}
+
+func (t *TeacherHandler) UpdateAttendance(ctx *fiber.Ctx) error {
+	attendanceID := ctx.Params("attendanceID")
+
+	var req dto.UpdateAttedanceRequest
+	if err := ctx.BodyParser(&req); err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	attendance, err := t.teacherSvc.FindByID(attendanceID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	attendance.AttendaceStatus = req.AttedanceStatus
+	attendance, err = t.teacherSvc.UpdateAttedance(attendance)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	res := dto.AttendanceResponse{
+		ID:              attendance.ID,
+		StudentID:       attendance.Student.ID,
+		StudentName:     attendance.Student.Name,
+		SubjectID:       attendance.Subject.Name,
+		AttendaceStatus: attendance.AttendaceStatus,
+		AttendaceAt:     attendance.AttendaceAt,
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Attendance updated successfully",
 		"data":    res,
 	})
 }

@@ -31,13 +31,17 @@ func (h *TeacherHandler) GetAllLiterations(ctx *fiber.Ctx) (err error) {
 	var res []dto.LiterationResponse
 	for _, literation := range literations {
 		res = append(res, dto.LiterationResponse{
-			ID:          literation.ID,
-			StudentID:   literation.StudentID,
-			Student:     literation.Student.Name,
-			Title:       literation.Title,
-			Description: literation.Description,
-			Documents:   literation.Documents,
-			Feedback:    literation.Feedback,
+			ID:             literation.ID,
+			StudentID:      literation.StudentID,
+			Student:        literation.Student.Name,
+			StudentClassID: literation.Student.Class.ID,
+			StudentClass:   literation.Student.Class.Name,
+			Title:          literation.Title,
+			Description:    literation.Description,
+			Documents:      literation.Documents,
+			Feedback:       literation.Feedback,
+			Point:          literation.Points,
+			Status:         literation.Status,
 		})
 	}
 
@@ -47,7 +51,7 @@ func (h *TeacherHandler) GetAllLiterations(ctx *fiber.Ctx) (err error) {
 	})
 }
 
-func (h *TeacherHandler) UpdateLiterationFeedback(ctx *fiber.Ctx) (err error) {
+func (h *TeacherHandler) Update(ctx *fiber.Ctx) (err error) {
 	literationID := ctx.Params("id") // Get the literation_id parameter
 	var req dto.UpdateLiterationRequest
 	if err := ctx.BodyParser(&req); err != nil {
@@ -56,7 +60,7 @@ func (h *TeacherHandler) UpdateLiterationFeedback(ctx *fiber.Ctx) (err error) {
 		})
 	}
 
-	_, err = h.teacherSvc.UpdateLiterationFeedback(literationID, req.Feedback)
+	_, err = h.teacherSvc.Update(literationID, req.Feedback, req.Point, req.Status)
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Failed to update literation feedback",
@@ -79,13 +83,17 @@ func (h *TeacherHandler) GetLiterationByID(ctx *fiber.Ctx) (err error) {
 	}
 
 	res := dto.LiterationResponse{
-		ID:          literation.ID,
-		StudentID:   literation.StudentID,
-		Student:     literation.Student.Name,
-		Title:       literation.Title,
-		Description: literation.Description,
-		Documents:   literation.Documents,
-		Feedback:    literation.Feedback,
+		ID:             literation.ID,
+		StudentID:      literation.StudentID,
+		Student:        literation.Student.Name,
+		StudentClassID: literation.Student.Class.ID,
+		StudentClass:   literation.Student.Class.Name,
+		Title:          literation.Title,
+		Description:    literation.Description,
+		Documents:      literation.Documents,
+		Feedback:       literation.Feedback,
+		Point:          literation.Points,
+		Status:         literation.Status,
 	}
 
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
@@ -107,13 +115,17 @@ func (h *TeacherHandler) GetLiterationByStudentID(ctx *fiber.Ctx) (err error) {
 	var res []dto.LiterationResponse
 	for _, literation := range literations {
 		res = append(res, dto.LiterationResponse{
-			ID:          literation.ID,
-			StudentID:   literation.StudentID,
-			Student:     literation.Student.Name,
-			Title:       literation.Title,
-			Description: literation.Description,
-			Documents:   literation.Documents,
-			Feedback:    literation.Feedback,
+			ID:             literation.ID,
+			StudentID:      literation.StudentID,
+			Student:        literation.Student.Name,
+			StudentClassID: literation.Student.Class.ID,
+			StudentClass:   literation.Student.Class.Name,
+			Title:          literation.Title,
+			Description:    literation.Description,
+			Documents:      literation.Documents,
+			Feedback:       literation.Feedback,
+			Point:          literation.Points,
+			Status:         literation.Status,
 		})
 	}
 

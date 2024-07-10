@@ -69,14 +69,25 @@ func (h *StudentHandler) GetSubjectMatterBySubjectID(ctx *fiber.Ctx) (err error)
 	}
 
 	var response []dto.SubjectMattterResponse
-
 	for _, subjectMatter := range subjectMatters {
+		responseContent := []dto.SubjectMatterContent{}
+		for _, c := range subjectMatter.Content {
+			responseContent = append(responseContent, dto.SubjectMatterContent{
+				ID:          c.ID,
+				Title:       c.Title,
+				Description: c.Description,
+				Link:        c.Link,
+			})
+		}
+
 		response = append(response, dto.SubjectMattterResponse{
 			ID:          subjectMatter.ID,
 			Subject:     subjectMatter.Subject.Name,
 			Title:       subjectMatter.Title,
 			Description: subjectMatter.Description,
-			Content:     subjectMatter.Content,
+			CreatedAt:  subjectMatter.CreatedAt,
+			UpdatedAt:  subjectMatter.UpdatedAt,
+			Content:     responseContent,
 		})
 	}
 
@@ -96,16 +107,29 @@ func (h *StudentHandler) GetDetailSubjectMatter(ctx *fiber.Ctx) (err error) {
 		})
 	}
 
+	responseContent := []dto.SubjectMatterContent{}
+	for _, c := range subjectMatter.Content {
+		responseContent = append(responseContent, dto.SubjectMatterContent{
+			ID:          c.ID,
+			Title:       c.Title,
+			Description: c.Description,
+			Link:        c.Link,
+		})
+	}
+
 	response := dto.SubjectMattterResponse{
 		ID:          subjectMatter.ID,
 		Subject:     subjectMatter.Subject.Name,
 		Title:       subjectMatter.Title,
 		Description: subjectMatter.Description,
-		Content:     subjectMatter.Content,
+		CreatedAt:  subjectMatter.CreatedAt,
+		UpdatedAt:  subjectMatter.UpdatedAt,
+		Content:     responseContent,
 	}
 
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
 		"message": "success get subject matter",
 		"data":    response,
 	})
+
 }

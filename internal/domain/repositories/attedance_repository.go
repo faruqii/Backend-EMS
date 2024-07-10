@@ -71,15 +71,18 @@ func (r *attendaceRepository) GetMyAttedance(studentID string) ([]entities.Atend
 }
 
 func (r *attendaceRepository) UpdateAttedance(attedance *entities.Atendance) (*entities.Atendance, error) {
-	if err := r.db.Save(attedance).Error; err != nil {
+	// only update status
+	if err := r.db.Model(&entities.Atendance{}).Where("id = ?", attedance.ID).Select("AttendaceStatus").Updates(attedance).Error; err != nil {
 		return nil, err
 	}
+
 	return attedance, nil
 }
 
 func (r *attendaceRepository) FindByID(id string) (*entities.Atendance, error) {
 	var attedance entities.Atendance
-	if err := r.db.Where("id = ?", id).Find(&attedance).Error; err != nil {
+	// preload student and subject
+	if err := r.db.Preload("Student").Preload("Subject").Where("id = ?", id).First(&attedance).Error; err != nil {
 		return nil, err
 	}
 

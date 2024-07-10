@@ -28,6 +28,7 @@ type QuestionRequest struct {
 }
 
 type QuestionBrief struct {
+	ID            string   `json:"id"`
 	Text          string   `json:"text"`
 	Options       []string `json:"options"`
 	CorrectAnswer string   `json:"correct_answer"`

@@ -12,6 +12,7 @@ type StudentAssignmentService interface {
 	SubmitAssignment(assignment *entities.StudentAssignment) error
 	GetAssignment(taskID string) (*entities.StudentAssignment, error)
 	SubmitQuiz(quizAssignment *entities.StudentQuizAssignment) error
+	GetMyQuizAssignment(userID string, subjectID string) ([]entities.StudentQuizAssignment, error)
 }
 
 func (s *studentService) SubmitAssignment(assignment *entities.StudentAssignment) error {
@@ -77,4 +78,20 @@ func (s *studentService) SubmitQuiz(quizAssignment *entities.StudentQuizAssignme
 	}
 
 	return nil
+}
+
+func (s *studentService) GetMyQuizAssignment(userID string, subjectID string) ([]entities.StudentQuizAssignment, error) {
+	// Get student id from token
+	studentID, err := s.tokenRepo.GetStudentIDByUserID(userID)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to get student id", 500)
+	}
+
+	// Get quiz assignment by student id
+	quizAssignments, err := s.assignmentRepo.GetMyQuizAssignment(studentID, subjectID)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to get quiz assignment", 500)
+	}
+
+	return quizAssignments, nil
 }

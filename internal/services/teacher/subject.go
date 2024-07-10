@@ -1,6 +1,8 @@
 package services
 
 import (
+	"fmt"
+
 	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"github.com/Magetan-Boyz/Backend/internal/services"
@@ -12,6 +14,8 @@ type TeacherSubjectService interface {
 	CreateSubjectMatter(subjectMatter *entities.SubjectMattter) error
 	GetSubjectMatterBySubjectID(subjectID string) ([]entities.SubjectMattter, error)
 	GetDetailSubjectMatter(subjectMatterID string) (*entities.SubjectMattter, error)
+	UpdateSubjectMatter(subjectMatterID string, subjectMatter *entities.SubjectMattter) error
+	DeleteSubjectMatter(subjectMatterID string) error
 }
 
 func (s *teacherService) CountStudent(classID, subjectID string) ([]dto.StudentResponse, error) {
@@ -87,6 +91,7 @@ func (s *teacherService) GetMySubjects(userID string) ([]dto.TeacherSubjectsResp
 
 func (s *teacherService) CreateSubjectMatter(subjectMatter *entities.SubjectMattter) error {
 	if err := s.subjectRepo.CreateSubjectMatter(subjectMatter); err != nil {
+		fmt.Println("Service: Error creating subject matter:", err)
 		return services.HandleError(err, "Failed to create subject matter", 500)
 	}
 	return nil
@@ -106,4 +111,18 @@ func (s *teacherService) GetDetailSubjectMatter(subjectMatterID string) (*entiti
 		return nil, services.HandleError(err, "Failed to get subject matter", 500)
 	}
 	return subjectMatter, nil
+}
+
+func (s *teacherService) UpdateSubjectMatter(subjectMatterID string, subjectMatter *entities.SubjectMattter) error {
+	if err := s.subjectRepo.UpdateSubjectMatter(subjectMatterID, subjectMatter); err != nil {
+		return services.HandleError(err, "Failed to update subject matter", 500)
+	}
+	return nil
+}
+
+func (s *teacherService) DeleteSubjectMatter(subjectMatterID string) error {
+	if err := s.subjectRepo.DeleteSubjectMatter(subjectMatterID); err != nil {
+		return services.HandleError(err, "Failed to delete subject matter", 500)
+	}
+	return nil
 }

@@ -9,6 +9,8 @@ type AttedanceService interface {
 	CreateAttedance(attedance *entities.Atendance) (*entities.Atendance, error)
 	GetAttedanceBySubjectID(subjectID string) ([]entities.Atendance, error)
 	GetAttedanceByClassID(classID string) ([]entities.Atendance, error)
+	UpdateAttedance(attedance *entities.Atendance) (*entities.Atendance, error)
+	FindByID(id string) (*entities.Atendance, error)
 }
 
 func (s *teacherService) CreateAttedance(attedance *entities.Atendance) (*entities.Atendance, error) {
@@ -35,4 +37,18 @@ func (s *teacherService) GetAttedanceByClassID(classID string) ([]entities.Atend
 	return attedances, nil
 }
 
+func (s *teacherService) UpdateAttedance(attedance *entities.Atendance) (*entities.Atendance, error) {
+	attedance, err := s.attedanceRepo.UpdateAttedance(attedance)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to update attedance", 500)
+	}
+	return attedance, nil
+}
 
+func (s *teacherService) FindByID(id string) (*entities.Atendance, error) {
+	attedance, err := s.attedanceRepo.FindByID(id)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to fetch attedance", 500)
+	}
+	return attedance, nil
+}

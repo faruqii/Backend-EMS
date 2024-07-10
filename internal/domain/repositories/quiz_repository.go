@@ -19,6 +19,10 @@ type QuizRepository interface {
 	CountQuestion(quizID string) (int64, error)
 	MatchAnswer(quizID string, answer []string) (int64, error)
 	GetQuizType(quizID string) (string, error)
+	Update(quizID string, quiz *entities.Quiz) error
+	Delete(quizID string) error
+	UpdateQuestion(questionID string, question *entities.Question) error
+	DeleteQuestion(questionID string) error
 }
 
 type quizRepository struct {
@@ -174,4 +178,42 @@ func (r *quizRepository) GetQuizType(quizID string) (string, error) {
 		return "", err
 	}
 	return quiz.TypeOfQuiz, nil
+}
+
+func (r *quizRepository) Update(quizID string, quiz *entities.Quiz) error {
+	if err := r.db.Model(&entities.Quiz{}).Where("id = ?", quizID).Updates(quiz).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *quizRepository) Delete(quizID string) error {
+	// Start a transaction
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		// Delete related questions
+		if err := tx.Where("quiz_id = ?", quizID).Delete(&entities.Question{}).Error; err != nil {
+			return err
+		}
+
+		// Delete the quiz
+		if err := tx.Where("id = ?", quizID).Delete(&entities.Quiz{}).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
+}
+
+func (r *quizRepository) UpdateQuestion(questionID string, question *entities.Question) error {
+	if err := r.db.Model(&entities.Question{}).Where("id = ?", questionID).Updates(question).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *quizRepository) DeleteQuestion(questionID string) error {
+	if err := r.db.Where("id = ?", questionID).Delete(&entities.Question{}).Error; err != nil {
+		return err
+	}
+	return nil
 }
