@@ -51,7 +51,7 @@ func initServices(repos *Repositories) *Services {
 			repos.classRepo, repos.subjectRepo,
 			repos.attedanceRepo, repos.achivementRepo,
 			repos.gradeRepo, repos.taskRepo,
-			repos.violationRepo, repos.dispensationRepo),
+			repos.violationRepo, repos.dispensationRepo, repos.literationRepo),
 		globalService: globalSvc.NewGlobalService(repos.announcementRepo, repos.agendaRepo),
 	}
 }
