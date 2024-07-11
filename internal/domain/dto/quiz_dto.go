@@ -54,3 +54,13 @@ type GradeStudentQuizRequest struct {
 	Status string  `json:"status"`
 	Grade  float64 `json:"grade"`
 }
+
+type QuizExportResponse struct {
+	ID          string          `json:"id"`
+	SubjectID   string          `json:"subject_id"`
+	Title       string          `json:"title"`
+	TypeOfQuiz  string          `json:"type_of_quiz"` // Quiz, UTS, UAS
+	Description string          `json:"description"`
+	Deadline    string          `json:"deadline"`
+	Questions   []QuestionBrief `json:"questions"`
+}

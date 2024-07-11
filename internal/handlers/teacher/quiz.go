@@ -398,3 +398,19 @@ func (t *TeacherHandler) GetQuizWithQuestions(ctx *fiber.Ctx) error {
 		"data":    response,
 	})
 }
+
+func (t *TeacherHandler) ExportQuiz(ctx *fiber.Ctx) error {
+	quizID := ctx.Params("quizID")
+
+	// Fetch quiz data
+	quiz, err := t.teacherSvc.GetQuizForExport(quizID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	// Return as JSON file
+	ctx.Response().Header.Set("Content-Disposition", "attachment; filename=quiz.json")
+	return ctx.JSON(quiz)
+}

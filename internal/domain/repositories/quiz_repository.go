@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"github.com/lib/pq"
 	"gorm.io/gorm"
@@ -25,6 +26,7 @@ type QuizRepository interface {
 	DeleteQuestion(questionID string) error
 	AddQuestion(quizID string, question *entities.Question) error
 	GetQuizWithQuestions(quizID string) (*entities.Quiz, error)
+	GetQuizForExport(id string) (*dto.QuizExportResponse, error)
 }
 
 type quizRepository struct {
@@ -258,4 +260,33 @@ func (r *quizRepository) GetQuizWithQuestions(quizID string) (*entities.Quiz, er
 	}
 
 	return &quiz, nil
+}
+
+func (r *quizRepository) GetQuizForExport(id string) (*dto.QuizExportResponse, error) {
+	var quiz entities.Quiz
+	if err := r.db.Preload("Subject").Preload("Questions").Where("id = ?", id).First(&quiz).Error; err != nil {
+		return nil, err
+	}
+
+	// Map to response struct
+	quizResponse := &dto.QuizExportResponse{
+		ID:          quiz.ID,
+		SubjectID:   quiz.SubjectID,
+		Title:       quiz.Title,
+		TypeOfQuiz:  quiz.TypeOfQuiz,
+		Description: quiz.Description,
+		Deadline:    quiz.Deadline,
+	}
+
+	for _, question := range quiz.Questions {
+		questionRes := dto.QuestionBrief{
+			ID:            question.ID,
+			Text:          question.Text,
+			Options:       question.Options,
+			CorrectAnswer: question.CorrectAnswer,
+		}
+		quizResponse.Questions = append(quizResponse.Questions, questionRes)
+	}
+
+	return quizResponse, nil
 }

@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 
+	"github.com/Magetan-Boyz/Backend/internal/domain/dto"
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"github.com/Magetan-Boyz/Backend/internal/services"
 )
@@ -20,6 +21,7 @@ type QuizService interface {
 	AddQuestion(quizID string, question *entities.Question) error
 	GetQuiz(quizID string) (*entities.Quiz, error)
 	GetQuizWithQuestions(quizID string) (*entities.Quiz, error)
+	GetQuizForExport(id string) (*dto.QuizExportResponse, error)
 }
 
 func (s *teacherService) CreateQuiz(quiz *entities.Quiz, questions []entities.Question) error {
@@ -163,6 +165,15 @@ func (s *teacherService) GetQuizWithQuestions(quizID string) (*entities.Quiz, er
 	quiz, err := s.quizRepo.GetQuizWithQuestions(quizID)
 	if err != nil {
 		return nil, services.HandleError(err, "Failed to fetch quiz", 500)
+	}
+
+	return quiz, nil
+}
+
+func (s *teacherService) GetQuizForExport(id string) (*dto.QuizExportResponse, error) {
+	quiz, err := s.quizRepo.GetQuizForExport(id)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to fetch quiz for export", 500)
 	}
 
 	return quiz, nil
