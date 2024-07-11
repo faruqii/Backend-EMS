@@ -24,6 +24,10 @@ func formatTimeWithLocation(t time.Time) string {
 }
 
 func (h *AdminHandler) CreateAnnouncement(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	var req dto.CreateAnnouncementRequest
 	if err := ctx.BodyParser(&req); err != nil {
 		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
@@ -61,6 +65,10 @@ func (h *AdminHandler) CreateAnnouncement(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *AdminHandler) GetAnnouncements(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	announcements, err := h.adminService.GetAnnouncements()
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
@@ -85,6 +93,10 @@ func (h *AdminHandler) GetAnnouncements(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *AdminHandler) GetAnnouncementByID(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	id := ctx.Params("id")
 	announcement, err := h.adminService.GetAnnouncementByID(id)
 	if err != nil {
@@ -107,6 +119,10 @@ func (h *AdminHandler) GetAnnouncementByID(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *AdminHandler) UpdateAnnouncement(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	id := ctx.Params("id")
 	var req dto.UpdateAnnouncementRequest
 	if err := ctx.BodyParser(&req); err != nil {
@@ -148,6 +164,10 @@ func (h *AdminHandler) UpdateAnnouncement(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *AdminHandler) DeleteAnnouncement(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	id := ctx.Params("id")
 
 	err = h.adminService.DeleteAnnouncement(id)

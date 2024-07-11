@@ -11,6 +11,9 @@ import (
 )
 
 func (h *AdminHandler) CreateClass(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 
 	var req dto.CreateClassRequest
 
@@ -45,6 +48,10 @@ func (h *AdminHandler) CreateClass(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *AdminHandler) AssignHomeroomTeacher(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	classID := ctx.Params("id")
 
 	class, err := h.adminService.FindClassByID(classID)
@@ -89,6 +96,9 @@ func (h *AdminHandler) AssignHomeroomTeacher(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *AdminHandler) GetAllClass(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 
 	classes, err := h.adminService.GetAllClass()
 
@@ -115,6 +125,10 @@ func (h *AdminHandler) GetAllClass(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *AdminHandler) UpdateTeacherHomeroomStatus(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	teacherID := ctx.Params("id")
 
 	req := dto.UpdateTeacherStatusRequest{}
@@ -138,6 +152,10 @@ func (h *AdminHandler) UpdateTeacherHomeroomStatus(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *AdminHandler) GetClassSchedule(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	classID := ctx.Params("id")
 
 	classExist, err := h.adminService.ClassExists(classID)
@@ -182,6 +200,10 @@ func (h *AdminHandler) GetClassSchedule(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *AdminHandler) GetAllStudentsBelongToClass(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	classID := ctx.Params("id")
 
 	students, err := h.adminService.GetAllStudentsBelongToClass(classID)
@@ -206,6 +228,10 @@ func (h *AdminHandler) GetAllStudentsBelongToClass(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *AdminHandler) RemoveStudentsFromClass(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	classID := ctx.Params("id")
 
 	err = h.adminService.RemoveStudentsFromClass(classID)

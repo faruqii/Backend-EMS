@@ -11,6 +11,9 @@ import (
 )
 
 func (c *AdminHandler) CreateTeacher(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 
 	var req dto.TeacherRequest
 
@@ -51,6 +54,9 @@ func (c *AdminHandler) CreateTeacher(ctx *fiber.Ctx) (err error) {
 }
 
 func (c *AdminHandler) GetAllTeacher(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 
 	teachers, err := c.adminService.GetAllTeacher()
 
@@ -78,6 +84,10 @@ func (c *AdminHandler) GetAllTeacher(ctx *fiber.Ctx) (err error) {
 }
 
 func (c *AdminHandler) AssignTeacherToSubject(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	subjectID := ctx.Params("id")
 
 	var req dto.TeacherSubjectRequest
@@ -101,6 +111,10 @@ func (c *AdminHandler) AssignTeacherToSubject(ctx *fiber.Ctx) (err error) {
 }
 
 func (c *AdminHandler) GetTeachersBySubjectID(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	subjectID := ctx.Params("id")
 
 	teachers, err := c.adminService.GetTeachersBySubjectID(subjectID)
@@ -117,6 +131,10 @@ func (c *AdminHandler) GetTeachersBySubjectID(ctx *fiber.Ctx) (err error) {
 }
 
 func (c *AdminHandler) GetTeacherSubjects(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	teacherID := ctx.Params("id")
 
 	subjects, err := c.adminService.GetTeacherSubjects(teacherID)
@@ -133,6 +151,10 @@ func (c *AdminHandler) GetTeacherSubjects(ctx *fiber.Ctx) (err error) {
 }
 
 func (c *AdminHandler) CreateTeacherAccountFromCsv(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	file, err := ctx.FormFile("file")
 	if err != nil {
 		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
@@ -190,6 +212,10 @@ func (c *AdminHandler) CreateTeacherAccountFromCsv(ctx *fiber.Ctx) (err error) {
 }
 
 func (c *AdminHandler) GetTeachersByClassAndSubject(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	classID := ctx.Query("classID")
 	subjectID := ctx.Query("subjectID")
 

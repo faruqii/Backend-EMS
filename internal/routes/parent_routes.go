@@ -11,7 +11,7 @@ func ParentRoutes(router fiber.Router, teacherSvc service.ParentService, mw *mid
 	parentController := handlers.NewParentHandler(teacherSvc, *mw)
 
 	parentControllerRoutes := router.Group("/parent")
-	parentControllerRoutes.Use(mw.Authenticate(), mw.Authorization("parent"))
+	parentControllerRoutes.Use(mw.Authenticate(), mw.Authorization("parent"), middleware.TestMode())
 
 	parentScheduleControllerRoutes := parentControllerRoutes.Group("/schedule")
 	parentScheduleControllerRoutes.Get("", parentController.GetSchedule)

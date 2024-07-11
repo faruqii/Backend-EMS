@@ -9,6 +9,10 @@ import (
 )
 
 func (h *ParentHandler) GetStudentDispensations(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	userID := ctx.Locals("user").(string)
 
 	dispensations, err := h.parentService.GetStudentDispensations(userID)
@@ -40,6 +44,10 @@ func (h *ParentHandler) GetStudentDispensations(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *ParentHandler) GetStudentDispensationByID(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	dispensationID := ctx.Params("dispensationID")
 
 	dispensation, err := h.parentService.GetStudentDispensationByID(dispensationID)

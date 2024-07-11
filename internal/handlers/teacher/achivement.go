@@ -8,6 +8,10 @@ import (
 )
 
 func (h *TeacherHandler) GetAllAchivement(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	achivements, err := h.teacherSvc.GetAllAchivement()
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
@@ -37,6 +41,10 @@ func (h *TeacherHandler) GetAllAchivement(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *TeacherHandler) GetAchivementByID(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	achivementID := ctx.Params("id")
 
 	achivement, err := h.teacherSvc.GetAchivementByID(achivementID)
@@ -65,6 +73,10 @@ func (h *TeacherHandler) GetAchivementByID(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *TeacherHandler) GetAllAchivementByStudentID(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	studentID := ctx.Params("id")
 
 	achivements, err := h.teacherSvc.GetAllAchivementByStudentID(studentID)
@@ -96,6 +108,10 @@ func (h *TeacherHandler) GetAllAchivementByStudentID(ctx *fiber.Ctx) (err error)
 }
 
 func (h *TeacherHandler) UpdateAchievement(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	achievementID := ctx.Params("id")
 
 	var req dto.UpdateAchivementRequest
@@ -129,6 +145,10 @@ func (h *TeacherHandler) UpdateAchievement(ctx *fiber.Ctx) error {
 }
 
 func (h *TeacherHandler) DeleteAchivement(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	achivementID := ctx.Params("id")
 
 	err = h.teacherSvc.DeleteAchivement(achivementID)

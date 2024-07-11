@@ -9,6 +9,10 @@ import (
 )
 
 func (h *ParentHandler) GetTask(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	userID := ctx.Locals("user").(string)
 
 	task, err := h.parentService.GetTask(userID)

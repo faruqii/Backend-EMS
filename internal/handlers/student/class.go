@@ -8,6 +8,10 @@ import (
 )
 
 func (h *StudentHandler) GetClass(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	userID := ctx.Locals("user").(string)
 
 	class, err := h.studentService.MyClass(userID)
@@ -30,6 +34,10 @@ func (h *StudentHandler) GetClass(ctx *fiber.Ctx) error {
 }
 
 func (h *StudentHandler) GetSubjects(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	userID := ctx.Locals("user").(string)
 
 	subjects, err := h.studentService.MySubjects(userID)

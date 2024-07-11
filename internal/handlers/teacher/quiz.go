@@ -13,6 +13,9 @@ import (
 )
 
 func (t *TeacherHandler) CreateQuiz(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 
 	classID := ctx.Params("classID")
 	if classID == "" {
@@ -80,6 +83,9 @@ func (t *TeacherHandler) CreateQuiz(ctx *fiber.Ctx) error {
 }
 
 func (t *TeacherHandler) GetQuiz(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	userID := ctx.Locals("user").(string)
 
 	quiz, err := t.teacherSvc.GetQuizByTeacherID(userID)
@@ -123,6 +129,9 @@ func (t *TeacherHandler) GetQuiz(ctx *fiber.Ctx) error {
 }
 
 func (t *TeacherHandler) GetAllQuizAssignment(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	quizID := ctx.Params("quizID")
 	if quizID == "" {
 		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
@@ -157,6 +166,9 @@ func (t *TeacherHandler) GetAllQuizAssignment(ctx *fiber.Ctx) error {
 }
 
 func (t *TeacherHandler) GradeStudentQuiz(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	quizAssignmentID := ctx.Params("quizAssignmentID")
 	if quizAssignmentID == "" {
 		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
@@ -184,6 +196,9 @@ func (t *TeacherHandler) GradeStudentQuiz(ctx *fiber.Ctx) error {
 }
 
 func (t *TeacherHandler) GetStudentQuizAssignmentAnswer(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	quizAssignmentID := ctx.Params("quizAssignmentID")
 	if quizAssignmentID == "" {
 		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
@@ -229,6 +244,9 @@ func (t *TeacherHandler) GetStudentQuizAssignmentAnswer(ctx *fiber.Ctx) error {
 }
 
 func (t *TeacherHandler) UpdateQuiz(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	quizID := ctx.Params("quizID")
 	if quizID == "" {
 		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
@@ -263,6 +281,9 @@ func (t *TeacherHandler) UpdateQuiz(ctx *fiber.Ctx) error {
 }
 
 func (t *TeacherHandler) DeleteQuiz(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	quizID := ctx.Params("quizID")
 	if quizID == "" {
 		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
@@ -283,6 +304,9 @@ func (t *TeacherHandler) DeleteQuiz(ctx *fiber.Ctx) error {
 }
 
 func (t *TeacherHandler) UpdateQuizQuestion(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	questionID := ctx.Params("questionID")
 	if questionID == "" {
 		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
@@ -316,6 +340,9 @@ func (t *TeacherHandler) UpdateQuizQuestion(ctx *fiber.Ctx) error {
 }
 
 func (t *TeacherHandler) AddQuestion(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	quizID := ctx.Params("quizID")
 	if quizID == "" {
 		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
@@ -358,6 +385,9 @@ func (t *TeacherHandler) AddQuestion(ctx *fiber.Ctx) error {
 }
 
 func (t *TeacherHandler) GetQuizWithQuestions(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	quizID := ctx.Params("quizID")
 	if quizID == "" {
 		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
@@ -402,6 +432,9 @@ func (t *TeacherHandler) GetQuizWithQuestions(ctx *fiber.Ctx) error {
 }
 
 func (t *TeacherHandler) ExportQuiz(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	quizID := ctx.Params("quizID")
 
 	// Fetch quiz data
@@ -418,6 +451,9 @@ func (t *TeacherHandler) ExportQuiz(ctx *fiber.Ctx) error {
 }
 
 func (t *TeacherHandler) ImportQuiz(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	file, err := ctx.FormFile("file")
 	if err != nil {
 		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{

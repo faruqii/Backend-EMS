@@ -9,6 +9,10 @@ import (
 )
 
 func (h *StudentHandler) CreateAchivement(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	userID := ctx.Locals("user").(string)
 
 	var req dto.AchivementRequest
@@ -40,6 +44,10 @@ func (h *StudentHandler) CreateAchivement(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *StudentHandler) GetMyAchievements(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	userID := ctx.Locals("user").(string)
 
 	achivements, err := h.studentService.GetMyAchievements(userID)

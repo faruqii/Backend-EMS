@@ -9,6 +9,9 @@ import (
 )
 
 func (h *TeacherHandler) GetDispenpationByID(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	dispensationID := ctx.Params("dispensationID")
 
 	dispensation, err := h.teacherSvc.GetDispensationByID(dispensationID)
@@ -36,6 +39,9 @@ func (h *TeacherHandler) GetDispenpationByID(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *TeacherHandler) GetAllDispensations(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	dispensations, err := h.teacherSvc.GetAllDispensations()
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
@@ -64,6 +70,9 @@ func (h *TeacherHandler) GetAllDispensations(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *TeacherHandler) GetDispensationsByStudentID(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	studentID := ctx.Params("studentID")
 
 	dispensations, err := h.teacherSvc.GetDispensationsByStudentID(studentID)
@@ -94,6 +103,9 @@ func (h *TeacherHandler) GetDispensationsByStudentID(ctx *fiber.Ctx) (err error)
 }
 
 func (h *TeacherHandler) UpdateDispensationStatus(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	dispensationID := ctx.Params("dispensationID")
 	var req dto.DispensationUpdateRequest
 	if err := ctx.BodyParser(&req); err != nil {

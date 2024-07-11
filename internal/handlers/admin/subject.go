@@ -10,7 +10,7 @@ import (
 
 func (c *AdminHandler) CreateSubject(ctx *fiber.Ctx) (err error) {
 	if ctx.Locals("testMode").(bool) {
-		return ctx.JSON(fiber.Map{"message": "Test mode: subject not created"})
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
 	}
 
 	req := dto.SubjectRequest{}
@@ -49,6 +49,9 @@ func (c *AdminHandler) CreateSubject(ctx *fiber.Ctx) (err error) {
 }
 
 func (c *AdminHandler) GetAllSubject(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 
 	subjects, err := c.adminService.GetAllSubject()
 
@@ -76,6 +79,10 @@ func (c *AdminHandler) GetAllSubject(ctx *fiber.Ctx) (err error) {
 }
 
 func (c *AdminHandler) AssignSubjectToClass(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	classID := ctx.Params("id")
 
 	var req dto.AssignSubjectToClassRequest
@@ -99,6 +106,10 @@ func (c *AdminHandler) AssignSubjectToClass(ctx *fiber.Ctx) (err error) {
 }
 
 func (c *AdminHandler) GetClassesSubjectsAndTeachers(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	classPrefix := ctx.Query("classPrefix")
 	subjectID := ctx.Query("subjectID")
 

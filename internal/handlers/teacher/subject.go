@@ -10,6 +10,9 @@ import (
 )
 
 func (h *TeacherHandler) CountStudent(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	classID := ctx.Params("classID")
 	subjectID := ctx.Params("subjectID")
 
@@ -27,6 +30,9 @@ func (h *TeacherHandler) CountStudent(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *TeacherHandler) GetMySubjects(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	userID := ctx.Locals("user").(string)
 
 	subjects, err := h.teacherSvc.GetMySubjects(userID)
@@ -43,6 +49,9 @@ func (h *TeacherHandler) GetMySubjects(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *TeacherHandler) CreateSubjectMatter(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	subjectID := ctx.Params("subjectID")
 
 	var req dto.SubjectMattterRequest
@@ -101,6 +110,9 @@ func (h *TeacherHandler) CreateSubjectMatter(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *TeacherHandler) GetSubjectMatterBySubjectID(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	subjectID := ctx.Params("subjectID")
 
 	subjectMatters, err := h.teacherSvc.GetSubjectMatterBySubjectID(subjectID)
@@ -140,6 +152,9 @@ func (h *TeacherHandler) GetSubjectMatterBySubjectID(ctx *fiber.Ctx) (err error)
 }
 
 func (h *TeacherHandler) GetDetailSubjectMatter(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	subjectMatterID := ctx.Params("subjectMatterID")
 
 	subjectMatter, err := h.teacherSvc.GetDetailSubjectMatter(subjectMatterID)
@@ -176,6 +191,9 @@ func (h *TeacherHandler) GetDetailSubjectMatter(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *TeacherHandler) UpdateSubjectMatter(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	subjectMatterID := ctx.Params("subjectMatterID")
 
 	var req dto.SubjectMattterRequest
@@ -202,9 +220,9 @@ func (h *TeacherHandler) UpdateSubjectMatter(ctx *fiber.Ctx) (err error) {
 	for _, c := range req.Content {
 		content = append(content, entities.SubjectMatterContent{
 			SubjectMatterID: subjectMatter.ID,
-			Title:       c.Title,
-			Description: c.Description,
-			Link:        c.Link,
+			Title:           c.Title,
+			Description:     c.Description,
+			Link:            c.Link,
 		})
 	}
 	subjectMatter.Content = content
@@ -221,6 +239,9 @@ func (h *TeacherHandler) UpdateSubjectMatter(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *TeacherHandler) DeleteSubjectMatter(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	subjectMatterID := ctx.Params("subjectMatterID")
 
 	if err := h.teacherSvc.DeleteSubjectMatter(subjectMatterID); err != nil {

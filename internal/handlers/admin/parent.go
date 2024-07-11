@@ -11,6 +11,10 @@ import (
 )
 
 func (c *AdminHandler) CreateParentAccount(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	var req dto.ParentRequest
 	if err = ctx.BodyParser(&req); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -54,6 +58,10 @@ func (c *AdminHandler) CreateParentAccount(ctx *fiber.Ctx) (err error) {
 }
 
 func (c *AdminHandler) AssignParentToStudent(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	var req dto.ParentStudentRequest
 	if err = ctx.BodyParser(&req); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -80,6 +88,10 @@ func (c *AdminHandler) AssignParentToStudent(ctx *fiber.Ctx) (err error) {
 }
 
 func (c *AdminHandler) CreateParentAccountFromCsv(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	file, err := ctx.FormFile("file")
 	if err != nil {
 		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
@@ -140,6 +152,10 @@ func (c *AdminHandler) CreateParentAccountFromCsv(ctx *fiber.Ctx) (err error) {
 }
 
 func (c *AdminHandler) GetParents(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	parents, err := c.adminService.GetAll()
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{

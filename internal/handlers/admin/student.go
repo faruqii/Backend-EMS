@@ -12,6 +12,9 @@ import (
 )
 
 func (c *AdminHandler) CreateStudent(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 
 	var req dto.StudentRequest
 
@@ -55,6 +58,10 @@ func (c *AdminHandler) CreateStudent(ctx *fiber.Ctx) (err error) {
 }
 
 func (c *AdminHandler) GetAllStudents(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	students, err := c.adminService.GetAllStudents()
 
 	if err != nil {
@@ -92,6 +99,10 @@ func (c *AdminHandler) GetAllStudents(ctx *fiber.Ctx) (err error) {
 }
 
 func (c *AdminHandler) InsertStudentToClass(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	classID := ctx.Params("id")
 
 	var req dto.InsertStudentToClass
@@ -118,6 +129,10 @@ func (c *AdminHandler) InsertStudentToClass(ctx *fiber.Ctx) (err error) {
 }
 
 func (c *AdminHandler) CreateStudentAccountFromCsv(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	file, err := ctx.FormFile("file")
 	if err != nil {
 		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
@@ -191,6 +206,10 @@ func (c *AdminHandler) CreateStudentAccountFromCsv(ctx *fiber.Ctx) error {
 }
 
 func (c *AdminHandler) RemoveStudentFromClass(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	studentID := ctx.Params("id")
 
 	err = c.adminService.RemoveStudentFromClass(studentID)

@@ -12,6 +12,10 @@ import (
 )
 
 func (h *StudentHandler) GetQuiz(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	userID := ctx.Locals("user").(string)
 
 	quiz, err := h.studentService.GetQuiz(userID)
@@ -43,6 +47,10 @@ func (h *StudentHandler) GetQuiz(ctx *fiber.Ctx) error {
 }
 
 func (h *StudentHandler) GetQuizQuestions(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	quizID := ctx.Params("quizID")
 	page, _ := strconv.Atoi(ctx.Query("page", "1"))          // Default to page 1 if not specified
 	pageSize, _ := strconv.Atoi(ctx.Query("pageSize", "10")) // Default to 10 items per page if not specified
@@ -88,6 +96,10 @@ func (h *StudentHandler) GetQuizQuestions(ctx *fiber.Ctx) error {
 }
 
 func (h *StudentHandler) SubmitQuizAnswer(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	userID := ctx.Locals("user").(string)
 	quizID := ctx.Params("quizID")
 
@@ -116,6 +128,10 @@ func (h *StudentHandler) SubmitQuizAnswer(ctx *fiber.Ctx) error {
 }
 
 func (h *StudentHandler) GetMyQuizGrade(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	userID := ctx.Locals("user").(string)
 	quizID := ctx.Params("quizID")
 
@@ -144,6 +160,10 @@ func (h *StudentHandler) GetMyQuizGrade(ctx *fiber.Ctx) error {
 }
 
 func (h *StudentHandler) GetMyQuizGrades(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	userID := ctx.Locals("user").(string)
 	subjectID := ctx.Query("subjectID")
 

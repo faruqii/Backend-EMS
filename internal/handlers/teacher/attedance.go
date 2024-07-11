@@ -10,6 +10,9 @@ import (
 )
 
 func (t *TeacherHandler) CreateAttendance(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	subjectID := ctx.Params("subjectID")
 
 	var req dto.CreateAttendanceRequest
@@ -36,7 +39,7 @@ func (t *TeacherHandler) CreateAttendance(ctx *fiber.Ctx) error {
 	res := dto.AttendanceResponse{
 		ID:              attendance.ID,
 		StudentID:       attendance.StudentID,
-		StudentName: 	 attendance.Student.Name,
+		StudentName:     attendance.Student.Name,
 		SubjectID:       attendance.SubjectID,
 		AttendaceStatus: attendance.AttendaceStatus,
 		AttendaceAt:     attendance.AttendaceAt,
@@ -49,6 +52,9 @@ func (t *TeacherHandler) CreateAttendance(ctx *fiber.Ctx) error {
 }
 
 func (t *TeacherHandler) GetAttendanceBySubjectID(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	subjectID := ctx.Params("subjectID")
 
 	attendance, err := t.teacherSvc.GetAttedanceBySubjectID(subjectID)
@@ -77,6 +83,9 @@ func (t *TeacherHandler) GetAttendanceBySubjectID(ctx *fiber.Ctx) error {
 }
 
 func (t *TeacherHandler) GetAttendanceByClassID(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	user := ctx.Locals("user").(string)
 	classID := ctx.Params("classID")
 
@@ -120,6 +129,9 @@ func (t *TeacherHandler) GetAttendanceByClassID(ctx *fiber.Ctx) error {
 }
 
 func (t *TeacherHandler) UpdateAttendance(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	attendanceID := ctx.Params("attendanceID")
 
 	var req dto.UpdateAttedanceRequest

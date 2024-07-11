@@ -7,6 +7,9 @@ import (
 )
 
 func (h *TeacherHandler) InsertGrade(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	subjectID := ctx.Params("subjectID")
 	if subjectID == "" {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -57,6 +60,9 @@ func (h *TeacherHandler) InsertGrade(ctx *fiber.Ctx) error {
 }
 
 func (h *TeacherHandler) GetGradeByID(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	gradeID := ctx.Params("gradeID")
 	if gradeID == "" {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -94,6 +100,9 @@ func (h *TeacherHandler) GetGradeByID(ctx *fiber.Ctx) error {
 }
 
 func (h *TeacherHandler) GetAllGradeByStudentID(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	studentID := ctx.Params("studentID")
 	if studentID == "" {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -134,6 +143,9 @@ func (h *TeacherHandler) GetAllGradeByStudentID(ctx *fiber.Ctx) error {
 }
 
 func (h *TeacherHandler) GetAllGradeBySubjectID(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	subjectID := ctx.Params("subjectID")
 	if subjectID == "" {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -174,6 +186,9 @@ func (h *TeacherHandler) GetAllGradeBySubjectID(ctx *fiber.Ctx) error {
 }
 
 func (h *TeacherHandler) GetAllGrade(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	semester := ctx.Query("semester")
 	academicYear := ctx.Query("academicYear")
 

@@ -10,6 +10,9 @@ import (
 )
 
 func (t *TeacherHandler) GetTodaySchedule(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	token := ctx.Locals("user").(string)
 
 	teacher, err := t.teacherSvc.GetTeacherIDByUserID(token)
@@ -47,6 +50,9 @@ func (t *TeacherHandler) GetTodaySchedule(ctx *fiber.Ctx) error {
 }
 
 func (t *TeacherHandler) GetAllTeacherSchedule(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	token := ctx.Locals("user").(string)
 
 	teacher, err := t.teacherSvc.GetTeacherIDByUserID(token)

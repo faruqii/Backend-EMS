@@ -10,6 +10,10 @@ import (
 )
 
 func (h *StudentHandler) GetTask(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	userID := ctx.Locals("user").(string)
 
 	task, err := h.studentService.GetTask(userID)
@@ -44,6 +48,10 @@ func (h *StudentHandler) GetTask(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *StudentHandler) SubmitTaskAssignment(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	taskID := ctx.Params("id")
 	userID := ctx.Locals("user").(string)
 
@@ -94,6 +102,10 @@ func (h *StudentHandler) SubmitTaskAssignment(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *StudentHandler) GetAssignment(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	taskID := ctx.Params("id")
 
 	assignment, err := h.studentService.GetAssignment(taskID)

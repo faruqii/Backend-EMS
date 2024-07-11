@@ -9,6 +9,9 @@ import (
 )
 
 func (h *TeacherHandler) GetAllLiterations(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	classID := ctx.Query("classID") // Get the class_id query parameter
 
 	var literations []entities.Literation
@@ -52,6 +55,9 @@ func (h *TeacherHandler) GetAllLiterations(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *TeacherHandler) Update(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	literationID := ctx.Params("id") // Get the literation_id parameter
 	var req dto.UpdateLiterationRequest
 	if err := ctx.BodyParser(&req); err != nil {
@@ -73,6 +79,9 @@ func (h *TeacherHandler) Update(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *TeacherHandler) GetLiterationByID(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	literationID := ctx.Params("id") // Get the literation_id parameter
 
 	literation, err := h.teacherSvc.GetLiterationByID(literationID)
@@ -103,6 +112,9 @@ func (h *TeacherHandler) GetLiterationByID(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *TeacherHandler) GetLiterationByStudentID(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	studentID := ctx.Params("id") // Get the student_id parameter
 
 	literations, err := h.teacherSvc.GetLiterationByStudentID(studentID)

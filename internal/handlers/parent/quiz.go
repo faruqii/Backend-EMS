@@ -9,6 +9,10 @@ import (
 )
 
 func (h *ParentHandler) GetQuizAssignment(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	userID := ctx.Locals("user").(string)
 
 	quiz, err := h.parentService.GetQuizAssignment(userID)

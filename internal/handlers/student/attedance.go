@@ -8,6 +8,10 @@ import (
 )
 
 func (h *StudentHandler) MyAttedance(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	userID := ctx.Locals("user").(string)
 
 	attedance, err := h.studentService.MyAttedance(userID)

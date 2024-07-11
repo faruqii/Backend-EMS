@@ -8,6 +8,9 @@ import (
 )
 
 func (h *TeacherHandler) GetAllStudentByClass(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	classID := ctx.Params("classID")
 
 	students, err := h.teacherSvc.GetAllStudentByClass(classID)

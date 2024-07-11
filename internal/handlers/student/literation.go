@@ -9,6 +9,10 @@ import (
 )
 
 func (h *StudentHandler) InsertLiteration(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	userID := ctx.Locals("user").(string)
 
 	var req dto.LiterationRequest
@@ -49,6 +53,10 @@ func (h *StudentHandler) InsertLiteration(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *StudentHandler) GetLiterationByID(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	literationID := ctx.Params("id")
 
 	literation, err := h.studentService.GetLiterationByID(literationID)
@@ -77,6 +85,10 @@ func (h *StudentHandler) GetLiterationByID(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *StudentHandler) GetLiterationByStudentID(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	userID := ctx.Locals("user").(string)
 
 	studentID, err := h.studentService.GetStudentIDByUserID(userID)

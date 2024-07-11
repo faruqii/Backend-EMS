@@ -12,6 +12,10 @@ import (
 )
 
 func (c *AdminHandler) CreateSchedule(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	var req dto.CreateScheduleRequest
 
 	if err = ctx.BodyParser(&req); err != nil {
@@ -114,6 +118,10 @@ func (c *AdminHandler) CreateSchedule(ctx *fiber.Ctx) (err error) {
 }
 
 func (c *AdminHandler) GetSchedules(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	schedules, err := c.adminService.GetAllSchedule()
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
@@ -143,6 +151,10 @@ func (c *AdminHandler) GetSchedules(ctx *fiber.Ctx) (err error) {
 }
 
 func (c *AdminHandler) UpdateSchedule(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	id := ctx.Params("id")
 
 	var req dto.CreateScheduleRequest
@@ -206,6 +218,10 @@ func (c *AdminHandler) UpdateSchedule(ctx *fiber.Ctx) (err error) {
 }
 
 func (c *AdminHandler) DeleteSchedule(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	id := ctx.Params("id")
 
 	err = c.adminService.DeleteSchedule(id)

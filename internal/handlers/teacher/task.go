@@ -10,6 +10,9 @@ import (
 )
 
 func (t *TeacherHandler) CreateTask(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	token := ctx.Locals("user").(string)
 
 	teacherID, err := t.teacherSvc.GetTeacherIDByUserID(token)
@@ -91,6 +94,9 @@ func (t *TeacherHandler) CreateTask(ctx *fiber.Ctx) (err error) {
 }
 
 func (t *TeacherHandler) GetAllTask(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	userID := ctx.Locals("user").(string)
 
 	task, err := t.teacherSvc.GetAllTasks(userID)
@@ -126,6 +132,9 @@ func (t *TeacherHandler) GetAllTask(ctx *fiber.Ctx) (err error) {
 }
 
 func (t *TeacherHandler) GetAllStudentAssignment(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	taskID := ctx.Params("taskID")
 
 	studentAssignments, err := t.teacherSvc.GetStudentTaskAssignment(taskID)
@@ -156,6 +165,9 @@ func (t *TeacherHandler) GetAllStudentAssignment(ctx *fiber.Ctx) (err error) {
 }
 
 func (t *TeacherHandler) UpdateStudentTaskAssignment(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	assignmentID := ctx.Params("assignmentID")
 
 	var req dto.UpdateStudentTaskAssignmentRequest
@@ -178,6 +190,9 @@ func (t *TeacherHandler) UpdateStudentTaskAssignment(ctx *fiber.Ctx) (err error)
 }
 
 func (t *TeacherHandler) GetStudentTaskAssignmentDetail(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	assignmentID := ctx.Params("assignmentID")
 
 	studentAssignment, err := t.teacherSvc.GetStudentTaskAssignmentDetail(assignmentID)
@@ -204,6 +219,9 @@ func (t *TeacherHandler) GetStudentTaskAssignmentDetail(ctx *fiber.Ctx) (err err
 }
 
 func (t *TeacherHandler) GetTask(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	taskID := ctx.Params("taskID")
 
 	task, err := t.teacherSvc.GetTask(taskID)
@@ -234,6 +252,9 @@ func (t *TeacherHandler) GetTask(ctx *fiber.Ctx) (err error) {
 }
 
 func (t *TeacherHandler) UpdateTask(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	taskID := ctx.Params("taskID")
 
 	var req dto.TaskRequest
@@ -303,6 +324,9 @@ func (t *TeacherHandler) UpdateTask(ctx *fiber.Ctx) (err error) {
 }
 
 func (t *TeacherHandler) DeleteTask(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	taskID := ctx.Params("taskID")
 
 	err = t.teacherSvc.DeleteTask(taskID)

@@ -8,6 +8,10 @@ import (
 )
 
 func (h *StudentHandler) GetSubjectByClassID(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	classID := ctx.Params("classID")
 
 	subjects, err := h.studentService.GetSubjectsByClassID(classID)
@@ -35,6 +39,10 @@ func (h *StudentHandler) GetSubjectByClassID(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *StudentHandler) GetDetailSubject(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	subjectID := ctx.Params("subjectID")
 
 	subject, err := h.studentService.GetDetailSubject(subjectID)
@@ -59,6 +67,10 @@ func (h *StudentHandler) GetDetailSubject(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *StudentHandler) GetSubjectMatterBySubjectID(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	subjectID := ctx.Params("subjectID")
 
 	subjectMatters, err := h.studentService.GetSubjectMatterBySubjectID(subjectID)
@@ -85,8 +97,8 @@ func (h *StudentHandler) GetSubjectMatterBySubjectID(ctx *fiber.Ctx) (err error)
 			Subject:     subjectMatter.Subject.Name,
 			Title:       subjectMatter.Title,
 			Description: subjectMatter.Description,
-			CreatedAt:  subjectMatter.CreatedAt,
-			UpdatedAt:  subjectMatter.UpdatedAt,
+			CreatedAt:   subjectMatter.CreatedAt,
+			UpdatedAt:   subjectMatter.UpdatedAt,
 			Content:     responseContent,
 		})
 	}
@@ -98,6 +110,10 @@ func (h *StudentHandler) GetSubjectMatterBySubjectID(ctx *fiber.Ctx) (err error)
 }
 
 func (h *StudentHandler) GetDetailSubjectMatter(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	subjectMatterID := ctx.Params("subjectMatterID")
 
 	subjectMatter, err := h.studentService.GetDetailSubjectMatter(subjectMatterID)
@@ -122,8 +138,8 @@ func (h *StudentHandler) GetDetailSubjectMatter(ctx *fiber.Ctx) (err error) {
 		Subject:     subjectMatter.Subject.Name,
 		Title:       subjectMatter.Title,
 		Description: subjectMatter.Description,
-		CreatedAt:  subjectMatter.CreatedAt,
-		UpdatedAt:  subjectMatter.UpdatedAt,
+		CreatedAt:   subjectMatter.CreatedAt,
+		UpdatedAt:   subjectMatter.UpdatedAt,
 		Content:     responseContent,
 	}
 

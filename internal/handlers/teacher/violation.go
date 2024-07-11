@@ -10,6 +10,9 @@ import (
 )
 
 func (h *TeacherHandler) CreateViolation(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	var req dto.ViolationRequest
 	if err = ctx.BodyParser(&req); err != nil {
 		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
@@ -54,6 +57,9 @@ func (h *TeacherHandler) CreateViolation(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *TeacherHandler) GetAllViolation(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	violations, err := h.teacherSvc.GetAllViolation()
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
@@ -82,6 +88,9 @@ func (h *TeacherHandler) GetAllViolation(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *TeacherHandler) GetViolationByID(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	id := ctx.Params("id")
 	violation, err := h.teacherSvc.GetViolationByID(id)
 	if err != nil {
@@ -108,6 +117,9 @@ func (h *TeacherHandler) GetViolationByID(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *TeacherHandler) GetViolationByStudentID(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	studentID := ctx.Params("student_id")
 	violations, err := h.teacherSvc.GetViolationByStudentID(studentID)
 	if err != nil {

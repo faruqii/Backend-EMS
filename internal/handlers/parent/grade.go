@@ -9,6 +9,10 @@ import (
 )
 
 func (h *ParentHandler) GetGradeByID(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	gradeID := ctx.Params("gradeID")
 
 	grade, err := h.parentService.GetGradeByID(gradeID)
@@ -41,6 +45,10 @@ func (h *ParentHandler) GetGradeByID(ctx *fiber.Ctx) error {
 }
 
 func (h *ParentHandler) GetStudentGrades(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	userID := ctx.Locals("user").(string)
 	parentID, err := h.parentService.GetParentIDByUserID(userID)
 	if err != nil {

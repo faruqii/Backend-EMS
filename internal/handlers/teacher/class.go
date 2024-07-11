@@ -8,6 +8,9 @@ import (
 )
 
 func (h *TeacherHandler) GetWhereIamTeachTheClass(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	user := ctx.Locals("user").(string)
 
 	class, err := h.teacherSvc.GetWhereIamTeachTheClass(user)
@@ -35,6 +38,9 @@ func (h *TeacherHandler) GetWhereIamTeachTheClass(ctx *fiber.Ctx) error {
 }
 
 func (h *TeacherHandler) GetStudents(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	classID := ctx.Params("classID")
 
 	students, err := h.teacherSvc.GetAllStudents(classID)
@@ -71,6 +77,9 @@ func (h *TeacherHandler) GetStudents(ctx *fiber.Ctx) error {
 }
 
 func (h *TeacherHandler) GetWhereIamHomeroomTeacherinClass(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
 	user := ctx.Locals("user").(string)
 
 	class, err := h.teacherSvc.GetWhereIamHomeroomTeacher(user)

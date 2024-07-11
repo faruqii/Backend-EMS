@@ -10,6 +10,10 @@ import (
 )
 
 func (h *StudentHandler) GetSchedule(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	userID := ctx.Locals("user").(string)
 
 	schedules, err := h.studentService.GetScedule(userID)

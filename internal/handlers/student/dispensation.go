@@ -10,6 +10,10 @@ import (
 )
 
 func (h *StudentHandler) CreateDispensation(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	userID := ctx.Locals("user").(string)
 
 	var req dto.DispensationRequest
@@ -57,6 +61,10 @@ func (h *StudentHandler) CreateDispensation(ctx *fiber.Ctx) (err error) {
 
 // Get Dispensation By ID
 func (h *StudentHandler) GetDispensationByID(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	dispensationID := ctx.Params("dispensationID")
 
 	dispensation, err := h.studentService.GetDispenpationByID(dispensationID)
@@ -85,6 +93,10 @@ func (h *StudentHandler) GetDispensationByID(ctx *fiber.Ctx) (err error) {
 
 // Get My Dispensations
 func (h *StudentHandler) GetMyDispensations(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	userID := ctx.Locals("user").(string)
 
 	dispensations, err := h.studentService.GetMyDispensations(userID)

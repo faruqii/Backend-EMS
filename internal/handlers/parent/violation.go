@@ -9,6 +9,10 @@ import (
 )
 
 func (h *ParentHandler) GetStudentViolation(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	userID := ctx.Locals("user").(string)
 	violations, err := h.parentService.GetStudentViolation(userID)
 	if err != nil {
@@ -39,6 +43,10 @@ func (h *ParentHandler) GetStudentViolation(ctx *fiber.Ctx) (err error) {
 }
 
 func (h *ParentHandler) GetViolationByID(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	id := ctx.Params("id")
 	violation, err := h.parentService.GetViolationByID(id)
 	if err != nil {

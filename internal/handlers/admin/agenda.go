@@ -10,6 +10,10 @@ import (
 )
 
 func (h *AdminHandler) CreateAgenda(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	var req dto.CreateAgendaRequest
 
 	if err := ctx.BodyParser(&req); err != nil {
@@ -72,6 +76,10 @@ func (h *AdminHandler) CreateAgenda(ctx *fiber.Ctx) error {
 }
 
 func (h *AdminHandler) UpdateAgenda(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	agendaID := ctx.Params("agendaID")
 
 	if agendaID == "" {
@@ -148,6 +156,10 @@ func (h *AdminHandler) UpdateAgenda(ctx *fiber.Ctx) error {
 }
 
 func (h *AdminHandler) DeleteAgenda(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	agendaID := ctx.Params("agendaID")
 
 	if agendaID == "" {
@@ -169,6 +181,10 @@ func (h *AdminHandler) DeleteAgenda(ctx *fiber.Ctx) error {
 }
 
 func (h *AdminHandler) GetAgendaByID(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	agendaID := ctx.Params("agendaID")
 
 	if agendaID == "" {
@@ -203,6 +219,10 @@ func (h *AdminHandler) GetAgendaByID(ctx *fiber.Ctx) error {
 }
 
 func (h *AdminHandler) GetAllAgenda(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
 	agendas, err := h.adminService.GetAllAgendas()
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
