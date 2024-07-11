@@ -32,6 +32,7 @@ func TeacherRoutes(router fiber.Router, teacherService services.TeacherService, 
 	teacherQuizControllerRoutes.Get("", teacherController.GetQuiz)
 	teacherQuizControllerRoutes.Get("/:quizID", teacherController.GetQuizWithQuestions)
 	teacherQuizControllerRoutes.Get("/:quizID/export", teacherController.ExportQuiz)
+	teacherQuizControllerRoutes.Post("/:classID/import", teacherController.ImportQuiz)
 	teacherQuizControllerRoutes.Get("/:quizID/assignment", teacherController.GetAllQuizAssignment)
 	teacherQuizControllerRoutes.Put("/:quizAssignmentID/grade", teacherController.GradeStudentQuiz)
 	teacherQuizControllerRoutes.Get("/assignment/:quizAssignmentID", teacherController.GetStudentQuizAssignmentAnswer)
