@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"time"
 
@@ -413,4 +415,97 @@ func (t *TeacherHandler) ExportQuiz(ctx *fiber.Ctx) error {
 	// Return as JSON file
 	ctx.Response().Header.Set("Content-Disposition", "attachment; filename=quiz.json")
 	return ctx.JSON(quiz)
+}
+
+func (t *TeacherHandler) ImportQuiz(ctx *fiber.Ctx) error {
+	file, err := ctx.FormFile("file")
+	if err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Failed to get file",
+		})
+	}
+
+	// Open the file
+	f, err := file.Open()
+	if err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Failed to open file",
+		})
+	}
+	defer f.Close()
+
+	// Read the file content
+	fileBytes, err := io.ReadAll(f)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to read file",
+		})
+	}
+
+	// Parse JSON content
+	var quizExport dto.QuizExportResponse
+	err = json.Unmarshal(fileBytes, &quizExport)
+	if err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Failed to parse JSON",
+		})
+	}
+
+	// Extract classID and teacherID from query params
+	classID := ctx.Params("classID")
+	if classID == "" {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Class ID is required",
+		})
+	}
+
+	subjectID := quizExport.SubjectID
+	if subjectID == "" {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Subject ID is required",
+		})
+	}
+
+	userID := ctx.Locals("user").(string)
+
+	teacherID, err := t.teacherSvc.GetTeacherIDByUserID(userID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	// Convert dto.QuizExportResponse to entities.Quiz
+	var questions []entities.Question
+	for _, q := range quizExport.Questions {
+		question := entities.Question{
+			Text:          q.Text,
+			Options:       q.Options,
+			CorrectAnswer: q.CorrectAnswer,
+		}
+		questions = append(questions, question)
+	}
+
+	quiz := entities.Quiz{
+		ClassID:     classID,
+		SubjectID:   subjectID,
+		TeacherID:   teacherID,
+		Title:       quizExport.Title,
+		TypeOfQuiz:  quizExport.TypeOfQuiz,
+		Description: quizExport.Description,
+		Deadline:    quizExport.Deadline,
+		Questions:   questions,
+	}
+
+	// Save quiz to the database
+	err = t.teacherSvc.CreateQuiz(&quiz, questions)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.Status(http.StatusCreated).JSON(fiber.Map{
+		"message": "Quiz imported successfully",
+	})
 }
