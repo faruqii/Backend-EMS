@@ -11,7 +11,7 @@ func StudentRoutes(router fiber.Router, studentSvc services.StudentService, mw *
 	student := handlers.NewStudentHandler(studentSvc, *mw)
 
 	studentRoutes := router.Group("/student")
-	studentRoutes.Use(mw.Authenticate(), mw.Authorization("student"))
+	studentRoutes.Use(mw.Authenticate(), mw.Authorization("student"), middleware.TestMode())
 
 	studentProfileRoutes := studentRoutes.Group("/profile")
 	studentProfileRoutes.Get("", student.MyProfile)

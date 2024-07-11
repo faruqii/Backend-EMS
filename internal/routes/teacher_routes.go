@@ -11,7 +11,7 @@ func TeacherRoutes(router fiber.Router, teacherService services.TeacherService, 
 	teacherController := handlers.NewTeacherHandler(teacherService, *mw)
 
 	teacherControllerRoutes := router.Group("/teacher")
-	teacherControllerRoutes.Use(mw.Authenticate(), mw.Authorization("teacher"))
+	teacherControllerRoutes.Use(mw.Authenticate(), mw.Authorization("teacher"), middleware.TestMode())
 
 	teacherScheduleControllerRoutes := teacherControllerRoutes.Group("/schedule")
 	teacherScheduleControllerRoutes.Get("/today", teacherController.GetTodaySchedule)
