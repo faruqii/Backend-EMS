@@ -69,3 +69,25 @@ func (h *TeacherHandler) GetStudents(ctx *fiber.Ctx) error {
 		"data":    response,
 	})
 }
+
+func (h *TeacherHandler) GetWhereIamHomeroomTeacherinClass(ctx *fiber.Ctx) error {
+	user := ctx.Locals("user").(string)
+
+	class, err := h.teacherSvc.GetWhereIamHomeroomTeacher(user)
+	if err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	res := dto.ClassResponse{
+		ID:              class.ID,
+		Name:            class.Name,
+		HomeRoomTeacher: class.HomeRoomTeacher.Name,
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "success get class",
+		"data":    res,
+	})
+}

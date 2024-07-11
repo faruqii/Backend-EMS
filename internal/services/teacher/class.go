@@ -9,6 +9,7 @@ type TeacherClassService interface {
 	GetWhereIamTeachTheClass(userID string) ([]entities.ClassSubject, error)
 	IsIamHomeroomTeacher(userID string, classID string) (bool, error)
 	GetAllStudents(classID string) ([]entities.Student, error)
+	GetWhereIamHomeroomTeacher(userID string) (*entities.Class, error)
 }
 
 func (s *teacherService) GetWhereIamTeachTheClass(userID string) ([]entities.ClassSubject, error) {
@@ -46,4 +47,18 @@ func (s *teacherService) GetAllStudents(classID string) ([]entities.Student, err
 	}
 
 	return students, nil
+}
+
+func (s *teacherService) GetWhereIamHomeroomTeacher(userID string) (*entities.Class, error) {
+	teacherID, err := s.tokenRepo.GetTeacherIDByUserID(userID)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to fetch teacher", 500)
+	}
+
+	class, err := s.classRepo.GetWhereIamHomeroomTeacherinClass(teacherID)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to fetch class", 500)
+	}
+
+	return class, nil
 }

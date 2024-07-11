@@ -19,6 +19,7 @@ type ClassRepository interface {
 	IsTeacherHomeRoomTeacher(teacherID, classID string) (bool, error)
 	RemoveStudentsFromClass(classID string) error
 	GetClassesByPrefix(name string) ([]entities.Class, error)
+	GetWhereIamHomeroomTeacherinClass(teacherID string) (*entities.Class, error)
 }
 
 type classRepository struct {
@@ -129,4 +130,12 @@ func (r *classRepository) GetClassesByPrefix(name string) ([]entities.Class, err
 		return nil, err
 	}
 	return classes, nil
+}
+
+func (r *classRepository) GetWhereIamHomeroomTeacherinClass(teacherID string) (*entities.Class, error) {
+	var classes entities.Class
+	if err := r.db.Preload("HomeRoomTeacher").Where("home_room_teacher_id = ?", teacherID).First(&classes).Error; err != nil {
+		return nil, err
+	}
+	return &classes, nil
 }
