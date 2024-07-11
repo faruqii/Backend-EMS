@@ -32,6 +32,14 @@ type MiddlewareError struct {
 	StatusCode int
 }
 
+func TestMode() fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		testMode := c.Query("test") == "true" || c.Get("X-Test-Mode") == "true"
+		c.Locals("testMode", testMode)
+		return c.Next()
+	}
+}
+
 // Authenticate middleware checks if the user is authenticated and sets user data in context locals
 func (m *Middleware) Authenticate() fiber.Handler {
 	return func(c *fiber.Ctx) error {

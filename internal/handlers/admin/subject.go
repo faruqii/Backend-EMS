@@ -9,6 +9,9 @@ import (
 )
 
 func (c *AdminHandler) CreateSubject(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "Test mode: subject not created"})
+	}
 
 	req := dto.SubjectRequest{}
 

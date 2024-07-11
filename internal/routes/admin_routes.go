@@ -11,7 +11,7 @@ func AdminRoutes(router fiber.Router, adminSvc services.AdminService, mw *middle
 	admin := handlers.NewAdminHandler(adminSvc, *mw)
 
 	adminRoutes := router.Group("/admin")
-	adminRoutes.Use(mw.Authenticate(), mw.Authorization("admin")) // Apply middleware here
+	adminRoutes.Use(mw.Authenticate(), mw.Authorization("admin"), middleware.TestMode()) // Apply middleware here
 
 	// Subject routes
 	subRoutes := adminRoutes.Group("/subjects")
