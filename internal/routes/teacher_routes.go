@@ -55,6 +55,7 @@ func TeacherRoutes(router fiber.Router, teacherService services.TeacherService, 
 
 	teacherClassRoutes := teacherControllerRoutes.Group("/class")
 	teacherClassRoutes.Get("", teacherController.GetWhereIamTeachTheClass)
+	teacherClassRoutes.Get("/homeroom", teacherController.GetWhereIamHomeroomTeacherinClass)
 	teacherClassRoutes.Get("/:classID/attendance", teacherController.GetAttendanceByClassID)
 	teacherClassRoutes.Get("/:classID/students", teacherController.GetStudents)
 
