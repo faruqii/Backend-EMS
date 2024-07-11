@@ -25,6 +25,7 @@ func (h *StudentHandler) GetSubjectByClassID(ctx *fiber.Ctx) (err error) {
 
 	for _, subject := range subjects {
 		response = append(response, dto.ClassSubjectResponse{
+			ClassID: 	 subject.Class.ID,
 			ClassName:   subject.Class.Name,
 			SubjectID:   subject.Subject.ID,
 			SubjectName: subject.Subject.Name,
