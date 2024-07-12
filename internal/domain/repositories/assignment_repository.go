@@ -1,6 +1,9 @@
 package repositories
 
 import (
+	"errors"
+	"log"
+
 	"github.com/Magetan-Boyz/Backend/internal/domain/entities"
 	"gorm.io/gorm"
 )
@@ -24,7 +27,6 @@ type AssignmentRepository interface {
 	GetMyQuizAssignment(studentID string, subjectID string) ([]entities.StudentQuizAssignment, error)
 	GetStudentQuizAssignmentAnswer(quizAssignmentID string) ([]entities.StudentQuizAssignment, error)
 	UpdateTaskSubmission(assignmentID string, assignment *entities.StudentAssignment) error
-	
 }
 
 type assignmentRepository struct {
@@ -178,10 +180,22 @@ func (r *assignmentRepository) GetStudentQuizAssignmentAnswer(quizAssignmentID s
 }
 
 func (r *assignmentRepository) UpdateTaskSubmission(assignmentID string, assignment *entities.StudentAssignment) error {
-	return r.db.Model(&entities.StudentAssignment{}).
+	log.Printf("Updating submission for assignmentID: %s with submission: %s", assignmentID, assignment.Submission)
+	result := r.db.Model(&entities.StudentAssignment{}).
 		Where("id = ?", assignmentID).
 		Select("Submission"). // Only update this field
-		Updates(assignment).Error
+		Updates(assignment)
+
+	if result.Error != nil {
+		log.Printf("Error updating submission: %v", result.Error)
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		log.Printf("No rows were affected, assignmentID might be incorrect: %s", assignmentID)
+		return errors.New("no rows were affected")
+	}
+
+	log.Printf("Rows affected: %d", result.RowsAffected)
+	return nil
 }
-
-
