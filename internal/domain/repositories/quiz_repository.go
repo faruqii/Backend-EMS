@@ -18,7 +18,7 @@ type QuizRepository interface {
 	GetQuizBySubjectID(subjectID string) (*entities.Quiz, error)
 	GetQuizByTeacherID(teacherID string) ([]entities.Quiz, error)
 	CountQuestion(quizID string) (int64, error)
-	MatchAnswer(quizID string, answer []string) (int64, error)
+	MatchAnswer(quizID string, answer []string) (int, error)
 	GetQuizType(quizID string) (string, error)
 	Update(quizID string, quiz *entities.Quiz) error
 	Delete(quizID string) error
