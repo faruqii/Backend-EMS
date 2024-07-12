@@ -146,34 +146,19 @@ func (r *quizRepository) CountQuestion(quizID string) (int64, error) {
 	return count, nil
 }
 
-func (r *quizRepository) MatchAnswer(quizID string, answers []string) (int64, error) {
-	var correctAnswers int64
-
-	// Fetch all questions for the given quiz ID
+func (r *quizRepository) MatchAnswer(quizID string, answers []string) (int, error) {
 	var questions []entities.Question
-	if err := r.db.Model(&entities.Question{}).
-		Where("quiz_id = ?", quizID).
-		Find(&questions).Error; err != nil {
+	if err := r.db.Where("quiz_id = ?", quizID).Find(&questions).Error; err != nil {
 		return 0, err
 	}
 
-	// Create a map to store correct answers for each question ID
-	correctAnswerMap := make(map[string]string)
-	for _, question := range questions {
-		correctAnswerMap[question.ID] = question.CorrectAnswer
-	}
-
-	// Loop through submitted answers and check against correct answers
-	for _, submittedAnswer := range answers {
-		for _, question := range questions {
-			if submittedAnswer == correctAnswerMap[question.ID] {
-				correctAnswers++
-				break
-			}
+	correctCount := 0
+	for i, question := range questions {
+		if i < len(answers) && question.CorrectAnswer == answers[i] {
+			correctCount++
 		}
 	}
-
-	return correctAnswers, nil
+	return correctCount, nil
 }
 
 func (r *quizRepository) GetQuizType(quizID string) (string, error) {
