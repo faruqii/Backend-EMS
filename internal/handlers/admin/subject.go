@@ -170,13 +170,18 @@ func (c *AdminHandler) UpdateSubject(ctx *fiber.Ctx) (err error) {
 		})
 	}
 
-	subject := entities.Subject{
-		Name:        req.Name,
-		Description: req.Description,
-		Semester:    req.Semester,
+	subject, err := c.adminService.FindSubjectByID(subjectID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
 	}
 
-	err = c.adminService.UpdateSubject(subjectID, &subject)
+	subject.Name = req.Name
+	subject.Description = req.Description
+	subject.Semester = req.Semester
+
+	err = c.adminService.UpdateSubject(subject.ID, subject)
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
