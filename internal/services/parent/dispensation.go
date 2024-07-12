@@ -8,6 +8,7 @@ import (
 type ParentStudentDispensationService interface {
 	GetStudentDispensations(userID string) ([]entities.Dispensation, error)
 	GetStudentDispensationByID(dispensationID string) (*entities.Dispensation, error)
+	CreateStudentDispensation(userID string, dispensation *entities.Dispensation) (*entities.Dispensation, error)
 }
 
 func (s *parentService) GetStudentDispensations(userID string) ([]entities.Dispensation, error) {
@@ -33,6 +34,26 @@ func (s *parentService) GetStudentDispensationByID(dispensationID string) (*enti
 	dispensation, err := s.dispensationRepo.GetDispensationByID(dispensationID)
 	if err != nil {
 		return nil, services.HandleError(err, "Failed to get dispensation", 500)
+	}
+
+	return dispensation, nil
+}
+
+func (s *parentService) CreateStudentDispensation(userID string, dispensation *entities.Dispensation) (*entities.Dispensation, error) {
+	parentID, err := s.tokenRepo.GetParentIDByUserID(userID)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to get parent", 500)
+	}
+
+	studentID, err := s.parentRepo.GetStudentIDByParentID(parentID)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to get student", 500)
+	}
+
+	dispensation.StudentID = studentID
+	dispensation, err = s.dispensationRepo.InsertDispensation(dispensation)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to create dispensation", 500)
 	}
 
 	return dispensation, nil
