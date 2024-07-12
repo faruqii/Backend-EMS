@@ -101,7 +101,12 @@ func (s *studentService) GetMyQuizAssignment(userID string, subjectID string) ([
 
 func (s *studentService) UpdateTaskSubmission(assignmentID string, assignment *entities.StudentAssignment) error {
 	// check if the deadline has passed
-	task, err := s.taskRepo.GetTask(assignment.TaskID)
+	assignment, err := s.assignmentRepo.FindByID(assignmentID)
+	if err != nil {
+		return services.HandleError(err, "Failed to find assignment", 500)
+	}
+
+	task, err := s.taskRepo.GetTask(assignment.Task.ID)
 	if err != nil {
 		return services.HandleError(err, "Failed to get task", 500)
 	}

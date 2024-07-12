@@ -24,6 +24,7 @@ type AssignmentRepository interface {
 	GetMyQuizAssignment(studentID string, subjectID string) ([]entities.StudentQuizAssignment, error)
 	GetStudentQuizAssignmentAnswer(quizAssignmentID string) ([]entities.StudentQuizAssignment, error)
 	UpdateTaskSubmission(assignmentID string, assignment *entities.StudentAssignment) error
+	
 }
 
 type assignmentRepository struct {
@@ -182,3 +183,5 @@ func (r *assignmentRepository) UpdateTaskSubmission(assignmentID string, assignm
 		Select("Submission"). // Only update this field
 		Updates(assignment).Error
 }
+
+
