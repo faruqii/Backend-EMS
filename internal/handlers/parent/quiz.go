@@ -26,8 +26,10 @@ func (h *ParentHandler) GetQuizAssignment(ctx *fiber.Ctx) error {
 	for _, q := range quiz {
 		response = append(response, dto.StudentQuizAssignmentResponse{
 			ID:          q.ID,
+			QuizID:      q.Quiz.ID,
 			QuizName:    q.Quiz.Title,
 			StudentName: q.Student.Name,
+			NISN:        q.Student.NISN,
 			Grade:       q.Grade,
 			Status:      q.Status,
 			SubmitAt:    q.SubmitAt.Format(time.DateTime),
