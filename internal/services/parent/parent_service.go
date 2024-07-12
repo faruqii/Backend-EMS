@@ -14,6 +14,7 @@ type ParentService interface {
 	ParentStudentDispensationService
 	ParentStudentAttedanceService
 	ParentStudentLiterationService
+	ParentProfileService
 }
 
 type parentService struct {

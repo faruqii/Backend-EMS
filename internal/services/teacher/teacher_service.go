@@ -18,6 +18,7 @@ type TeacherService interface {
 	TeacherStudentLiterationService
 	TeacherViolationService
 	TeacherStudentService
+	TeacherProfileService
 }
 
 type teacherService struct {

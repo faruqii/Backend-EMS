@@ -12,6 +12,7 @@ type TeacherRepository interface {
 	Update(teacher *entities.Teacher) error
 	Delete(id string) error
 	GetAll() ([]entities.Teacher, error)
+	GetMyProfile(id string) (*entities.Teacher, error)
 }
 
 // teacherRepository is a concrete implementation of TeacherRepository.
@@ -78,4 +79,14 @@ func (r *teacherRepository) GetAll() ([]entities.Teacher, error) {
 		return nil, err
 	}
 	return teachers, nil
+}
+
+// GetMyProfile retrieves a teacher's profile.
+func (r *teacherRepository) GetMyProfile(id string) (*entities.Teacher, error) {
+	// preload user too
+	var teacher entities.Teacher
+	if err := r.db.Preload("User").Where("id = ?", id).First(&teacher).Error; err != nil {
+		return nil, err
+	}
+	return &teacher, nil
 }

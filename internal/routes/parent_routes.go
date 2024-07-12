@@ -48,4 +48,7 @@ func ParentRoutes(router fiber.Router, teacherSvc service.ParentService, mw *mid
 	parentLiterationRoutes.Get("", parentController.GetStudentLiterations)
 	parentLiterationRoutes.Get("/:literationID", parentController.GetStudentLiterationDetail)
 
+	parentProfileRoutes := parentControllerRoutes.Group("/profile")
+	parentProfileRoutes.Get("", parentController.GetMyProfile)
+
 }

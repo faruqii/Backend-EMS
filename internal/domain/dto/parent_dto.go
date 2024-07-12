@@ -29,3 +29,14 @@ type ParentStudentResponse struct {
 	ParentID  string `json:"parent_id"`
 	StudentID string `json:"student_id"`
 }
+
+type ParentProfileResponse struct {
+	ID          string `json:"id"`
+	UserID      string `json:"user_id"`
+	Username    string `json:"username"`
+	Name        string `json:"name"`
+	Address     string `json:"address"`
+	Occupation  string `json:"occupation"`
+	PhoneNumber string `json:"phone_number"`
+	Email       string `json:"email"`
+}

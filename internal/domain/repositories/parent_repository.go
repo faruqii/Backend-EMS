@@ -16,6 +16,7 @@ type ParentRepository interface {
 	GetStudentIDByParentID(parentID string) (string, error)
 	GetAll() ([]dto.ParentResponse, error)
 	GetMyStudents(parentID string) ([]entities.ParentStudent, error)
+	GetMyProfile(id string) (*entities.Parent, error)
 }
 
 type parentRepository struct {
@@ -100,4 +101,13 @@ func (r *parentRepository) GetMyStudents(parentID string) ([]entities.ParentStud
 		return nil, err
 	}
 	return parstuds, nil
+}
+
+func (r *parentRepository) GetMyProfile(id string) (*entities.Parent, error) {
+	// preload user too
+	parent := new(entities.Parent)
+	if err := r.db.Preload("User").Where("id = ?", id).First(parent).Error; err != nil {
+		return nil, err
+	}
+	return parent, nil
 }
