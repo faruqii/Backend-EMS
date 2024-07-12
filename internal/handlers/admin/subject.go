@@ -155,6 +155,47 @@ func (c *AdminHandler) GetClassesSubjectsAndTeachers(ctx *fiber.Ctx) (err error)
 	})
 }
 
+func (c *AdminHandler) UpdateSubject(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
+	subjectID := ctx.Params("subjectID")
+
+	var req dto.SubjectRequest
+
+	if err = ctx.BodyParser(&req); err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	subject := entities.Subject{
+		Name:        req.Name,
+		Description: req.Description,
+		Semester:    req.Semester,
+	}
+
+	err = c.adminService.UpdateSubject(subjectID, &subject)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	response := dto.SubjectResponse{
+		ID:          subject.ID,
+		Name:        subject.Name,
+		Description: subject.Description,
+		Semester:    subject.Semester,
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Subject updated successfully",
+		"data":    response,
+	})
+}
+
 // Helper function to check if the entry already exists in the data slice
 // func contains(data []fiber.Map, entry fiber.Map) bool {
 // 	for _, item := range data {

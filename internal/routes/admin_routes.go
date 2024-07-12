@@ -16,6 +16,7 @@ func AdminRoutes(router fiber.Router, adminSvc services.AdminService, mw *middle
 	// Subject routes
 	subRoutes := adminRoutes.Group("/subjects")
 	subRoutes.Post("/create", admin.CreateSubject)
+	subRoutes.Put("/:subjectID/update", admin.UpdateSubject)
 	subRoutes.Get("/all", admin.GetAllSubject)
 	subRoutes.Post("/:id/assign-teacher", admin.AssignTeacherToSubject)
 	subRoutes.Get("/:id/teachers", admin.GetTeachersBySubjectID)

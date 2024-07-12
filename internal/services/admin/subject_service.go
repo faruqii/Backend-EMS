@@ -14,6 +14,7 @@ type AdminSubjectService interface {
 	GetClassesByPrefix(classPrefix string) ([]dto.ClassResponse, error)
 	GetSubjectsByClassPrefix(classPrefix string) ([]dto.SubjectResponse, error)
 	GetClassSubjectsByPrefixAndSubject(classPrefix string, subjectID string) ([]entities.ClassSubject, error)
+	UpdateSubject(subjectID string, subject *entities.Subject) error
 }
 
 func (s *adminService) CreateSubject(subject *entities.Subject) error {
@@ -74,4 +75,20 @@ func (s *adminService) GetSubjectsByClassPrefix(classPrefix string) ([]dto.Subje
 // AdminService.go
 func (s *adminService) GetClassSubjectsByPrefixAndSubject(classPrefix string, subjectID string) ([]entities.ClassSubject, error) {
 	return s.subjectRepo.GetClassSubjectsByPrefixAndSubject(classPrefix, subjectID)
+}
+
+func (s *adminService) UpdateSubject(subjectID string, subject *entities.Subject) error {
+	// find subject by id
+	_, err := s.subjectRepo.FindByID(subjectID)
+	if err != nil {
+		return services.HandleError(err, "Failed to fetch subject", 500)
+	}
+
+	// update subject
+	err = s.subjectRepo.Update(subjectID, subject)
+	if err != nil {
+		return services.HandleError(err, "Failed to update subject", 500)
+	}
+
+	return nil
 }
