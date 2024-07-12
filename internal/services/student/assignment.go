@@ -99,7 +99,7 @@ func (s *studentService) GetMyQuizAssignment(userID string, subjectID string) ([
 	return quizAssignments, nil
 }
 
-func (s *studentService) UpdateTaskSubmission(assignmentID string, assignment *entities.StudentAssignment) error {
+func (s *studentService) UpdateTaskSubmission(assignmentID string, studentAssignment *entities.StudentAssignment) error {
 	// check if the deadline has passed
 	assignment, err := s.assignmentRepo.FindByID(assignmentID)
 	if err != nil {
