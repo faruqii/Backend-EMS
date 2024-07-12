@@ -256,6 +256,14 @@ func (t *TeacherHandler) UpdateTask(ctx *fiber.Ctx) (err error) {
 		return ctx.JSON(fiber.Map{"message": "DB still the same"})
 	}
 	taskID := ctx.Params("taskID")
+	user := ctx.Locals("user").(string)
+
+	teacherID, err := t.teacherSvc.GetTeacherIDByUserID(user)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
 
 	var req dto.TaskRequest
 	if err = ctx.BodyParser(&req); err != nil {
@@ -281,6 +289,7 @@ func (t *TeacherHandler) UpdateTask(ctx *fiber.Ctx) (err error) {
 	task := entities.Task{
 		ClassID:     req.ClassID,
 		SubjectID:   req.SubjectID,
+		TeacherID:   teacherID,
 		Title:       req.Title,
 		TypeOfTask:  req.TypeOfTask,
 		Description: req.Description,

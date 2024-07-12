@@ -130,3 +130,33 @@ func (h *StudentHandler) GetAssignment(ctx *fiber.Ctx) (err error) {
 		"data":    response,
 	})
 }
+
+func (h *StudentHandler) UpdateTaskSubmission(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
+	assignmentID := ctx.Params("assignmentID")
+
+	var req dto.StudentUpdateAssignmentRequest
+	if err = ctx.BodyParser(&req); err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	asssignment := entities.StudentAssignment{
+		Submission: req.Submission,
+	}
+
+	err = h.studentService.UpdateTaskSubmission(assignmentID, &asssignment)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Student assignment updated successfully",
+	})
+}

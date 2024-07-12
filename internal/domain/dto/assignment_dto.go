@@ -6,6 +6,10 @@ type StudentAssignmentRequest struct {
 	Submission string `json:"submission"`
 }
 
+type StudentUpdateAssignmentRequest struct {
+	Submission string `json:"submission"`
+}
+
 type StudentAssignmentResponse struct {
 	ID         string    `json:"id"`
 	Task       string    `json:"task"`

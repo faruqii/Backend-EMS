@@ -23,6 +23,7 @@ type AssignmentRepository interface {
 	GradeStudentQuiz(quizAssignmentID string, status string, grade float64) error
 	GetMyQuizAssignment(studentID string, subjectID string) ([]entities.StudentQuizAssignment, error)
 	GetStudentQuizAssignmentAnswer(quizAssignmentID string) ([]entities.StudentQuizAssignment, error)
+	UpdateTaskSubmission(assignmentID string, assignment *entities.StudentAssignment) error
 }
 
 type assignmentRepository struct {
@@ -175,3 +176,9 @@ func (r *assignmentRepository) GetStudentQuizAssignmentAnswer(quizAssignmentID s
 	return assignments, nil
 }
 
+func (r *assignmentRepository) UpdateTaskSubmission(assignmentID string, assignment *entities.StudentAssignment) error {
+	return r.db.Model(&entities.StudentAssignment{}).
+		Where("id = ?", assignmentID).
+		Select("Submission"). // Only update this field
+		Updates(assignment).Error
+}

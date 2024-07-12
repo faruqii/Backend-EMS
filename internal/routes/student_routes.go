@@ -30,6 +30,7 @@ func StudentRoutes(router fiber.Router, studentSvc services.StudentService, mw *
 	studentTaskRoutes.Get("", student.GetTask)
 	studentTaskRoutes.Post("/:id/assignment", student.SubmitTaskAssignment)
 	studentTaskRoutes.Get("/:id/assignment", student.GetAssignment)
+	studentTaskRoutes.Put("/assignment/:assignmentID/update", student.UpdateTaskSubmission)
 
 	studentScheduleRoutes := studentRoutes.Group("/schedule")
 	studentScheduleRoutes.Get("", student.GetSchedule)

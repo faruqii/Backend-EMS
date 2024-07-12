@@ -13,6 +13,7 @@ type StudentAssignmentService interface {
 	GetAssignment(taskID string) (*entities.StudentAssignment, error)
 	SubmitQuiz(quizAssignment *entities.StudentQuizAssignment) error
 	GetMyQuizAssignment(userID string, subjectID string) ([]entities.StudentQuizAssignment, error)
+	UpdateTaskSubmission(assignmentID string, assignment *entities.StudentAssignment) error
 }
 
 func (s *studentService) SubmitAssignment(assignment *entities.StudentAssignment) error {
@@ -96,4 +97,23 @@ func (s *studentService) GetMyQuizAssignment(userID string, subjectID string) ([
 	}
 
 	return quizAssignments, nil
+}
+
+func (s *studentService) UpdateTaskSubmission(assignmentID string, assignment *entities.StudentAssignment) error {
+	// check if the deadline has passed
+	task, err := s.taskRepo.GetTask(assignment.TaskID)
+	if err != nil {
+		return services.HandleError(err, "Failed to get task", 500)
+	}
+
+	if time.Now().After(task.Deadline) {
+		return services.HandleError(nil, "The deadline has passed", 400)
+	}
+
+	// Update the assignment
+	if err := s.assignmentRepo.UpdateTaskSubmission(assignmentID, assignment); err != nil {
+		return services.HandleError(err, "Failed to update assignment", 500)
+	}
+
+	return nil
 }
