@@ -54,17 +54,19 @@ func (s *studentService) SubmitQuiz(quizAssignment *entities.StudentQuizAssignme
 	// Check quiz type
 	if quizType == "Multiple Choice" {
 		totalQuestions, err := s.quizRepo.CountQuestion(quizAssignment.QuizID)
-		log.Println(totalQuestions)
 		if err != nil {
 			return services.HandleError(err, "Failed to count questions", 500)
 		}
+		log.Printf("Total Questions: %d\n", totalQuestions)
 
 		correctAnswers, err := s.quizRepo.MatchAnswer(quizAssignment.QuizID, quizAssignment.Answers)
 		if err != nil {
 			return services.HandleError(err, "Failed to match answers", 500)
 		}
+		log.Printf("Correct Answers: %d\n", correctAnswers)
 
 		grade := float64(correctAnswers) / float64(totalQuestions) * 100
+		log.Printf("Calculated Grade: %f\n", grade)
 		quizAssignment.Grade = grade
 
 	} else if quizType == "Essay" {
