@@ -116,7 +116,7 @@ func (s *studentService) UpdateTaskSubmission(assignmentID string, studentAssign
 	}
 
 	// Update the assignment
-	if err := s.assignmentRepo.UpdateTaskSubmission(assignmentID, assignment); err != nil {
+	if err := s.assignmentRepo.UpdateTaskSubmission(assignmentID, studentAssignment); err != nil {
 		return services.HandleError(err, "Failed to update assignment", 500)
 	}
 
