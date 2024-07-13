@@ -237,3 +237,23 @@ func (c *AdminHandler) GetTeachersByClassAndSubject(ctx *fiber.Ctx) (err error) 
 		"data":    teachers,
 	})
 }
+
+func (c *AdminHandler) RemoveTeacherFromSubject(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
+	subjectID := ctx.Params("subjectID")
+	teacherID := ctx.Params("teacherID")
+
+	err = c.adminService.RemoveTeacherFromSubject(teacherID, subjectID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Teacher removed from subject successfully",
+	})
+}

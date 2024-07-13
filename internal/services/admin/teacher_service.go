@@ -19,6 +19,7 @@ type AdminTeacherService interface {
 	UpdateTeacherHomeroomStatus(teacherID string, isHomeroom bool) error
 	UpdateTeacherIsCouncelorStatus(teacherID string, isCouncelor bool) error
 	GetTeachersByClassAndSubject(classID, subjectID string) ([]dto.TeacherSubjectResponse, error)
+	RemoveTeacherFromSubject(teacherID, subjectID string) error
 }
 
 func (s *adminService) CreateTeacher(teacher *entities.Teacher) error {
@@ -66,7 +67,6 @@ func (s *adminService) AssignTeacherToSubject(teacherIDs []string, subjectID str
 
 	return nil
 }
-
 
 func (s *adminService) FindTeacherByID(id string) (*entities.Teacher, error) {
 	teacher, err := s.teacherRepo.FindByID(id)
@@ -174,4 +174,21 @@ func (s *adminService) GetTeachersByClassAndSubject(classID, subjectID string) (
 		})
 	}
 	return teachers, nil
+}
+
+func (s *adminService) RemoveTeacherFromSubject(teacherID, subjectID string) error {
+	teacherAssigned, err := s.subjectRepo.IsTeacherAssignedToSubject(teacherID, subjectID)
+	if err != nil {
+		return services.HandleError(err, "Failed to check if teacher is assigned to subject", 500)
+	}
+	if !teacherAssigned {
+		return services.HandleError(errors.New("teacher not assigned to subject"), "Teacher not assigned to subject", 400)
+	}
+
+	err = s.subjectRepo.RemoveTeacherFromSubject(teacherID, subjectID)
+	if err != nil {
+		return services.HandleError(err, "Failed to remove teacher from subject", 500)
+	}
+
+	return nil
 }

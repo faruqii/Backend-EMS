@@ -32,6 +32,7 @@ type SubjectRepository interface {
 	GetClassSubjectsByPrefixAndSubject(classPrefix string, subjectID string) ([]entities.ClassSubject, error)
 	UpdateSubjectMatter(subjectMatterID string, subjectMatter *entities.SubjectMattter) error
 	DeleteSubjectMatter(subjectMatterID string) error
+	RemoveTeacherFromSubject(teacherID, subjectID string) error
 }
 
 // subjectRepository is a concrete implementation of SubjectRepository.
@@ -365,4 +366,20 @@ func (r *subjectRepository) DeleteSubjectMatter(subjectMatterID string) error {
 	}
 
 	return nil
+}
+
+// RemoveTeacherFromSubject removes a teacher from a subject.
+func (r *subjectRepository) RemoveTeacherFromSubject(teacherID, subjectID string) error {
+    // Find the teacher_subject record
+    var teacherSubject entities.TeacherSubject
+    if err := r.db.Where("teacher_id = ? AND subject_id = ?", teacherID, subjectID).First(&teacherSubject).Error; err != nil {
+        return err // Handle not found error
+    }
+
+    // Delete the teacher_subject record
+    if err := r.db.Delete(&teacherSubject).Error; err != nil {
+        return err
+    }
+
+    return nil
 }
