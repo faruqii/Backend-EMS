@@ -216,7 +216,7 @@ func (h *StudentHandler) GetMyQuizSubmission(ctx *fiber.Ctx) error {
 		})
 	}
 
-	response := dto.StudentQuizResponse{
+	response := dto.StudentQuizSubmissionResponse{
 		ID:          quizAssignment.ID,
 		ClassID:     quizAssignment.Quiz.ClassID,
 		SubjectID:   quizAssignment.Quiz.SubjectID,
@@ -225,21 +225,27 @@ func (h *StudentHandler) GetMyQuizSubmission(ctx *fiber.Ctx) error {
 		TypeOfQuiz:  quizAssignment.Quiz.TypeOfQuiz,
 		Description: quizAssignment.Quiz.Description,
 		Deadline:    quizAssignment.Quiz.Deadline,
+		Answers:     quizAssignment.Answers,
+		Status:      quizAssignment.Status,
+		Grade:       quizAssignment.Grade,
 	}
 
-	questions := make([]dto.QuestionBrief, len(quizAssignment.Quiz.Questions))
+	questions := make([]dto.StudentSubmissionQuestionBrief, len(quizAssignment.Quiz.Questions))
 	for i, q := range quizAssignment.Quiz.Questions {
-		questions[i] = dto.QuestionBrief{
+		questions[i] = dto.StudentSubmissionQuestionBrief{
 			ID:            q.ID,
 			Text:          q.Text,
 			Options:       q.Options,
 			CorrectAnswer: q.CorrectAnswer,
+			StudentAnswer: quizAssignment.Answers[i], // Assuming the order of answers matches the order of questions
 		}
 	}
+
+	response.Questions = questions
 
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
 		"message":   "Success get quiz submission",
 		"data":      response,
-		"questions": questions,
 	})
 }
+

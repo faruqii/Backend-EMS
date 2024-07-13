@@ -64,3 +64,26 @@ type QuizExportResponse struct {
 	Deadline    string          `json:"deadline"`
 	Questions   []QuestionBrief `json:"questions"`
 }
+
+type StudentSubmissionQuestionBrief struct {
+	ID            string   `json:"id"`
+	Text          string   `json:"text"`
+	Options       []string `json:"options"`
+	CorrectAnswer string   `json:"correct_answer"`
+	StudentAnswer string   `json:"student_answer"`
+}
+
+type StudentQuizSubmissionResponse struct {
+	ID          string                           `json:"id"`
+	ClassID     string                           `json:"class_id"`
+	SubjectID   string                           `json:"subject_id"`
+	TeacherID   string                           `json:"teacher_id"`
+	Title       string                           `json:"title"`
+	TypeOfQuiz  string                           `json:"type_of_quiz"` // Quiz, UTS, UAS
+	Description string                           `json:"description"`
+	Deadline    string                           `json:"deadline"`
+	Questions   []StudentSubmissionQuestionBrief `json:"questions"`
+	Answers     []string                         `json:"answers"`
+	Status      string                           `json:"status"`
+	Grade       float64                          `json:"grade"`
+}
