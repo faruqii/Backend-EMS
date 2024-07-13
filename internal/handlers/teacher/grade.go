@@ -235,3 +235,75 @@ func (h *TeacherHandler) GetAllGrade(ctx *fiber.Ctx) error {
 		"data":    response,
 	})
 }
+
+func (h *TeacherHandler) UpdateGrade(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+	gradeID := ctx.Params("gradeID")
+	if gradeID == "" {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Grade ID is required",
+		})
+	}
+
+	user := ctx.Locals("user").(string)
+	teacherID, err := h.teacherSvc.GetTeacherIDByUserID(user)
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	var req dto.GradeRequest
+	if err := ctx.BodyParser(&req); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	grade, err := h.teacherSvc.GetGradeByID(gradeID)
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	grade.StudentID = req.StudentID
+	grade.SubjectID = req.SubjectID
+	grade.TeacherID = teacherID
+	grade.Semester = req.Semester
+	grade.AcademicYear = req.AcademicYear
+	grade.FormativeScores = req.FormativeScores
+	grade.SummativeScores = req.SummativeScores
+	grade.ProjectScores = req.ProjectScores
+	grade.FinalGrade = req.FinalGrade
+
+	updatedGrade, err := h.teacherSvc.UpdateGrade(grade)
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	response := dto.GradeResponse{
+		ID:              updatedGrade.ID,
+		StudentID:       updatedGrade.StudentID,
+		Student:         updatedGrade.Student.Name,
+		SubjectID:       updatedGrade.SubjectID,
+		Subject:         updatedGrade.Subject.Name,
+		TeacherID:       updatedGrade.TeacherID,
+		Teacher:         updatedGrade.Teacher.Name,
+		Semester:        updatedGrade.Semester,
+		AcademicYear:    updatedGrade.AcademicYear,
+		FormativeScores: updatedGrade.FormativeScores,
+		SummativeScores: updatedGrade.SummativeScores,
+		ProjectScores:   updatedGrade.ProjectScores,
+		FinalGrade:      updatedGrade.FinalGrade,
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Grade updated successfully",
+		"data":    response,
+	})
+}

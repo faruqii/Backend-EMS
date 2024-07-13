@@ -14,6 +14,7 @@ type TeacherGradeService interface {
 	FilterBySemester(semester string) ([]entities.Grade, error)
 	FilterByAcademicYear(academicYear string) ([]entities.Grade, error)
 	FilterBySemesterAndAcademicYear(semester, academicYear string) ([]entities.Grade, error)
+	UpdateGrade(grade *entities.Grade) (*entities.Grade, error)
 }
 
 func (s *teacherService) InsertGrade(grade *entities.Grade) (*entities.Grade, error) {
@@ -85,4 +86,13 @@ func (s *teacherService) FilterBySemesterAndAcademicYear(semester, academicYear 
 		return nil, services.HandleError(err, "Failed to get grades", 500)
 	}
 	return grades, nil
+}
+
+func (s *teacherService) UpdateGrade(grade *entities.Grade) (*entities.Grade, error) {
+	grade, err := s.gradeRepo.UpdateGrade(grade)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to update grade", 500)
+	}
+
+	return grade, nil
 }

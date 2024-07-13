@@ -2,6 +2,7 @@ package dto
 
 type GradeRequest struct {
 	StudentID       string  `json:"student_id"`
+	SubjectID       string  `json:"subject_id"`
 	Semester        int     `json:"semester"`
 	AcademicYear    string  `json:"academic_year"`
 	FormativeScores float32 `json:"formative_scores"`

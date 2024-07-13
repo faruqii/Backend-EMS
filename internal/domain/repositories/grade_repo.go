@@ -17,6 +17,7 @@ type GradeRepository interface {
 	FilterStudentGradesBySemester(studentID, semester string) ([]entities.Grade, error)
 	FilterStudentGradesByAcademicYear(studentID, academicYear string) ([]entities.Grade, error)
 	FilterStudentGradesBySemesterAndAcademicYear(studentID, semester, academicYear string) ([]entities.Grade, error)
+	UpdateGrade(grade *entities.Grade) (*entities.Grade, error)
 }
 
 type gradeRepository struct {
@@ -132,4 +133,19 @@ func (r *gradeRepository) FilterStudentGradesBySemesterAndAcademicYear(studentID
 	}
 
 	return grades, nil
+}
+
+func (r *gradeRepository) UpdateGrade(grade *entities.Grade) (*entities.Grade, error) {
+	// find grade
+	var oldGrade entities.Grade
+	if err := r.db.Where("id = ?", grade.ID).First(&oldGrade).Error; err != nil {
+		return nil, err
+	}
+
+	// update grade
+	if err := r.db.Model(&oldGrade).Updates(grade).Error; err != nil {
+		return nil, err
+	}
+
+	return grade, nil
 }
