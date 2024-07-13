@@ -114,8 +114,17 @@ func (r *parentRepository) GetMyProfile(id string) (*entities.Parent, error) {
 }
 
 func (r *parentRepository) RemoveParentFromStudent(parentID, studentID string) error {
-	if err := r.db.Where("parent_id = ? AND student_id = ?", parentID, studentID).Delete(&entities.ParentStudent{}).Error; err != nil {
+	tx := r.db.Begin()
+
+	if err := tx.Where("parent_id = ? AND student_id = ?", parentID, studentID).Delete(&entities.ParentStudent{}).Error; err != nil {
+		tx.Rollback()
 		return err
 	}
+
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
 	return nil
 }
