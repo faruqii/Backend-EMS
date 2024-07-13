@@ -11,6 +11,7 @@ type AdminParentService interface {
 	CreateParent(parent *entities.Parent) error
 	AssignParentToStudent(parentID, studentID string) error
 	GetAll() ([]dto.ParentResponse, error)
+	RemoveParentFromStudent(parentID, studentID string) error
 }
 
 func (s *adminService) CreateParent(parent *entities.Parent) error {
@@ -75,4 +76,13 @@ func (s *adminService) GetAll() ([]dto.ParentResponse, error) {
 	}
 
 	return parents, nil
+}
+
+func (s *adminService) RemoveParentFromStudent(parentID, studentID string) error {
+	err := s.parentRepo.RemoveParentFromStudent(parentID, studentID)
+	if err != nil {
+		return services.HandleError(err, "Failed to remove parent from student", 500)
+	}
+
+	return nil
 }

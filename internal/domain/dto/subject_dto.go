@@ -20,7 +20,9 @@ type TeacherSubjectRequest struct {
 }
 
 type TeacherSubjectResponse struct {
+	SubjectID   string `json:"subject_id"`
 	SubjectName string `json:"subject_name"`
+	TeacherID   string `json:"teacher_id"`
 	TeacherName string `json:"teacher_name"`
 }
 

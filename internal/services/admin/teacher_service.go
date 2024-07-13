@@ -82,7 +82,9 @@ func (s *adminService) GetTeachersBySubjectID(subjectID string) ([]dto.TeacherSu
 	var teachers []dto.TeacherSubjectResponse
 	for _, ts := range teacherSubjects {
 		teachers = append(teachers, dto.TeacherSubjectResponse{
+			TeacherID:   ts.Teacher.ID,
 			TeacherName: ts.Teacher.Name,
+			SubjectID:   ts.Subject.ID,
 			SubjectName: ts.Subject.Name,
 		})
 	}

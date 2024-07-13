@@ -172,11 +172,32 @@ func (c *AdminHandler) GetParents(ctx *fiber.Ctx) (err error) {
 			Occupation:  parent.Occupation,
 			PhoneNumber: parent.PhoneNumber,
 			Email:       parent.Email,
+			StudentID:   parent.StudentID,
 			StudentName: parent.StudentName,
 		})
 	}
 
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
 		"data": response,
+	})
+}
+
+func (c *AdminHandler) RemoveParentFromStudent(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
+	parentID := ctx.Params("parent_id")
+	studentID := ctx.Params("student_id")
+
+	err = c.adminService.RemoveParentFromStudent(parentID, studentID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.JSON(fiber.Map{
+		"message": "Parent removed from student successfully",
 	})
 }

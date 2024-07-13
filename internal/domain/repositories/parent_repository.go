@@ -17,6 +17,7 @@ type ParentRepository interface {
 	GetAll() ([]dto.ParentResponse, error)
 	GetMyStudents(parentID string) ([]entities.ParentStudent, error)
 	GetMyProfile(id string) (*entities.Parent, error)
+	RemoveParentFromStudent(parentID, studentID string) error
 }
 
 type parentRepository struct {
@@ -110,4 +111,16 @@ func (r *parentRepository) GetMyProfile(id string) (*entities.Parent, error) {
 		return nil, err
 	}
 	return parent, nil
+}
+
+func (r *parentRepository) RemoveParentFromStudent(parentID, studentID string) error {
+	var parstud entities.ParentStudent
+	if err := r.db.Where("parent_id = ? AND student_id = ?", parentID, studentID).First(&parstud).Error; err != nil {
+		return err
+	}
+
+	if err := r.db.Delete(&parstud).Error; err != nil {
+		return err
+	}
+	return nil
 }
