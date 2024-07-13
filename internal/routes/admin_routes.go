@@ -22,7 +22,7 @@ func AdminRoutes(router fiber.Router, adminSvc services.AdminService, mw *middle
 	subRoutes.Get("/:id/teachers", admin.GetTeachersBySubjectID)
 	// subRoutes.Get("", admin.GetTeachersByClassAndSubject)
 	subRoutes.Get("/", admin.GetClassesSubjectsAndTeachers)
-	subRoutes.Delete("/:subjectID/:teacherID/remove-teacher", admin.RemoveTeacherFromSubject)
+	// subRoutes.Delete("/:subjectID/:teacherID/remove-teacher", admin.RemoveTeacherFromSubject)
 
 	// Teacher routes
 	teacherRoutes := adminRoutes.Group("/teacher")
@@ -31,6 +31,7 @@ func AdminRoutes(router fiber.Router, adminSvc services.AdminService, mw *middle
 	teacherRoutes.Get("/all", admin.GetAllTeacher)
 	teacherRoutes.Put("/:id/update-homeroom-status", admin.UpdateTeacherHomeroomStatus)
 	teacherRoutes.Get("/:id/subjects", admin.GetTeacherSubjects)
+	teacherRoutes.Delete("/:teacherID/:subjectID/remove-teacher", admin.RemoveTeacherFromSubject)
 
 	// Class routes
 	classRoutes := adminRoutes.Group("/class")

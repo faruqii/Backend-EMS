@@ -242,9 +242,9 @@ func (c *AdminHandler) RemoveTeacherFromSubject(ctx *fiber.Ctx) (err error) {
 	if ctx.Locals("testMode").(bool) {
 		return ctx.JSON(fiber.Map{"message": "DB still the same"})
 	}
-
-	subjectID := ctx.Params("subjectID")
+	
 	teacherID := ctx.Params("teacherID")
+	subjectID := ctx.Params("subjectID")
 
 	err = c.adminService.RemoveTeacherFromSubject(teacherID, subjectID)
 	if err != nil {
