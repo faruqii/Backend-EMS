@@ -7,6 +7,7 @@ import (
 
 type ParentTaskService interface {
 	GetTask(userID string) ([]entities.Task, error)
+	GetStudentAssignment(userID string) ([]entities.StudentAssignment, error)
 }
 
 func (s *parentService) GetTask(userID string) ([]entities.Task, error) {
@@ -31,4 +32,23 @@ func (s *parentService) GetTask(userID string) ([]entities.Task, error) {
 	}
 
 	return task, nil
+}
+
+func (s *parentService) GetStudentAssignment(userID string) ([]entities.StudentAssignment, error) {
+	parentID, err := s.tokenRepo.GetParentIDByUserID(userID)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to fetch parent", 500)
+	}
+
+	studentID, err := s.parentRepo.GetStudentIDByParentID(parentID)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to fetch student", 500)
+	}
+
+	studentAssignment, err := s.assignmentRepo.GetStudentTaskSubmissions(studentID)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to fetch student assignment", 500)
+	}
+
+	return studentAssignment, nil
 }

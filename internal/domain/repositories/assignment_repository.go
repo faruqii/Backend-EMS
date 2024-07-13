@@ -27,6 +27,7 @@ type AssignmentRepository interface {
 	GetMyQuizAssignment(studentID string, subjectID string) ([]entities.StudentQuizAssignment, error)
 	GetStudentQuizAssignmentAnswer(quizAssignmentID string) ([]entities.StudentQuizAssignment, error)
 	UpdateTaskSubmission(assignmentID string, assignment *entities.StudentAssignment) error
+	GetStudentTaskSubmissions(studentID string) ([]entities.StudentAssignment, error)
 }
 
 type assignmentRepository struct {
@@ -198,4 +199,12 @@ func (r *assignmentRepository) UpdateTaskSubmission(assignmentID string, assignm
 
 	log.Printf("Rows affected: %d", result.RowsAffected)
 	return nil
+}
+
+func (r *assignmentRepository) GetStudentTaskSubmissions(studentID string) ([]entities.StudentAssignment, error) {
+	var assignments []entities.StudentAssignment
+	if err := r.db.Preload("Task").Preload("Student").Where("student_id = ?", studentID).Find(&assignments).Error; err != nil {
+		return nil, err
+	}
+	return assignments, nil
 }
