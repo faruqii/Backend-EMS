@@ -24,6 +24,7 @@ type StudentRepository interface {
 	FindStudentClassIDByStudentID(studentID string) (string, error)
 	GetStudentByUserID(userID string) (*entities.Student, error)
 	RemoveStudentFromClass(studentID string) error
+	FindStudentByClassPrefix(prefix string) ([]entities.Student, error)
 }
 
 type studentRepository struct {
@@ -111,7 +112,7 @@ func (r *studentRepository) InsertStudentToClass(studentID, classID string) (*en
 
 func (r *studentRepository) GetAllStudents() ([]entities.Student, error) {
 	var students []entities.Student
-	if err := r.db.Find(&students).Error; err != nil {
+	if err := r.db.Preload("Class").Find(&students).Error; err != nil {
 		return nil, err
 	}
 	return students, nil
@@ -153,21 +154,32 @@ func (r *studentRepository) GetStudentByUserID(userID string) (*entities.Student
 }
 
 func (r *studentRepository) RemoveStudentFromClass(studentID string) error {
-    var student entities.Student
-    if err := r.db.Where("id = ?", studentID).First(&student).Error; err != nil {
-        return err
-    }
+	var student entities.Student
+	if err := r.db.Where("id = ?", studentID).First(&student).Error; err != nil {
+		return err
+	}
 
-    // Ensuring ClassID is nil
-    student.ClassID = nil
+	// Ensuring ClassID is nil
+	student.ClassID = nil
 
-    // Updating the ClassID field specifically
-    if err := r.db.Model(&student).Update("class_id", gorm.Expr("NULL")).Error; err != nil {
-        return err
-    }
+	// Updating the ClassID field specifically
+	if err := r.db.Model(&student).Update("class_id", gorm.Expr("NULL")).Error; err != nil {
+		return err
+	}
 
-    return nil
+	return nil
 }
 
+func (r *studentRepository) FindStudentByClassPrefix(prefix string) ([]entities.Student, error) {
+	var students []entities.Student
+	// using class name = like %
+	// preload the class
+	if err := r.db.Preload("Class").Joins("JOIN classes ON students.class_id = classes.id").Where("classes.name LIKE ?", prefix+"%").Find(&students).Error; err != nil {
+		return nil, err
+	}
+
+	return students, nil
+
+}
 
 // Path: internal/domain/repositories/student_repository.go

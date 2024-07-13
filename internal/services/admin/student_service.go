@@ -15,6 +15,7 @@ type AdminStudentService interface {
 	GetAllStudents() ([]entities.Student, error)
 	InsertStudentToClass(studentID, classID string) (*entities.Student, error)
 	RemoveStudentFromClass(studentID string) error
+	FindStudentByClassPrefix(prefix string) ([]entities.Student, error)
 }
 
 func (s *adminService) CreateStudent(student *entities.Student) error {
@@ -75,4 +76,13 @@ func (s *adminService) RemoveStudentFromClass(studentID string) error {
 	}
 
 	return nil
+}
+
+func (s *adminService) FindStudentByClassPrefix(prefix string) ([]entities.Student, error) {
+	students, err := s.studentRepo.FindStudentByClassPrefix(prefix)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to fetch students", 500)
+	}
+
+	return students, nil
 }

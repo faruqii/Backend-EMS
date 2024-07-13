@@ -62,7 +62,14 @@ func (c *AdminHandler) GetAllStudents(ctx *fiber.Ctx) (err error) {
 		return ctx.JSON(fiber.Map{"message": "DB still the same"})
 	}
 
-	students, err := c.adminService.GetAllStudents()
+	classPrefix := ctx.Query("class_prefix")
+
+	var students []entities.Student
+	if classPrefix != "" {
+		students, err = c.adminService.FindStudentByClassPrefix(classPrefix)
+	} else {
+		students, err = c.adminService.GetAllStudents()
+	}
 
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
@@ -70,10 +77,10 @@ func (c *AdminHandler) GetAllStudents(ctx *fiber.Ctx) (err error) {
 		})
 	}
 
-	var response []dto.StudentResponse
+	var response []dto.AdminStudentResponse
 
 	for _, student := range students {
-		res := dto.StudentResponse{
+		res := dto.AdminStudentResponse{
 			ID:          student.ID,
 			Name:        student.Name,
 			NISN:        student.NISN,
@@ -88,9 +95,16 @@ func (c *AdminHandler) GetAllStudents(ctx *fiber.Ctx) (err error) {
 			Phone:       student.Phone,
 			ParentPhone: student.ParentPhone,
 			Email:       student.Email,
+			ClassName:   student.Class.Name,
 		}
 
 		response = append(response, res)
+	}
+
+	if len(response) == 0 {
+		return ctx.Status(http.StatusNotFound).JSON(fiber.Map{
+			"message": "No students found",
+		})
 	}
 
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
