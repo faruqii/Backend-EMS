@@ -82,9 +82,9 @@ func (r *parentRepository) GetStudentIDByParentID(parentID string) (string, erro
 
 func (r *parentRepository) GetAll() ([]dto.ParentResponse, error) {
 	var parents []dto.ParentResponse
-	// join table with ParentStudent to show the child of parent
+
 	err := r.db.Table("parents").
-		Select("parents.id, parents.name, parents.address, parents.occupation, parents.phone_number, parents.email, students.name as student_name").
+		Select("parents.id, parents.name, parents.address, parents.occupation, parents.phone_number, parents.email, students.id as student_id, students.name as student_name").
 		Joins("LEFT JOIN parent_students ON parents.id = parent_students.parent_id").
 		Joins("LEFT JOIN students ON parent_students.student_id = students.id").
 		Scan(&parents).Error
@@ -114,12 +114,7 @@ func (r *parentRepository) GetMyProfile(id string) (*entities.Parent, error) {
 }
 
 func (r *parentRepository) RemoveParentFromStudent(parentID, studentID string) error {
-	var parstud entities.ParentStudent
-	if err := r.db.Where("parent_id = ? AND student_id = ?", parentID, studentID).First(&parstud).Error; err != nil {
-		return err
-	}
-
-	if err := r.db.Delete(&parstud).Error; err != nil {
+	if err := db.Where("parent_id = ? AND student_id = ?", parentID, studentID).Delete(&entities.ParentStudent{}).Error; err != nil {
 		return err
 	}
 	return nil
