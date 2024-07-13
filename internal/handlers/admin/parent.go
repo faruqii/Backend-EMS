@@ -187,8 +187,8 @@ func (c *AdminHandler) RemoveParentFromStudent(ctx *fiber.Ctx) (err error) {
 		return ctx.JSON(fiber.Map{"message": "DB still the same"})
 	}
 
-	parentID := ctx.Params("parent_id")
-	studentID := ctx.Params("student_id")
+	parentID := ctx.Params("parentID")
+	studentID := ctx.Params("studentID")
 
 	err = c.adminService.RemoveParentFromStudent(parentID, studentID)
 	if err != nil {
