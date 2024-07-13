@@ -227,11 +227,13 @@ func (h *StudentHandler) GetMyQuizSubmission(ctx *fiber.Ctx) error {
 		Deadline:    quizAssignment.Quiz.Deadline,
 	}
 
-	questions := make([]dto.StudentQuestionBrief, len(quizAssignment.Quiz.Questions))
+	questions := make([]dto.QuestionBrief, len(quizAssignment.Quiz.Questions))
 	for i, q := range quizAssignment.Quiz.Questions {
-		questions[i] = dto.StudentQuestionBrief{
-			Text:    q.Text,
-			Options: q.Options,
+		questions[i] = dto.QuestionBrief{
+			ID:            q.ID,
+			Text:          q.Text,
+			Options:       q.Options,
+			CorrectAnswer: q.CorrectAnswer,
 		}
 	}
 
