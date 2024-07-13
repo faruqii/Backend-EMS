@@ -370,16 +370,8 @@ func (r *subjectRepository) DeleteSubjectMatter(subjectMatterID string) error {
 
 // RemoveTeacherFromSubject removes a teacher from a subject.
 func (r *subjectRepository) RemoveTeacherFromSubject(teacherID, subjectID string) error {
-    // Find the teacher_subject record
-    var teacherSubject entities.TeacherSubject
-    if err := r.db.Where("teacher_id = ? AND subject_id = ?", teacherID, subjectID).First(&teacherSubject).Error; err != nil {
-        return err // Handle not found error
-    }
-
-    // Delete the teacher_subject record
-    if err := r.db.Delete(&teacherSubject).Error; err != nil {
-        return err
-    }
-
-    return nil
+	if err := r.db.Where("teacher_id = ? AND subject_id = ?", teacherID, subjectID).Delete(&entities.TeacherSubject{}).Error; err != nil {
+		return err
+	}
+	return nil
 }
