@@ -18,6 +18,7 @@ func ParentRoutes(router fiber.Router, teacherSvc service.ParentService, mw *mid
 
 	parentTaskControllerRoutes := parentControllerRoutes.Group("/task")
 	parentTaskControllerRoutes.Get("", parentController.GetTask)
+	parentTaskControllerRoutes.Get("/assignment", parentController.GetStudentAssignment)
 
 	parentAchievementControllerRoutes := parentControllerRoutes.Group("/achievement")
 	parentAchievementControllerRoutes.Get("", parentController.GetAchivement)
