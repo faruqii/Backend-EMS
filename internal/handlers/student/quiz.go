@@ -201,3 +201,43 @@ func (h *StudentHandler) GetMyQuizGrades(ctx *fiber.Ctx) error {
 		"data":    response,
 	})
 }
+
+func (h *StudentHandler) GetMyQuizSubmission(ctx *fiber.Ctx) error {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
+	quizAssignmentID := ctx.Params("quizAssignmentID")
+
+	quizAssignment, err := h.studentService.GetMyQuizSubmission(quizAssignmentID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	response := dto.StudentQuizResponse{
+		ID:          quizAssignment.ID,
+		ClassID:     quizAssignment.Quiz.ClassID,
+		SubjectID:   quizAssignment.Quiz.SubjectID,
+		TeacherID:   quizAssignment.Quiz.TeacherID,
+		Title:       quizAssignment.Quiz.Title,
+		TypeOfQuiz:  quizAssignment.Quiz.TypeOfQuiz,
+		Description: quizAssignment.Quiz.Description,
+		Deadline:    quizAssignment.Quiz.Deadline,
+	}
+
+	questions := make([]dto.StudentQuestionBrief, len(quizAssignment.Quiz.Questions))
+	for i, q := range quizAssignment.Quiz.Questions {
+		questions[i] = dto.StudentQuestionBrief{
+			Text:    q.Text,
+			Options: q.Options,
+		}
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message":   "Success get quiz submission",
+		"data":      response,
+		"questions": questions,
+	})
+}

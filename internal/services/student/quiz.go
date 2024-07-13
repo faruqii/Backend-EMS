@@ -11,6 +11,7 @@ type StudentQuizService interface {
 	CountQuizQuestions(quizID string) (int, error)
 	GetQuizByID(id string) (*entities.Quiz, error)
 	GetMyQuizGrade(quizID, userID string) (*entities.StudentQuizAssignment, error)
+	GetMyQuizSubmission(quizAssignmentID string) (*entities.StudentQuizAssignment, error)
 }
 
 func (s *studentService) GetQuiz(userID string) ([]entities.Quiz, error) {
@@ -61,6 +62,15 @@ func (s *studentService) GetMyQuizGrade(quizID, userID string) (*entities.Studen
 	}
 
 	quizAssignment, err := s.assignmentRepo.GetStudentQuizAssignment(quizID, studentID)
+	if err != nil {
+		return nil, services.HandleError(err, "Failed to fetch quiz assignment", 500)
+	}
+
+	return quizAssignment, nil
+}
+
+func (s *studentService) GetMyQuizSubmission(quizAssignmentID string) (*entities.StudentQuizAssignment, error) {
+	quizAssignment, err := s.assignmentRepo.GetQuizAssignment(quizAssignmentID)
 	if err != nil {
 		return nil, services.HandleError(err, "Failed to fetch quiz assignment", 500)
 	}
