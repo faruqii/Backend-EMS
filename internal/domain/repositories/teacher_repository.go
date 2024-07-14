@@ -13,6 +13,7 @@ type TeacherRepository interface {
 	Delete(id string) error
 	GetAll() ([]entities.Teacher, error)
 	GetMyProfile(id string) (*entities.Teacher, error)
+	RemoveHomeroomTeacherStatus(id string) error
 }
 
 // teacherRepository is a concrete implementation of TeacherRepository.
@@ -89,4 +90,14 @@ func (r *teacherRepository) GetMyProfile(id string) (*entities.Teacher, error) {
 		return nil, err
 	}
 	return &teacher, nil
+}
+
+// RemoveHomeroomTeacherStatus removes homeroom teacher status.
+func (r *teacherRepository) RemoveHomeroomTeacherStatus(id string) error {
+	if err := r.db.Model(&entities.Teacher{}).
+		Where("id = ?", id).
+		Update("is_homeroom", false).Error; err != nil {
+		return err
+	}
+	return nil
 }

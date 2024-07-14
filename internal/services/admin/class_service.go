@@ -82,15 +82,13 @@ func (s *adminService) RemoveHomeroomTeacher(classID string) error {
 	}
 
 	// update class
-	class.HomeRoomTeacherID = nil
-	if err := s.classRepo.Update(class); err != nil {
-		return services.HandleError(err, "Failed to update class", 500)
+	if err := s.classRepo.RemoveHomeroomTeacher(class.ID); err != nil {
+		return services.HandleError(err, "Failed to remove homeroom teacher", 500)
 	}
 
 	// update teacher
-	teacher.IsHomeroom = false
-	if err := s.teacherRepo.Update(teacher); err != nil {
-		return services.HandleError(err, "Failed to update teacher", 500)
+	if err := s.teacherRepo.RemoveHomeroomTeacherStatus(teacher.ID); err != nil {
+		return services.HandleError(err, "Failed to remove homeroom status", 500)
 	}
 
 	return nil

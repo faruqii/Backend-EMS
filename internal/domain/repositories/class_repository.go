@@ -8,6 +8,7 @@ import (
 type ClassRepository interface {
 	Insert(class *entities.Class) error
 	Update(class *entities.Class) error
+	RemoveHomeroomTeacher(classID string) error
 	Delete(id string) error
 	FindByID(id string) (*entities.Class, error)
 	FindByTeacherID(teacherID string) ([]entities.Class, error)
@@ -39,6 +40,13 @@ func (r *classRepository) Insert(class *entities.Class) error {
 
 func (r *classRepository) Update(class *entities.Class) error {
 	if err := r.db.Model(&entities.Class{}).Where("id = ?", class.ID).Updates(class).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *classRepository) RemoveHomeroomTeacher(classID string) error {
+	if err := r.db.Model(&entities.Class{}).Where("id = ?", classID).Update("home_room_teacher_id", nil).Error; err != nil {
 		return err
 	}
 	return nil
