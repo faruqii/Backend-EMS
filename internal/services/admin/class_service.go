@@ -10,7 +10,7 @@ import (
 type AdminClassService interface {
 	CreateClass(class *entities.Class) error
 	AssignHomeroomTeacher(classID, teacherID string) error
-	RemoveHomeroomTeacher(classID, teacherID string) error
+	RemoveHomeroomTeacher(classID string) error
 	FindClassByID(id string) (*entities.Class, error)
 	GetAllClass() ([]entities.Class, error)
 	GetClassSchedule(classID string) ([]entities.Schedule, error)
@@ -63,30 +63,31 @@ func (s *adminService) AssignHomeroomTeacher(classID, teacherID string) error {
 	return nil
 }
 
-func (s *adminService) RemoveHomeroomTeacher(classID, teacherID string) error {
-	teacher, err := s.teacherRepo.FindByID(teacherID)
-	if err != nil {
-		return services.HandleError(err, "Teacher not found", 400)
-	}
-
+func (s *adminService) RemoveHomeroomTeacher(classID string) error {
+	// find class
 	class, err := s.classRepo.FindByID(classID)
 	if err != nil {
 		return services.HandleError(err, "Class not found", 400)
 	}
 
-	if class.HomeRoomTeacherID == nil {
-		return services.HandleError(err, "Homeroom teacher not assigned", 400)
+	// find teacher
+	teacherID := class.HomeRoomTeacherID
+	if teacherID == nil {
+		return services.HandleError(errors.New("homeroom teacher not found"), "Homeroom teacher not found", 400)
 	}
 
-	if *class.HomeRoomTeacherID != teacherID {
-		return services.HandleError(err, "Teacher is not homeroom teacher", 400)
+	teacher, err := s.teacherRepo.FindByID(*teacherID)
+	if err != nil {
+		return services.HandleError(err, "Teacher not found", 400)
 	}
 
+	// update class
 	class.HomeRoomTeacherID = nil
 	if err := s.classRepo.Update(class); err != nil {
 		return services.HandleError(err, "Failed to update class", 500)
 	}
 
+	// update teacher
 	teacher.IsHomeroom = false
 	if err := s.teacherRepo.Update(teacher); err != nil {
 		return services.HandleError(err, "Failed to update teacher", 500)

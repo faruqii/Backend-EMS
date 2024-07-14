@@ -37,7 +37,7 @@ func AdminRoutes(router fiber.Router, adminSvc services.AdminService, mw *middle
 	classRoutes := adminRoutes.Group("/class")
 	classRoutes.Post("/create", admin.CreateClass)
 	classRoutes.Post("/:id/assign-homeroom-teacher", admin.AssignHomeroomTeacher)
-	classRoutes.Delete("/:id/teacher/:teacherID/remove-homeroom-teacher", admin.RemoveHomeroomTeacher)
+	classRoutes.Delete("/:id/remove-homeroom-teacher", admin.RemoveHomeroomTeacher)
 	classRoutes.Get("/all", admin.GetAllClass)
 	classRoutes.Get("/:id/schedule", admin.GetClassSchedule)
 	classRoutes.Post("/:id/students", admin.InsertStudentToClass)

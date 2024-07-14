@@ -101,9 +101,8 @@ func (h *AdminHandler) RemoveHomeroomTeacher(ctx *fiber.Ctx) (err error) {
 	}
 
 	classID := ctx.Params("id")
-	teacherID := ctx.Params("teacherID")
 
-	err = h.adminService.RemoveHomeroomTeacher(classID, teacherID)
+	err = h.adminService.RemoveHomeroomTeacher(classID)
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
