@@ -95,6 +95,25 @@ func (h *AdminHandler) AssignHomeroomTeacher(ctx *fiber.Ctx) (err error) {
 	})
 }
 
+func (h *AdminHandler) RemoveHomeroomTeacher(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
+	classID := ctx.Params("id")
+
+	err = h.adminService.RemoveHomeroomTeacher(classID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Homeroom teacher removed successfully",
+	})
+}
+
 func (h *AdminHandler) GetAllClass(ctx *fiber.Ctx) (err error) {
 	if ctx.Locals("testMode").(bool) {
 		return ctx.JSON(fiber.Map{"message": "DB still the same"})

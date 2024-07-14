@@ -38,7 +38,7 @@ func (r *classRepository) Insert(class *entities.Class) error {
 }
 
 func (r *classRepository) Update(class *entities.Class) error {
-	if err := r.db.Save(class).Error; err != nil {
+	if err := r.db.Model(&entities.Class{}).Where("id = ?", class.ID).Updates(class).Error; err != nil {
 		return err
 	}
 	return nil
