@@ -33,6 +33,8 @@ type SubjectRepository interface {
 	UpdateSubjectMatter(subjectMatterID string, subjectMatter *entities.SubjectMattter) error
 	DeleteSubjectMatter(subjectMatterID string) error
 	RemoveTeacherFromSubject(teacherID, subjectID string) error
+	FindClassSubjectBySubjectAndClassID(subjectID, classID string) (*entities.ClassSubject, error)
+	RemoveSubjectFromClass(classSubjectID string) error
 }
 
 // subjectRepository is a concrete implementation of SubjectRepository.
@@ -371,6 +373,21 @@ func (r *subjectRepository) DeleteSubjectMatter(subjectMatterID string) error {
 // RemoveTeacherFromSubject removes a teacher from a subject.
 func (r *subjectRepository) RemoveTeacherFromSubject(teacherID, subjectID string) error {
 	if err := r.db.Where("teacher_id = ? AND subject_id = ?", teacherID, subjectID).Delete(&entities.TeacherSubject{}).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *subjectRepository) FindClassSubjectBySubjectAndClassID(subjectID, classID string) (*entities.ClassSubject, error) {
+	var classSubject entities.ClassSubject
+	if err := r.db.Where("subject_id = ? AND class_id = ?", subjectID, classID).First(&classSubject).Error; err != nil {
+		return nil, err
+	}
+	return &classSubject, nil
+}
+
+func (r *subjectRepository) RemoveSubjectFromClass(classSubjectID string) error {
+	if err := r.db.Delete(&entities.ClassSubject{}, "id = ?", classSubjectID).Error; err != nil {
 		return err
 	}
 	return nil

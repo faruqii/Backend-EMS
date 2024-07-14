@@ -264,3 +264,23 @@ func (h *AdminHandler) RemoveStudentsFromClass(ctx *fiber.Ctx) (err error) {
 		"message": "Students removed from class successfully",
 	})
 }
+
+func (c *AdminHandler) RemoveSubjectFromClass(ctx *fiber.Ctx) (err error) {
+	if ctx.Locals("testMode").(bool) {
+		return ctx.JSON(fiber.Map{"message": "DB still the same"})
+	}
+
+	classID := ctx.Params("classID")
+	subjectID := ctx.Params("subjectID")
+
+	err = c.adminService.RemoveSubjectFromClass(subjectID, classID)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "Subject removed from class successfully",
+	})
+}

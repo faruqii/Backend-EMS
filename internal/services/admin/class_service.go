@@ -18,6 +18,7 @@ type AdminClassService interface {
 	ClassExists(classID string) (bool, error)
 	AssignSubjectToClass(subjectID, teacherID, classID string) error
 	RemoveStudentsFromClass(classID string) error
+	RemoveSubjectFromClass(subjectID, classID string) error
 }
 
 func (s *adminService) CreateClass(class *entities.Class) error {
@@ -149,4 +150,18 @@ func (s *adminService) AssignSubjectToClass(subjectID, teacherID, classID string
 func (s *adminService) RemoveStudentsFromClass(classID string) error {
 	err := s.classRepo.RemoveStudentsFromClass(classID)
 	return services.HandleError(err, "Failed to remove students from class", 500)
+}
+
+func (s *adminService) RemoveSubjectFromClass(subjectID, classID string) error {
+	classSubject, err := s.subjectRepo.FindClassSubjectBySubjectAndClassID(subjectID, classID)
+	if err != nil {
+		return services.HandleError(err, "Class subject not found", 400)
+	}
+
+	err = s.subjectRepo.RemoveSubjectFromClass(classSubject.ID)
+	if err != nil {
+		return services.HandleError(err, "Failed to remove subject from class", 500)
+	}
+
+	return nil
 }

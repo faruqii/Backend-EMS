@@ -43,6 +43,7 @@ func AdminRoutes(router fiber.Router, adminSvc services.AdminService, mw *middle
 	classRoutes.Post("/:id/students", admin.InsertStudentToClass)
 	classRoutes.Get("/:id/students", admin.GetAllStudentsBelongToClass)
 	classRoutes.Post("/:id/assign-subject", admin.AssignSubjectToClass)
+	classRoutes.Delete("/:classID/subject/:subjectID/remove-subject", admin.RemoveSubjectFromClass)
 
 	// Schedule routes
 	scheduleRoutes := adminRoutes.Group("/schedule")
