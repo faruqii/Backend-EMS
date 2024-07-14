@@ -10,7 +10,7 @@ import (
 type AdminClassService interface {
 	CreateClass(class *entities.Class) error
 	AssignHomeroomTeacher(classID, teacherID string) error
-	RemoveHomeroomTeacher(classID string) error
+	RemoveHomeroomTeacher(classID, teacherID string) error
 	FindClassByID(id string) (*entities.Class, error)
 	GetAllClass() ([]entities.Class, error)
 	GetClassSchedule(classID string) ([]entities.Schedule, error)
@@ -63,30 +63,33 @@ func (s *adminService) AssignHomeroomTeacher(classID, teacherID string) error {
 	return nil
 }
 
-func (s *adminService) RemoveHomeroomTeacher(classID string) error {
+func (s *adminService) RemoveHomeroomTeacher(classID, teacherID string) error {
+	teacher, err := s.teacherRepo.FindByID(teacherID)
+	if err != nil {
+		return services.HandleError(err, "Teacher not found", 400)
+	}
+
 	class, err := s.classRepo.FindByID(classID)
 	if err != nil {
-		return services.HandleError(errors.New("class not found"), "Class not found", 400)
+		return services.HandleError(err, "Class not found", 400)
 	}
 
 	if class.HomeRoomTeacherID == nil {
-		return services.HandleError(errors.New("no homeroom teacher assigned"), "No homeroom teacher assigned", 400)
+		return services.HandleError(err, "Homeroom teacher not assigned", 400)
 	}
 
-	teacherID := *class.HomeRoomTeacherID
-	teacher, err := s.teacherRepo.FindByID(teacherID)
-	if err != nil {
-		return services.HandleError(errors.New("teacher not found"), "Teacher not found", 400)
+	if *class.HomeRoomTeacherID != teacherID {
+		return services.HandleError(err, "Teacher is not homeroom teacher", 400)
 	}
 
 	class.HomeRoomTeacherID = nil
 	if err := s.classRepo.Update(class); err != nil {
-		return services.HandleError(errors.New("failed to update class"), "Failed to update class", 500)
+		return services.HandleError(err, "Failed to update class", 500)
 	}
 
 	teacher.IsHomeroom = false
 	if err := s.teacherRepo.Update(teacher); err != nil {
-		return services.HandleError(errors.New("failed to update teacher"), "Failed to update teacher", 500)
+		return services.HandleError(err, "Failed to update teacher", 500)
 	}
 
 	return nil
