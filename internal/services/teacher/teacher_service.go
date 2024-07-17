@@ -4,7 +4,7 @@ import (
 	"github.com/Magetan-Boyz/Backend/internal/domain/repositories"
 )
 
-//go:generate mockgen -source=teacher_service.go -destination=mock_teacher_service.go -package=services
+//go:generate mockgen -source=teacher_service.go -destination=mock_teacher_service.go -package=mocks
 type TeacherService interface {
 	TeacherScheduleService
 	TeacherTaskService

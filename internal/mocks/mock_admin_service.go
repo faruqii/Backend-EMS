@@ -83,17 +83,17 @@ func (mr *MockAdminServiceMockRecorder) AssignSubjectToClass(subjectID, teacherI
 }
 
 // AssignTeacherToSubject mocks base method.
-func (m *MockAdminService) AssignTeacherToSubject(teacherID, SubjectID string) error {
+func (m *MockAdminService) AssignTeacherToSubject(teacherIDs []string, subjectID string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AssignTeacherToSubject", teacherID, SubjectID)
+	ret := m.ctrl.Call(m, "AssignTeacherToSubject", teacherIDs, subjectID)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // AssignTeacherToSubject indicates an expected call of AssignTeacherToSubject.
-func (mr *MockAdminServiceMockRecorder) AssignTeacherToSubject(teacherID, SubjectID any) *gomock.Call {
+func (mr *MockAdminServiceMockRecorder) AssignTeacherToSubject(teacherIDs, subjectID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AssignTeacherToSubject", reflect.TypeOf((*MockAdminService)(nil).AssignTeacherToSubject), teacherID, SubjectID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AssignTeacherToSubject", reflect.TypeOf((*MockAdminService)(nil).AssignTeacherToSubject), teacherIDs, subjectID)
 }
 
 // ClassExists mocks base method.
@@ -109,6 +109,20 @@ func (m *MockAdminService) ClassExists(classID string) (bool, error) {
 func (mr *MockAdminServiceMockRecorder) ClassExists(classID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ClassExists", reflect.TypeOf((*MockAdminService)(nil).ClassExists), classID)
+}
+
+// CreateAgenda mocks base method.
+func (m *MockAdminService) CreateAgenda(agenda *entities.Agenda) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateAgenda", agenda)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateAgenda indicates an expected call of CreateAgenda.
+func (mr *MockAdminServiceMockRecorder) CreateAgenda(agenda any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateAgenda", reflect.TypeOf((*MockAdminService)(nil).CreateAgenda), agenda)
 }
 
 // CreateAnnouncement mocks base method.
@@ -210,6 +224,20 @@ func (mr *MockAdminServiceMockRecorder) CreateTeacher(teacher any) *gomock.Call 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTeacher", reflect.TypeOf((*MockAdminService)(nil).CreateTeacher), teacher)
 }
 
+// DeleteAgenda mocks base method.
+func (m *MockAdminService) DeleteAgenda(id string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteAgenda", id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteAgenda indicates an expected call of DeleteAgenda.
+func (mr *MockAdminServiceMockRecorder) DeleteAgenda(id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteAgenda", reflect.TypeOf((*MockAdminService)(nil).DeleteAgenda), id)
+}
+
 // DeleteAnnouncement mocks base method.
 func (m *MockAdminService) DeleteAnnouncement(announcementID string) error {
 	m.ctrl.T.Helper()
@@ -222,6 +250,20 @@ func (m *MockAdminService) DeleteAnnouncement(announcementID string) error {
 func (mr *MockAdminServiceMockRecorder) DeleteAnnouncement(announcementID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteAnnouncement", reflect.TypeOf((*MockAdminService)(nil).DeleteAnnouncement), announcementID)
+}
+
+// DeleteSchedule mocks base method.
+func (m *MockAdminService) DeleteSchedule(id string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteSchedule", id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteSchedule indicates an expected call of DeleteSchedule.
+func (mr *MockAdminServiceMockRecorder) DeleteSchedule(id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteSchedule", reflect.TypeOf((*MockAdminService)(nil).DeleteSchedule), id)
 }
 
 // FindClassByID mocks base method.
@@ -237,6 +279,21 @@ func (m *MockAdminService) FindClassByID(id string) (*entities.Class, error) {
 func (mr *MockAdminServiceMockRecorder) FindClassByID(id any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindClassByID", reflect.TypeOf((*MockAdminService)(nil).FindClassByID), id)
+}
+
+// FindStudentByClassPrefix mocks base method.
+func (m *MockAdminService) FindStudentByClassPrefix(prefix string) ([]entities.Student, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindStudentByClassPrefix", prefix)
+	ret0, _ := ret[0].([]entities.Student)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindStudentByClassPrefix indicates an expected call of FindStudentByClassPrefix.
+func (mr *MockAdminServiceMockRecorder) FindStudentByClassPrefix(prefix any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindStudentByClassPrefix", reflect.TypeOf((*MockAdminService)(nil).FindStudentByClassPrefix), prefix)
 }
 
 // FindSubjectByID mocks base method.
@@ -269,6 +326,51 @@ func (mr *MockAdminServiceMockRecorder) FindTeacherByID(id any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindTeacherByID", reflect.TypeOf((*MockAdminService)(nil).FindTeacherByID), id)
 }
 
+// GetAgendaByID mocks base method.
+func (m *MockAdminService) GetAgendaByID(id string) (*entities.Agenda, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAgendaByID", id)
+	ret0, _ := ret[0].(*entities.Agenda)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAgendaByID indicates an expected call of GetAgendaByID.
+func (mr *MockAdminServiceMockRecorder) GetAgendaByID(id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAgendaByID", reflect.TypeOf((*MockAdminService)(nil).GetAgendaByID), id)
+}
+
+// GetAll mocks base method.
+func (m *MockAdminService) GetAll() ([]dto.ParentResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAll")
+	ret0, _ := ret[0].([]dto.ParentResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAll indicates an expected call of GetAll.
+func (mr *MockAdminServiceMockRecorder) GetAll() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockAdminService)(nil).GetAll))
+}
+
+// GetAllAgendas mocks base method.
+func (m *MockAdminService) GetAllAgendas() ([]entities.Agenda, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllAgendas")
+	ret0, _ := ret[0].([]entities.Agenda)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAllAgendas indicates an expected call of GetAllAgendas.
+func (mr *MockAdminServiceMockRecorder) GetAllAgendas() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllAgendas", reflect.TypeOf((*MockAdminService)(nil).GetAllAgendas))
+}
+
 // GetAllClass mocks base method.
 func (m *MockAdminService) GetAllClass() ([]entities.Class, error) {
 	m.ctrl.T.Helper()
@@ -282,6 +384,21 @@ func (m *MockAdminService) GetAllClass() ([]entities.Class, error) {
 func (mr *MockAdminServiceMockRecorder) GetAllClass() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllClass", reflect.TypeOf((*MockAdminService)(nil).GetAllClass))
+}
+
+// GetAllSchedule mocks base method.
+func (m *MockAdminService) GetAllSchedule() ([]entities.Schedule, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllSchedule")
+	ret0, _ := ret[0].([]entities.Schedule)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAllSchedule indicates an expected call of GetAllSchedule.
+func (mr *MockAdminServiceMockRecorder) GetAllSchedule() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllSchedule", reflect.TypeOf((*MockAdminService)(nil).GetAllSchedule))
 }
 
 // GetAllStudents mocks base method.
@@ -389,6 +506,36 @@ func (mr *MockAdminServiceMockRecorder) GetClassSchedule(classID any) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetClassSchedule", reflect.TypeOf((*MockAdminService)(nil).GetClassSchedule), classID)
 }
 
+// GetClassSubjectsByPrefixAndSubject mocks base method.
+func (m *MockAdminService) GetClassSubjectsByPrefixAndSubject(classPrefix, subjectID string) ([]entities.ClassSubject, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetClassSubjectsByPrefixAndSubject", classPrefix, subjectID)
+	ret0, _ := ret[0].([]entities.ClassSubject)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetClassSubjectsByPrefixAndSubject indicates an expected call of GetClassSubjectsByPrefixAndSubject.
+func (mr *MockAdminServiceMockRecorder) GetClassSubjectsByPrefixAndSubject(classPrefix, subjectID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetClassSubjectsByPrefixAndSubject", reflect.TypeOf((*MockAdminService)(nil).GetClassSubjectsByPrefixAndSubject), classPrefix, subjectID)
+}
+
+// GetClassesByPrefix mocks base method.
+func (m *MockAdminService) GetClassesByPrefix(classPrefix string) ([]dto.ClassResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetClassesByPrefix", classPrefix)
+	ret0, _ := ret[0].([]dto.ClassResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetClassesByPrefix indicates an expected call of GetClassesByPrefix.
+func (mr *MockAdminServiceMockRecorder) GetClassesByPrefix(classPrefix any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetClassesByPrefix", reflect.TypeOf((*MockAdminService)(nil).GetClassesByPrefix), classPrefix)
+}
+
 // GetPreloadSchedule mocks base method.
 func (m *MockAdminService) GetPreloadSchedule() (*entities.Schedule, error) {
 	m.ctrl.T.Helper()
@@ -419,6 +566,21 @@ func (mr *MockAdminServiceMockRecorder) GetScheduleByID(id any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetScheduleByID", reflect.TypeOf((*MockAdminService)(nil).GetScheduleByID), id)
 }
 
+// GetSubjectsByClassPrefix mocks base method.
+func (m *MockAdminService) GetSubjectsByClassPrefix(classPrefix string) ([]dto.SubjectResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetSubjectsByClassPrefix", classPrefix)
+	ret0, _ := ret[0].([]dto.SubjectResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetSubjectsByClassPrefix indicates an expected call of GetSubjectsByClassPrefix.
+func (mr *MockAdminServiceMockRecorder) GetSubjectsByClassPrefix(classPrefix any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSubjectsByClassPrefix", reflect.TypeOf((*MockAdminService)(nil).GetSubjectsByClassPrefix), classPrefix)
+}
+
 // GetTeacherSubjects mocks base method.
 func (m *MockAdminService) GetTeacherSubjects(teacherID string) ([]dto.TeacherSubjectsResponse, error) {
 	m.ctrl.T.Helper()
@@ -432,6 +594,21 @@ func (m *MockAdminService) GetTeacherSubjects(teacherID string) ([]dto.TeacherSu
 func (mr *MockAdminServiceMockRecorder) GetTeacherSubjects(teacherID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTeacherSubjects", reflect.TypeOf((*MockAdminService)(nil).GetTeacherSubjects), teacherID)
+}
+
+// GetTeachersByClassAndSubject mocks base method.
+func (m *MockAdminService) GetTeachersByClassAndSubject(classID, subjectID string) ([]dto.TeacherSubjectResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTeachersByClassAndSubject", classID, subjectID)
+	ret0, _ := ret[0].([]dto.TeacherSubjectResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTeachersByClassAndSubject indicates an expected call of GetTeachersByClassAndSubject.
+func (mr *MockAdminServiceMockRecorder) GetTeachersByClassAndSubject(classID, subjectID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTeachersByClassAndSubject", reflect.TypeOf((*MockAdminService)(nil).GetTeachersByClassAndSubject), classID, subjectID)
 }
 
 // GetTeachersBySubjectID mocks base method.
@@ -494,6 +671,34 @@ func (mr *MockAdminServiceMockRecorder) IsTeacherAssignedToSubject(teacherID, su
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsTeacherAssignedToSubject", reflect.TypeOf((*MockAdminService)(nil).IsTeacherAssignedToSubject), teacherID, subjectID)
 }
 
+// RemoveHomeroomTeacher mocks base method.
+func (m *MockAdminService) RemoveHomeroomTeacher(classID string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RemoveHomeroomTeacher", classID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RemoveHomeroomTeacher indicates an expected call of RemoveHomeroomTeacher.
+func (mr *MockAdminServiceMockRecorder) RemoveHomeroomTeacher(classID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveHomeroomTeacher", reflect.TypeOf((*MockAdminService)(nil).RemoveHomeroomTeacher), classID)
+}
+
+// RemoveParentFromStudent mocks base method.
+func (m *MockAdminService) RemoveParentFromStudent(parentID, studentID string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RemoveParentFromStudent", parentID, studentID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RemoveParentFromStudent indicates an expected call of RemoveParentFromStudent.
+func (mr *MockAdminServiceMockRecorder) RemoveParentFromStudent(parentID, studentID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveParentFromStudent", reflect.TypeOf((*MockAdminService)(nil).RemoveParentFromStudent), parentID, studentID)
+}
+
 // RemoveStudentFromClass mocks base method.
 func (m *MockAdminService) RemoveStudentFromClass(studentID string) error {
 	m.ctrl.T.Helper()
@@ -522,6 +727,48 @@ func (mr *MockAdminServiceMockRecorder) RemoveStudentsFromClass(classID any) *go
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveStudentsFromClass", reflect.TypeOf((*MockAdminService)(nil).RemoveStudentsFromClass), classID)
 }
 
+// RemoveSubjectFromClass mocks base method.
+func (m *MockAdminService) RemoveSubjectFromClass(subjectID, classID string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RemoveSubjectFromClass", subjectID, classID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RemoveSubjectFromClass indicates an expected call of RemoveSubjectFromClass.
+func (mr *MockAdminServiceMockRecorder) RemoveSubjectFromClass(subjectID, classID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveSubjectFromClass", reflect.TypeOf((*MockAdminService)(nil).RemoveSubjectFromClass), subjectID, classID)
+}
+
+// RemoveTeacherFromSubject mocks base method.
+func (m *MockAdminService) RemoveTeacherFromSubject(teacherID, subjectID string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RemoveTeacherFromSubject", teacherID, subjectID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RemoveTeacherFromSubject indicates an expected call of RemoveTeacherFromSubject.
+func (mr *MockAdminServiceMockRecorder) RemoveTeacherFromSubject(teacherID, subjectID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveTeacherFromSubject", reflect.TypeOf((*MockAdminService)(nil).RemoveTeacherFromSubject), teacherID, subjectID)
+}
+
+// UpdateAgenda mocks base method.
+func (m *MockAdminService) UpdateAgenda(id string, updatedAgenda *entities.Agenda) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateAgenda", id, updatedAgenda)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateAgenda indicates an expected call of UpdateAgenda.
+func (mr *MockAdminServiceMockRecorder) UpdateAgenda(id, updatedAgenda any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateAgenda", reflect.TypeOf((*MockAdminService)(nil).UpdateAgenda), id, updatedAgenda)
+}
+
 // UpdateAnnouncement mocks base method.
 func (m *MockAdminService) UpdateAnnouncement(announcement *entities.Announcement) (*entities.Announcement, error) {
 	m.ctrl.T.Helper()
@@ -535,6 +782,34 @@ func (m *MockAdminService) UpdateAnnouncement(announcement *entities.Announcemen
 func (mr *MockAdminServiceMockRecorder) UpdateAnnouncement(announcement any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateAnnouncement", reflect.TypeOf((*MockAdminService)(nil).UpdateAnnouncement), announcement)
+}
+
+// UpdateSchedule mocks base method.
+func (m *MockAdminService) UpdateSchedule(schedule *entities.Schedule) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateSchedule", schedule)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateSchedule indicates an expected call of UpdateSchedule.
+func (mr *MockAdminServiceMockRecorder) UpdateSchedule(schedule any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSchedule", reflect.TypeOf((*MockAdminService)(nil).UpdateSchedule), schedule)
+}
+
+// UpdateSubject mocks base method.
+func (m *MockAdminService) UpdateSubject(subjectID string, subject *entities.Subject) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateSubject", subjectID, subject)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateSubject indicates an expected call of UpdateSubject.
+func (mr *MockAdminServiceMockRecorder) UpdateSubject(subjectID, subject any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSubject", reflect.TypeOf((*MockAdminService)(nil).UpdateSubject), subjectID, subject)
 }
 
 // UpdateTeacherHomeroomStatus mocks base method.

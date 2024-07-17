@@ -2,6 +2,7 @@ package service
 
 import "github.com/Magetan-Boyz/Backend/internal/domain/repositories"
 
+//go:generate mockgen -source=student_service.go -destination=mock_student_service.go -package=mocks
 type StudentService interface {
 	StudentTaskService
 	StudentAssignmentService

@@ -200,13 +200,3 @@ func (c *AdminHandler) UpdateSubject(ctx *fiber.Ctx) (err error) {
 		"data":    response,
 	})
 }
-
-// Helper function to check if the entry already exists in the data slice
-// func contains(data []fiber.Map, entry fiber.Map) bool {
-// 	for _, item := range data {
-// 		if item["class_id"] == entry["class_id"] && item["subject_id"] == entry["subject_id"] {
-// 			return true
-// 		}
-// 	}
-// 	return false
-// }

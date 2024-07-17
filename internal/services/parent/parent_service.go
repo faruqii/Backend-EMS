@@ -2,6 +2,7 @@ package service
 
 import "github.com/Magetan-Boyz/Backend/internal/domain/repositories"
 
+//go:generate mockgen -source=parent_service.go -destination=mock_parent_service.go -package=mocks
 type ParentService interface {
 	ParentStudentSchedule
 	ParentTaskService
